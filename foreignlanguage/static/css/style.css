@@ -1,63 +1,13 @@
-/* style.css */
 
-body {
-    background-color: #fff7ed; /* Nền web màu kem rất nhạt */
-    padding-top: 50px;
+/* Nền màu cam nhạt */
+.bg-orange {
+    background-color: #ffcc80 !important;
 }
 
-/* Cấu hình thanh Navbar màu CAM NHẠT */
-.custom-navbar {
-    background-color: #ffcc80; /* Màu cam nhạt */
-    padding: 0.5rem 1.5rem;
-    box-shadow: 0 4px 6px rgba(234, 88, 12, 0.1);
-}
-
-/* Màu chữ mặc định trên thanh menu */
-.nav-link {
-    color: #4a4a4a; /* Màu xám đen */
-    font-weight: 500;
-}
-
-/* Hover vào link thường */
-.nav-item .nav-link:hover {
-    color: #e65100; /* Hover chuyển màu cam đậm */
-}
-
-/* Nút "Trang chủ" đang active -> Màu TRẮNG */
-.nav-link.active-custom {
-    background-color: #ffffff;
-    color: #e65100 !important;
-    border-radius: 50rem;
-    padding-left: 20px !important;
-    padding-right: 20px !important;
-    font-weight: 700;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-/* Nút Đăng kí -> Màu TRẮNG */
-.btn-signup {
-    background-color: #ffffff;
-    color: #e65100;
-    font-weight: 600;
-    border: none;
-    padding-left: 20px;
-    padding-right: 20px;
-    transition: all 0.3s;
-}
-
-.btn-signup:hover {
-    background-color: #fff3e0;
-    color: #ef6c00;
-}
-
-/* Logo text */
-.navbar-brand {
-    font-weight: 800;
-    font-size: 1.5rem;
+.text-orange {
     color: #e65100 !important;
 }
 
-/* Tùy chỉnh icon menu mobile */
-.navbar-toggler {
-    border-color: rgba(255,255,255,0.5);
+.nav-link:hover, .btn:hover {
+    opacity: 0.8;
 }

@@ -9,18 +9,20 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     <!--css-->
 </head>
 <body>
-{%block header%}
-{%include 'layout/header.html'%}
-{%endblock%}
-
+    {%block header%}
+    {%include 'layout/header.html'%}
+    {%endblock%}
 <div class="container mt-3">
+
+
     {%block content required%}
     {%endblock%}
 </div>
+
 {%block footer%}
 {%include 'layout/footer.html'%}
 {%endblock%}
