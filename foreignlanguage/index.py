@@ -13,6 +13,10 @@ def login():
 def signup():
     return render_template("signup.html")
 
+@app.route("/course")
+def course():
+    return render_template("course.html")
+
 if __name__ == "__main__":
     with app.app_context():
         app.run(debug=True)
