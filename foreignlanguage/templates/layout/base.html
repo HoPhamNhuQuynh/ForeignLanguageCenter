@@ -10,17 +10,19 @@
             crossorigin="anonymous"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-    <!--css-->
+    <link href="https://res.cloudinary.com/desvczltb/image/upload/v1763549688/logo_Anqinko_ostpx4.png" rel="icon" type="image/png""/>
+
 </head>
 <body>
     {%block header%}
     {%include 'layout/header.html'%}
     {%endblock%}
-<div class="container mt-3">
 
+<div class="container mt-3">
 
     {%block content required%}
     {%endblock%}
+
 </div>
 
 {%block footer%}

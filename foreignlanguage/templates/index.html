@@ -1,5 +1,133 @@
-{%extends 'layout/base.html'%}
+{% extends 'layout/base.html' %}
 
-{%block content%}
+{% block content %}
+    <style>
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-{%endblock%}
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .text-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+    <div class="container py-5">
+        <div class="card border-0 rounded-4 shadow overflow-hidden" style="border-radius: 15px;">
+            <div class="row g-0">
+                <div class="col-md-6 d-flex align-items-center bg-light">
+                    <div class="p-5">
+                        <h3 class="fw-bold mb-3 text-uppercase" style="color: #2A348B;">Trung tâm Ngoại ngữ Anqinko</h3>
+                        <p class="text-muted mb-4">Chúng tôi cung cấp lộ trình học tập cá nhân hóa giúp bạn đạt mục tiêu
+                            nhanh nhất.</p>
+
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><span class="badge rounded-pill me-2"
+                                                   style="background-color: #2A348B;">1</span> Mô hình chuẩn quốc tế
+                            </li>
+                            <li class="mb-2"><span class="badge rounded-pill me-2"
+                                                   style="background-color: #2A348B;">2</span> Luyện thi IELTS, TOEIC,
+                                SAT
+                            </li>
+                            <li class="mb-2"><span class="badge rounded-pill me-2"
+                                                   style="background-color: #2A348B;">3</span> Cam kết đầu ra
+                            </li>
+                        </ul>
+                        <a href="#" class="btn text-white w-100 fw-bold py-2 rounded-pill"
+                           style="background-color: #D9534F;">ĐĂNG KÝ NGAY</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545858/learnEnglish.webp"
+                         class="img-fluid h-100 object-fit-cover" alt="Intro">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+
+        <div class="card border-0 rounded-4 shadow overflow-hidden mb-4 hover-lift" style="border-radius: 30px;">
+            <div class="row g-0">
+                <div class="col-md-4 position-relative" style="min-height: 250px;">
+                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545858/learnEnglish.webp"
+                         class="w-100 h-100 object-fit-cover" alt="Course">
+
+                    <div class="position-absolute top-0 start-0 m-3 bg-white px-3 py-1 rounded-3 fw-bold shadow-sm"
+                         style="color: #2A348B; font-size: 0.9rem;">
+                        SAT
+                    </div>
+                </div>
+
+                <div class="col-md-8 d-flex flex-column justify-content-center p-4" style="background-color: #90CCF4;">
+                    <h3 class="fw-bold text-white mb-3">Du học ngắn & dài hạn (9-17 tuổi)</h3>
+                    <p class="text-clamp-3 mb-4" style="color: #2c3e50;">
+                        Chương trình được thiết kế đặc biệt giúp học viên trải nghiệm môi trường giáo dục quốc tế.
+                        Phát triển kỹ năng giao tiếp, tư duy phản biện và hòa nhập văn hóa bản địa.
+                    </p>
+                    <div class="text-end">
+                        <a href="#" class="btn text-white rounded-pill px-4 fw-bold" style="background-color: #2A348B;">
+                            Xem chi tiết <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 rounded-4 shadow overflow-hidden mb-4 hover-lift" style="border-radius: 30px;">
+            <div class="row g-0">
+                <div class="col-md-4 position-relative" style="min-height: 250px;">
+                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545858/learnEnglish.webp"
+                         class="w-100 h-100 object-fit-cover">
+                    <div class="position-absolute top-0 start-0 m-3 bg-white px-3 py-1 rounded-3 fw-bold shadow-sm"
+                         style="color: #2A348B;">
+                        IELTS
+                    </div>
+                </div>
+                <div class="col-md-8 d-flex flex-column justify-content-center p-4" style="background-color: #90CCF4;">
+                    <h3 class="fw-bold text-white mb-3">Luyện thi IELTS Cấp Tốc</h3>
+                    <p class="text-clamp-3 mb-4" style="color: #2c3e50;">
+                        Khóa học chuyên sâu tập trung vào 4 kỹ năng. Cam kết tăng 1.0 - 1.5 band điểm sau 3 tháng.
+                    </p>
+                    <div class="text-end">
+                        <a href="#" class="btn text-white rounded-pill px-4 fw-bold" style="background-color: #2A348B;">
+                            Xem chi tiết <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 rounded-4 shadow overflow-hidden mb-4 hover-lift" style="border-radius: 30px;">
+            <div class="row g-0">
+                <div class="col-md-4 position-relative" style="min-height: 250px;">
+                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545858/learnEnglish.webp"
+                         class="w-100 h-100 object-fit-cover">
+                    <div class="position-absolute top-0 start-0 m-3 bg-white px-3 py-1 rounded-3 fw-bold shadow-sm"
+                         style="color: #2A348B;">
+                        TOEIC
+                    </div>
+                </div>
+                <div class="col-md-8 d-flex flex-column justify-content-center p-4" style="background-color: #90CCF4;">
+                    <h3 class="fw-bold text-white mb-3">Luyện thi IELTS Cấp Tốc</h3>
+                    <p class="text-clamp-3 mb-4" style="color: #2c3e50;">
+                        Khóa học chuyên sâu tập trung vào 4 kỹ năng. Cam kết tăng 1.0 - 1.5 band điểm sau 3 tháng.
+                    </p>
+                    <div class="text-end">
+                        <a href="#" class="btn text-white rounded-pill px-4 fw-bold" style="background-color: #2A348B;">
+                            Xem chi tiết <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
