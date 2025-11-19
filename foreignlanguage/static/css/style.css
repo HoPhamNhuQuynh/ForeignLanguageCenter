@@ -1,13 +1,47 @@
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background-color: #ff9800; /* Màu cam chủ đạo */
+            min-height: 100vh;
+            color: white;
+        }
 
-/* Nền màu cam nhạt */
-.bg-orange {
-    background-color: #ffcc80 !important;
-}
+        .sidebar .nav-link {
+            color: white;
+            font-weight: 500;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
 
-.text-orange {
-    color: #e65100 !important;
-}
+        .sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
 
-.nav-link:hover, .btn:hover {
-    opacity: 0.8;
-}
+        /* Trạng thái đang chọn (Active) */
+        .sidebar .nav-link.active {
+            background-color: white;
+            color: #ff9800;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Style cho Card khóa học */
+        .course-card {
+            border: none;
+            border-radius: 12px;
+            background-color: #fff3cd; /* Màu vàng nhạt giống ảnh */
+            transition: transform 0.2s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
