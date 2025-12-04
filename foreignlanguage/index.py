@@ -1,4 +1,6 @@
 from flask import render_template, request
+from sqlalchemy.util import methods_equivalent
+
 from foreignlanguage import app, admin, dao, login
 from flask_login import current_user, login_user, logout_user
 
@@ -6,11 +8,11 @@ from flask_login import current_user, login_user, logout_user
 def index():
     return render_template("index.html")
 
-@app.route("/login")
-def login_user():
-    return render_template("login.html")
+@app.route("/signin", methods=["GET", "POST"])
+def signin():
+    return render_template("signin.html")
 
-@app.route("/signup")
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
     return render_template("signup.html")
 

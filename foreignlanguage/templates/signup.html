@@ -1,53 +1,81 @@
 {%extends 'layout/base.html'%}
 
-{%block tittle%}Đăng kí{%endblock%}
+{%block tittle%} Đăng ký{%endblock%}
+
+{%block header%}{%endblock%}
 
 {%block content%}
-<div>
-    <div class="card login-card shadow-lg">
-        <div class="card-body p-4">
-            <h2 class="text-center mb-4 fw-bold ">Đăng kí</h2>
-            <form>
-                <div class="mb-3">
-                    <label for="email" class="form-label fw-medium">Email</label>
-                    <input type="email" class="form-control form-control-lg" id="email"
-                           placeholder="Nhập email của bạn">
-                </div>
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light-blue">
 
-                <div class="mb-3">
-                    <label for="password" class="form-label fw-medium">Mật khẩu</label>
-                    <input type="password" class="form-control form-control-lg" id="password"
-                           placeholder="Nhập mật khẩu">
-                </div>
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="max-width: 85%; width: 100%;">
 
-                <div class="mb-3">
-                    <label for="confirm_password" class="form-label fw-medium">Nhập lại mật khẩu</label>
-                    <input type="password" class="form-control form-control-lg" id="confirm_password"
-                           placeholder="Xác nhận mật khẩu">
+        <div class="row g-0">
+            <div class="col-md-6 d-none d-md-flex flex-column align-items-center justify-content-center bg-white p-5 position-relative">
+                <div class="position-absolute top-0 start-0 m-4 fw-bold fs-4 text-dark-green">
+                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763549688/logo_Anqinko_ostpx4.png"
+                         alt="ANQUINKO" style="width: 100px">
                 </div>
-
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="rememberMe">
-                        <label class="form-check-label text-secondary" for="rememberMe">
-                            Ghi nhớ đăng nhập
-                        </label>
+                <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764814990/Live_collaboration-cuate_pptsvl.svg"
+                     alt="Login Illustration"
+                     class="img-fluid" style="max-height: 300px;">
+            </div>
+            <div class="col-md-6 bg-white p-5">
+                <div class="mb-4">
+                    <h2 class="fw-bold text-dark-green">Bắt đầu hành trình của bạn!</h2>
+                    <p class="text-muted small">Học tiếng Anh, nuôi dưỡng tự tin và mở cánh cửa ra thế giới.</p>
+                </div>
+                <form method="post" action="/signup">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Tên" required name="name">
+                        </div>
+                        <div class="col-6">
+                            <input type="text" pattern="0\d{9}" class="form-control form-control-lg bg-light fs-6" placeholder="Số điện thoại" name="phone_num"
+                                    title="Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0 (VD: 0912345678)">
+                        </div>
                     </div>
-                </div>
 
-                <div class="d-grid">
-                    <button type="button" class="btn btn-danger text-white fw-bold">Đăng kí</button>
-                </div>
+                    <div class="mb-3">
+                        <input type="email" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" class="form-control form-control-lg bg-light fs-6" placeholder="Email" required name="email"
+                                title="Vui lòng nhập đúng địa chỉ email (VD: user@example.com)">
+                    </div>
 
-                <div class="text-center mt-4">
-                    <p class="text-secondary mb-0">Đã có tài khoản?
-                        <a href="/login" class="text-decoration-none text-orange fw-bold">Đăng nhập ngay</a>
-                    </p>
-                </div>
-            </form>
+                    <div class="mb-3">
+                        <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Địa chỉ" name="address">
+                    </div>
 
+                    <div class="mb-3">
+                        <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Username" required name="username"
+                            pattern="[a-zA-Z0-9_]{3,20}"
+                            title="Username chỉ được chứa chữ cái không dấu, số, dấu gạch dưới và dài từ 3-30 ký tự.">
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-2 mb-md-0 position-relative">
+                            <input type="password" class="form-control bg-light pe-5" placeholder="Mật khẩu" required name="password" id="pass1"
+                                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
+                                    title="Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.">
+                                <!--   tim hieu them ve bieu thuc chinh quy cho nay -->
+                            <i class="fa-regular fa-eye-slash position-absolute top-50 end-0 translate-middle-y me-4 text-secondary small"
+                               style="cursor: pointer;" onclick="togglePass('pass1', this)"></i>
+                        </div>
+                        <div class="col-md-6 position-relative">
+                            <input type="password" class="form-control bg-light pe-5" placeholder="Xác nhận mật khẩu" required name="confirm_pass" id="pass2">
+                            <i class="fa-regular fa-eye-slash position-absolute top-50 end-0 translate-middle-y me-4 text-secondary small"
+                               style="cursor: pointer;" onclick="togglePass('pass2', this)"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-orange w-100 py-2 fs-6 fw-bold rounded-3">Đăng ký</button>
+                    <div class="text-center mt-4 small"> Bạn đã có tài khoản?
+                        <a href="/signin" class="text-orange text-decoration-none fw-bold">Đăng nhập tại đây.</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 {%endblock%}
+
+{%block footer%}{%endblock%}

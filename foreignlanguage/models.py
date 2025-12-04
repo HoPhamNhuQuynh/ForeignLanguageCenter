@@ -44,12 +44,13 @@ class Base(db.Model):  # base model
 
 class User(Base):  # base model of users
     __abstract__ = True
-    username = Column(String(50), nullable=False, unique=True)
+    username = Column(String(30), nullable=False, unique=True)
     password = Column(String(100), nullable=False)
     email = Column(String(100), nullable=False)
     address = Column(String(200))
     phone_num = Column(String(20))
     role = Column(Enum(UserRole), default=UserRole.STUDENT)
+    avatar = Column(String(200), default="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg")
 
 
 class Employee(User):  # main model

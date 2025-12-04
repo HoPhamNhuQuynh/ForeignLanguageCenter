@@ -1,47 +1,38 @@
-        body {
-            background-color: #f8f9fa;
-        }
-        .sidebar {
-            background-color: #ff9800; /* Màu cam chủ đạo */
-            min-height: 100vh;
-            color: white;
-        }
+         /* Font chữ toàn cục */
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
 
-        .sidebar .nav-link {
-            color: white;
-            font-weight: 500;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 5px;
-            transition: all 0.3s;
-        }
+    /* Màu nền xanh nhạt background tổng */
+    .bg-light-blue {
+        background-color: #DDECF9;
+    }
 
-        .sidebar .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
+    /* Màu cam chủ đạo (Button Login, Link) */
+    .text-orange {
+        color: #FF6B4A !important;
+    }
 
-        /* Trạng thái đang chọn (Active) */
-        .sidebar .nav-link.active {
-            background-color: white;
-            color: #ff9800;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+    .btn-orange {
+        background-color: #FF6B4A;
+        color: white;
+        border: none;
+        transition: 0.3s;
+    }
 
-        /* Style cho Card khóa học */
-        .course-card {
-            border: none;
-            border-radius: 12px;
-            background-color: #fff3cd; /* Màu vàng nhạt giống ảnh */
-            transition: transform 0.2s;
-        }
+    .btn-orange:hover {
+        background-color: #e55a3b;
+        color: white;
+    }
 
-        .course-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
+    /* Tinh chỉnh Input: Xóa viền nặng nề của Bootstrap, thêm bo tròn */
+    .form-control {
+        border: 1px solid #eee;
+        padding: 12px 15px;
+    }
 
-        .progress {
-            height: 10px;
-            border-radius: 5px;
-        }
+    .form-control:focus {
+        box-shadow: none;
+        border-color: #FF6B4A; /* Highlight màu cam khi nhập */
+        background-color: #fff !important;
+    }
