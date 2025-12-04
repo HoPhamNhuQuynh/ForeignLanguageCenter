@@ -4,24 +4,21 @@ from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 from enum import Enum as ValueEnum
 
-
 class UserRole(ValueEnum):
     STUDENT = 1
     ADMIN = 2
     CASHIER = 3
     TEACHER = 4
 
-
 class MethodEnum(ValueEnum):
     CASH = 1
     BANKING = 2
-
 
 class StatusPayment(ValueEnum):
     SUCCESS = 1
     FAILED = 2
     PENDING = 3
-    CANCELED = 4
+    CANCELLED = 4
 
 
 class StatusTuition(ValueEnum):
@@ -164,8 +161,6 @@ class Score(db.Model):  # main model
     grade_cate_id = Column(Integer, ForeignKey('grade_category.id'), nullable=False)
 
     registration = relationship('Registration', backref='scores', lazy=True)
-
-
 
 if __name__ == '__main__':
     with app.app_context():

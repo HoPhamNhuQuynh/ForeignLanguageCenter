@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "class_id": 1,
+    "session_date": "2024-03-10 18:00:00",
+    "shift": 1,
+    "session_content": "Introduction: Greetings & Self-introduction"
+  },
+  {
+    "id": 2,
+    "class_id": 1,
+    "session_date": "2024-03-12 18:00:00",
+    "shift": 1,
+    "session_content": "Topic: Daily Routines & Habits"
+  },
+  {
+    "id": 3,
+    "class_id": 1,
+    "session_date": "2024-03-14 18:00:00",
+    "shift": 1,
+    "session_content": "Topic: Hobbies & Interests"
+  },
+  {
+    "id": 4,
+    "class_id": 2,
+    "session_date": "2024-03-15 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 1: Jobs and Workplaces"
+  },
+  {
+    "id": 5,
+    "class_id": 2,
+    "session_date": "2024-03-18 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 2: Travel and Transport"
+  },
+  {
+    "id": 6,
+    "class_id": 3,
+    "session_date": "2024-04-01 18:00:00",
+    "shift": 1,
+    "session_content": "IELTS Overview & Speaking Part 1"
+  },
+  {
+    "id": 7,
+    "class_id": 3,
+    "session_date": "2024-04-03 18:00:00",
+    "shift": 1,
+    "session_content": "Listening Strategy: Note completion"
+  },
+  {
+    "id": 8,
+    "class_id": 3,
+    "session_date": "2024-04-05 18:00:00",
+    "shift": 1,
+    "session_content": "Reading Skill: Skimming & Scanning"
+  },
+  {
+    "id": 9,
+    "class_id": 5,
+    "session_date": "2024-03-20 17:30:00",
+    "shift": 1,
+    "session_content": "TOEIC Orientation & Part 1 Introduction"
+  },
+  {
+    "id": 10,
+    "class_id": 5,
+    "session_date": "2024-03-22 17:30:00",
+    "shift": 1,
+    "session_content": "Grammar Focus: Tenses review"
+  }
+]
