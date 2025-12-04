@@ -8,6 +8,10 @@
         background-color: #DDECF9;
     }
 
+    .bg-lighter-blue {
+        background-color: #D7E9FF;
+    }
+
     /* Màu cam chủ đạo (Button Login, Link) */
     .text-orange {
         color: #FF6B4A !important;
@@ -36,3 +40,182 @@
         border-color: #FF6B4A; /* Highlight màu cam khi nhập */
         background-color: #fff !important;
     }
+
+    /* --- PHẦN HERO BANNER (Thêm mới) --- */
+
+    /* Badge màu cam nhạt */
+    .bg-orange-light {
+        background-color: rgba(255, 107, 74, 0.1);
+    }
+
+    /* 1. Xử lý ảnh và hình nền tròn phía sau */
+    .hero-bg-circle {
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background-color: #DDECF9; /* Dùng màu bg-light-blue của bạn */
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 0;
+    }
+
+    .hero-main-img {
+        z-index: 1;
+        border-radius: 30px 30px 200px 30px; /* Bo góc kiểu hiện đại giống SkillNest */
+        max-height: 500px;
+        object-fit: cover;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    }
+
+    /* 2. Thẻ nổi (Floating Card) */
+    .floating-card {
+        position: absolute;
+        top: 20%;
+        left: 0; /* Đặt bên trái ảnh */
+        z-index: 2;
+        animation: floatMove 3s ease-in-out infinite; /* Hiệu ứng trôi */
+        max-width: 250px;
+    }
+
+    /* Hiệu ứng trôi lên xuống */
+    @keyframes floatMove {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    /* Responsive cho Mobile */
+    @media (max-width: 991px) {
+        .hero-bg-circle {
+            width: 300px;
+            height: 300px;
+        }
+        .floating-card {
+            left: 5%;
+            top: 10%;
+        }
+    }
+
+    /* --- Feature Card (Tại sao chọn chúng tôi) --- */
+    .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-color: #f0f0f0 !important;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px); /* Nhấc nhẹ lên khi hover */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+        border-color: transparent !important;
+    }
+
+    .icon-box {
+        width: 70px;
+        height: 70px;
+    }
+
+    /* --- Course Card (Khóa học) --- */
+    .course-card {
+        transition: transform 0.3s ease;
+    }
+
+    .course-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+    }
+
+    .course-card .card-img-top {
+        height: 220px;
+        object-fit: cover; /* Đảm bảo ảnh không bị méo */
+    }
+
+    /* Badge giá tiền hoặc tag */
+    .course-badge.bg-orange {
+        background-color: var(--primary-orange, #FF6B4A);
+    }
+
+    /* Icon tròn nhỏ */
+    .icon-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    /* Hiệu ứng nổi lềnh bềnh */
+    .move-y {
+        animation: floatY 3s ease-in-out infinite;
+    }
+    @keyframes floatY {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    /* Card Level */
+    .level-card {
+        transition: 0.3s;
+    }
+    .level-card:hover {
+        transform: translateY(-5px);
+        border-color: #FF6B4A !important; /* viền màu cam */
+        background-color: white !important;
+    }
+    .border-orange {
+        border: 2px solid #FF6B4A !important;
+    }
+
+        /* Tạo hình tròn quanh icon */
+    .level-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #f0f8ff; /* Màu xanh nhạt */
+        color: #FF6B4A; /* Icon màu cam */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    /* Màu nền cam rất nhạt cho icon lớn */
+    .bg-orange-light {
+        background-color: rgba(255, 107, 74, 0.15) !important;
+    }
+
+    /* Làm icon chìm mờ đi */
+    .opacity-10 {
+        opacity: 0.1;
+    }
+
+    /* Đảm bảo nội dung đè lên icon chìm */
+    .z-1 {
+        z-index: 1;
+    }
+
+    /* Hiệu ứng ô màu cam lệch phía sau ảnh Story */
+    .bg-orange {
+        background-color: #FF6B4A;
+    }
+
+    /* Hiệu ứng nhấc nhẹ lên khi hover vào thẻ giá trị */
+    .hover-up {
+        transition: transform 0.3s ease;
+    }
+    .hover-up:hover {
+        transform: translateY(-10px);
+    }
+
+    /* Hiệu ứng ảnh giáo viên phóng to nhẹ khi hover */
+    .teacher-card img {
+        transition: transform 0.5s ease;
+        height: 300px; /* Cố định chiều cao ảnh */
+        object-fit: cover;
+    }
+    .teacher-card:hover img {
+        transform: scale(1.05);
+    }
+
+    .ls-1 { letter-spacing: 1px; }

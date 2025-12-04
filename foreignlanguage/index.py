@@ -28,6 +28,14 @@ def student():
 def about():
     return render_template("about.html")
 
+@app.route("/contact")
+def contact_us():
+    return render_template("contact.html")
+
+@app.route("/entry-test")
+def entry_test():
+    return render_template("entry-test.html")
+
 @login.user_loader
 def load_user(user_id):
     return dao.get_user_by_id(user_id)
