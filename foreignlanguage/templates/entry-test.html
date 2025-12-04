@@ -1,0 +1,193 @@
+{% extends 'layout/base.html' %}
+
+{% block title %} Kiểm tra đầu vào {% endblock %}
+
+{% block content%}
+
+<section class="py-5">
+    <div class="container py-lg-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="badge bg-white text-orange shadow-sm px-3 py-2 rounded-pill mb-3 ">
+                    <i class="fas fa-chart-line me-1 "></i> Kiểm tra miễn phí
+                </span>
+                <h1 class="display-4 fw-bold mb-4" style="color: #1F2937;">
+                    Biết Chính Xác<br>
+                    <span class="text-orange">Trình Độ Hiện Tại Của Bạn</span>
+                </h1>
+                <p class="lead text-secondary mb-4">
+                    Bài kiểm tra được thiết kế theo chuẩn khung tham chiếu Châu Âu (CEFR).
+                    Giúp bạn xác định lộ trình học tập tối ưu nhất trong 60 phút.
+                </p>
+
+                <div class="d-flex gap-4 mb-4">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-white text-orange shadow-sm me-3">
+                            <i class="far fa-clock"></i>
+                        </div>
+                        <div>
+                            <strong class="d-block text-dark">60 Phút</strong>
+                            <small class="text-muted">Thời gian</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-white text-orange shadow-sm me-3">
+                            <i class="fas fa-list-ul"></i>
+                        </div>
+                        <div>
+                            <strong class="d-block text-dark">50 Câu</strong>
+                            <small class="text-muted">Trắc nghiệm</small>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#" class="btn btn-orange px-5 py-3 fw-bold rounded-3 shadow-lg btn-lg">
+                    Bắt đầu ngay <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+                <p class="mt-3 small text-muted">*Kết quả sẽ có ngay sau khi nộp bài</p>
+            </div>
+
+            <div class="col-lg-6 text-center">
+                <div class="position-relative">
+                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764831866/Contact_us-cuate_fufxrd.svg"
+                         alt="Test Illustration" class="img-fluid rounded-4 shadow" style="max-width: 80%;">
+
+                    <div class="floating-badge bg-white p-3 rounded-3 shadow position-absolute top-0 start-0 m-3 move-y">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-check-circle text-success fs-4"></i>
+                            <div>
+                                <h6 class="mb-0 fw-bold">Kết quả nhanh</h6>
+                                <small class="text-muted">Độ chính xác cao</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Hệ Thống Đánh Giá 6 Cấp Độ <i class="fas fa-chart-line ms-2 "></i></h2>
+            <p class="text-secondary">Kết quả bài thi sẽ xếp bạn vào một trong các cấp độ sau</p>
+        </div>
+
+        <div class="row g-4 text-center">
+
+            <div class="col-6 col-md-2">
+                <div class="level-card p-3 rounded-3 border h-100 d-flex flex-column align-items-center shadow-sm bg-light">
+                    <div class="level-icon mb-3"><i class="fas fa-seedling"></i></div>
+                    <h3 class="fw-bold text-secondary opacity-50">A1</h3>
+                    <h6 class="fw-bold mb-0">Mới bắt đầu</h6>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <div class="level-card p-3 rounded-3 border h-100 d-flex flex-column align-items-center shadow-sm bg-light">
+                    <div class="level-icon mb-3"><i class="fas fa-leaf"></i></div>
+                    <h3 class="fw-bold text-secondary opacity-50">A2</h3>
+                    <h6 class="fw-bold mb-0">Sơ cấp</h6>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <div class="level-card p-3 rounded-3 border h-100 d-flex flex-column align-items-center shadow-sm bg-light position-relative">
+                    <div class="level-icon mb-3"><i class="fas fa-tree"></i></div>
+                    <h3 class="fw-bold text-orange">B1</h3>
+                    <h6 class="fw-bold mb-0">Trung cấp</h6>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <div class="level-card p-3 rounded-3 border h-100 d-flex flex-column align-items-center shadow-sm bg-light">
+                    <div class="level-icon mb-3"><i class="fas fa-mountain"></i></div>
+                    <h3 class="fw-bold text-secondary opacity-50">B2</h3>
+                    <h6 class="fw-bold mb-0">Cao trung</h6>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <div class="level-card p-3 rounded-3 border h-100 d-flex flex-column align-items-center shadow-sm bg-light">
+                    <div class="level-icon mb-3"><i class="fas fa-trophy"></i></div>
+                    <h3 class="fw-bold text-secondary opacity-50">C1</h3>
+                    <h6 class="fw-bold mb-0">Cao cấp</h6>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <div class="level-card p-3 rounded-3 border h-100 d-flex flex-column align-items-center shadow-sm bg-light">
+                    <div class="level-icon mb-3"><i class="fas fa-crown"></i></div>
+                    <h3 class="fw-bold text-secondary opacity-50">C2</h3>
+                    <h6 class="fw-bold mb-0">Thành thạo</h6>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-lg rounded-4 mt-5 overflow-hidden position-relative">
+
+    <div class="position-absolute top-0 end-0 opacity-10 pe-3 pt-2">
+        <i class="fas fa-route text-orange" style="font-size: 8rem; transform: rotate(-15deg);"></i>
+    </div>
+
+    <div class="card-body p-4 p-lg-5 position-relative z-1">
+        <div class="row align-items-center">
+
+            <div class="col-lg-2 d-none d-lg-block text-center">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-orange-light text-orange mb-3"
+                     style="width: 80px; height: 80px;">
+                    <i class="fas fa-bullseye fa-2x"></i>
+                </div>
+            </div>
+
+            <div class="col-lg-10">
+                <h3 class="fw-bold text-dark mb-3">
+                    Lộ trình học <span class="text-orange text-decoration-underline">Cá Nhân Hóa 100%</span>
+                </h3>
+
+                <p class="text-secondary fs-5 mb-4" style="line-height: 1.6;">
+                    Từ kết quả của bạn, chúng tôi sẽ củng cố những kiến thức bạn đã biết, bổ sung những kiến thức mà bạn còn thiếu.
+                    Giúp bạn học <b>đúng trọng tâm</b> và <b>tiến nhanh hơn</b> đến mục tiêu.
+                </p>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-light border-start border-4 border-success h-100 shadow-sm">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fas fa-check-circle text-success fs-4"></i>
+                                <span class="fw-bold text-dark">Đúng trọng tâm</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-light border-start border-4 border-primary h-100 shadow-sm">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fas fa-clock text-primary fs-4"></i>
+                                <span class="fw-bold text-dark">Tiết kiệm 30% giờ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-light border-start border-4 border-danger h-100 shadow-sm">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fas fa-rocket text-danger fs-4"></i>
+                                <span class="fw-bold text-dark">Đạt Target nhanh</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+
+{% endblock %}

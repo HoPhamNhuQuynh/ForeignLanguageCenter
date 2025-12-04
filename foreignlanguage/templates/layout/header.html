@@ -26,23 +26,25 @@
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#">TOEIC</a></li>
                         <li><a class="dropdown-item" href="#">IELTS</a></li>
-                        <li><a class="dropdown-item" href="#">Tiếng Anh nói</a></li>
+                        <li><a class="dropdown-item" href="#">Tiếng Anh giao tiếp </a></li>
                     </ul>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link text-dark fw-bold" href="#">Kiểm tra đầu vào</a>
+                    <a class="nav-link text-dark fw-bold" href="/entry-test">Kiểm tra đầu vào</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark fw-bold" href="#">Liên hệ</a>
+                    <a class="nav-link text-dark fw-bold" href="/contact">Liên hệ</a>
                 </li>
             </ul>
 
+            {% if current_user %}
             <div class="d-flex align-items-center">
                 <a href="/signin" class="text-dark fw-bold me-4">Đăng nhập</a>
 
                 <a href="/signup" class="btn btn-danger fw-bold">Đăng ký</a>
             </div>
+            {% endif %}
         </div>
     </div>
 </nav>

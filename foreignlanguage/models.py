@@ -50,7 +50,7 @@ class User(Base):  # base model of users
     address = Column(String(200))
     phone_num = Column(String(20))
     role = Column(Enum(UserRole), default=UserRole.STUDENT)
-    avatar = Column(String(200), default="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg")
+    avatar = Column(String(300), default="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg")
 
 
 class Employee(User):  # main model
