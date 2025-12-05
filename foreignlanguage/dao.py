@@ -9,9 +9,9 @@ def auth_user(username,password):
     password = hashlib.md5(password.encode("utf-8")).hexdigest()
     return Student.query.filter(Student.username.__eq__(username), Student.password.__eq__(password)).first()
 
-def add_user(name, phone_num, username, password, email, address):
+def add_user(phone_num, username, password, email, address):
     password = hashlib.md5(password.encode("utf-8")).hexdigest()
-    u = Student(name=name, phone_num=phone_num , username=username, password=password, email=email, address=address)
+    u = Student(phone_num=phone_num , username=username, password=password, email=email, address=address)
     db.session.add(u)
     db.session.commit()
 
