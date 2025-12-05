@@ -12,23 +12,32 @@
         <div class="row g-0">
             <div class="col-md-6 d-none d-md-flex flex-column align-items-center justify-content-center bg-white p-5 position-relative">
                 <div class="position-absolute top-0 start-0 m-4 fw-bold fs-4 text-dark-green">
-                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763549688/logo_Anqinko_ostpx4.png" alt="ANQUINKO" style="width: 100px">
+                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763549688/logo_Anqinko_ostpx4.png"
+                         alt="ANQUINKO" style="width: 100px">
                 </div>
-                <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764775625/Hello-rafiki_u33kor.svg" alt="Login Illustration"
+                <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764775625/Hello-rafiki_u33kor.svg"
+                     alt="Login Illustration"
                      class="img-fluid" style="max-height: 300px;"></div>
             <div class="col-md-6 bg-white p-5">
                 <div class="mb-4">
                     <h2 class="fw-bold text-dark-green">Chào mừng quay trở lại</h2>
                     <p class="text-muted small">Tiếng Anh mở lối, thay đổi cuộc đời bạn với tầm nhìn mới.</p>
                 </div>
+
+                {% if err_msg%}
+                <div class="alert alert-danger">{{err_msg}}</div>
+                {% endif %}
+
                 <form method="post" action="/signin">
                     <div class="mb-3">
-                        <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Username">
+                        <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Username"
+                               name="username" required>
                     </div>
                     <div class="mb-3 position-relative">
-                        <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Mật khẩu" id="pass">
+                        <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Mật khẩu"
+                               name="password" id="password" required>
                         <i class="fa-regular fa-eye-slash position-absolute top-50 end-0 translate-middle-y me-3 text-secondary"
-                            style="cursor: pointer;" onclick="togglePass('pass', this)">
+                           style="cursor: pointer;" onclick="togglePass('password', this)">
                         </i>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -36,7 +45,7 @@
                             <input class="form-check-input" type="checkbox" id="rememberMe">
                             <label class="form-check-label text-secondary small" for="rememberMe">Remember me</label>
                         </div>
-                        <a href="#" class="text-decoration-none text-dark fw-bold small">Quên mật khẩu?</a>
+                        <a href="/forgot-pass" class="text-decoration-none text-dark fw-bold small">Quên mật khẩu?</a>
                     </div>
                     <button type="submit" class="btn btn-orange w-100 py-2 fs-6 fw-bold rounded-3">Đăng nhập</button>
                     <div class="text-center mt-4 small"> Bạn chưa là thành viên?

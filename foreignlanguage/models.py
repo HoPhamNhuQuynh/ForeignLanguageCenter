@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, Foreig
 from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 from enum import Enum as ValueEnum
+from flask_login import UserMixin
 
 
 class UserRole(ValueEnum):
@@ -60,7 +61,7 @@ class Employee(User):  # main model
     classrooms = relationship('Classroom', backref='employee', lazy=True)
 
 
-class Student(User):  # main model
+class Student(User, UserMixin):  # main model
     entry_score = Column(Float, default=0.0)
 
     sessions = relationship('Present', back_populates='student', lazy=True)
@@ -169,5 +170,10 @@ class Score(db.Model):  # main model
 
 if __name__ == '__main__':
     with app.app_context():
+
+        import hashlib
+
+        u1 = Student(name="User", username="user", password=hashlib.md5("123".encode("utf-8")).hexdigest(), email="user@gmail.com")
+
         db.create_all()
         db.session.commit()
