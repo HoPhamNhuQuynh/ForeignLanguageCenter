@@ -1,16 +1,9 @@
-import random
-import smtplib
-from email.mime.text import MIMEText
 
 from flask import render_template, request, redirect, make_response, session
-from sqlalchemy.testing.exclusions import succeeds_if
-from sqlalchemy.util import methods_equivalent
 
 from foreignlanguage import app, admin, dao, login, db
 from flask_login import current_user, login_user, logout_user
-import cloudinary.uploader
 from decorators import anonymous_required
-from foreignlanguage.models import Student
 
 
 @app.route("/")
@@ -43,10 +36,9 @@ def signup():
     err_msg = None
     if request.method.__eq__("POST"):
         password = request.form.get("password")
-        confirm = request.form.get("confirm")
+        confirm = request.form.get("confirm_pass")
 
         if password.__eq__(confirm):
-            name = request.form.get("name")
             phone_num = request.form.get("phone_num")
             username = request.form.get("username")
             email = request.form.get("email")
@@ -57,7 +49,7 @@ def signup():
                 err_msg = "Username đã tồn tại!"
             else:
                 try:
-                    dao.add_user(name=name, phone_num=phone_num, username=username, password=password, email=email, address=address)
+                    dao.add_user(phone_num=phone_num, username=username, password=password, email=email, address=address)
                     return redirect("/logout")
                 except:
                     db.session.rollback()
