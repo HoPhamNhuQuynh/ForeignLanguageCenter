@@ -3,8 +3,6 @@ from foreignlanguage import app, db
 import hashlib
 
 
-
-
 def auth_user(username,password):
     password = hashlib.md5(password.encode("utf-8")).hexdigest()
     return Student.query.filter(Student.username.__eq__(username), Student.password.__eq__(password)).first()

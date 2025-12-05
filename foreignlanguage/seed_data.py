@@ -1,6 +1,5 @@
 import json
 from datetime import datetime
-# Import app, db và các class từ file foreignlanguage.py
 from models import (
     app, db, Employee, Student, Course, Level, GradeCategory, Certification,
     Classroom, Registration, Transaction, Session, Present, Score,
