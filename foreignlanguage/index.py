@@ -1,10 +1,7 @@
 import hashlib
 import random
 from flask_mail import Message
-
 from flask import render_template, request, redirect, session
-
-
 from foreignlanguage import app, dao, login, db, mail
 from flask_login import login_user, logout_user
 from decorators import anonymous_required
