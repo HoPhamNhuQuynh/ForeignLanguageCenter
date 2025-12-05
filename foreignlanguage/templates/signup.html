@@ -28,28 +28,11 @@
                 <div class="alert alert-danger">{{err_msg}}</div>
                 {% endif %}
                 <form method="post" action="/signup">
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Tên"
-                                   required name="name">
-                        </div>
-                        <div class="col-6">
-                            <input type="text" pattern="0\d{9}" class="form-control form-control-lg bg-light fs-6"
-                                   placeholder="Số điện thoại" name="phone_num"
-                                   title="Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0 (VD: 0912345678)">
-                        </div>
-                    </div>
-
                     <div class="mb-3">
                         <input type="email" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
                                class="form-control form-control-lg bg-light fs-6" placeholder="Email" required
                                name="email"
                                title="Vui lòng nhập đúng địa chỉ email (VD: user@example.com)">
-                    </div>
-
-                    <div class="mb-3">
-                        <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Địa chỉ"
-                               name="address">
                     </div>
 
                     <div class="mb-3">
@@ -76,6 +59,13 @@
                                style="cursor: pointer;" onclick="togglePass('pass2', this)"></i>
                         </div>
                     </div>
+
+                    <div class="mb-3">
+                        <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Địa chỉ"
+                               name="address">
+                    </div>
+
+
 
                     <button type="submit" class="btn btn-orange w-100 py-2 fs-6 fw-bold rounded-3">Đăng ký</button>
                     <div class="text-center mt-4 small"> Bạn đã có tài khoản?

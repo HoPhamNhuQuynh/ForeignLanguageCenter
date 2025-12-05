@@ -3,17 +3,10 @@
 {% block title %} Khóa học {% endblock %}
 
 {%block content%}
-<div class="bg-light-blue text-white py-5">
+<div class="bg-dark text-white py-5">
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/" class="text-white-50 text-decoration-none">Trang chủ</a></li>
-                        <li class="breadcrumb-item"><a href="#" class="text-white-50 text-decoration-none">Khóa học</a></li>
-                        <li class="breadcrumb-item active text-white" aria-current="page">TOEIC</li>
-                    </ol>
-                </nav>
 
                 <h1 class="display-5 fw-bold mb-3">Khóa học Luyện thi TOEIC Toàn diện</h1>
                 <p class="lead text-light mb-4">
@@ -40,7 +33,7 @@
                 </div>
 
                 <div class="mt-4 text-white-50">
-                    <i class="fas fa-history me-1"></i> Cập nhật lần cuối: 12/2024
+                    <i class="fas fa-history me-1"></i> Cập nhật lần cuối: 10/2025
                 </div>
             </div>
         </div>
@@ -60,7 +53,7 @@
                         <i class="fas fa-check text-success me-2"></i> Kỹ năng nghe hiểu Part 1 - Part 4
                     </div>
                     <div class="col-md-6 mb-2">
-                        <i class="fas fa-check text-success me-2"></i> Mẹo làm bài Reading tốc độ cao
+                        <i class="fas fa-check text-success me-2"></i> Cải thiện tốc độ làm bài Reading
                     </div>
                     <div class="col-md-6 mb-2">
                         <i class="fas fa-check text-success me-2"></i> 10 bộ đề thi thử sát thực tế
@@ -86,30 +79,47 @@
                             </div>
                         </div>
                     </div>
-                    </div>
-            </div>
 
-            <div class="mb-5">
-                <h3 class="fw-bold mb-3">Thông tin giảng viên</h3>
-                <div class="d-flex align-items-start">
-                    <img src="https://via.placeholder.com/100" class="rounded-circle me-3" alt="Cô Ấn">
-                    <div>
-                        <h5 class="fw-bold text-primary">Cô Ấn</h5>
-                        <p class="text-muted mb-1">Thạc sĩ Ngôn ngữ Anh - 900+ TOEIC</p>
-                        <p>Cô Ấn có hơn 5 năm kinh nghiệm luyện thi TOEIC, nổi tiếng với phương pháp dạy "Học là nhớ, Thi là đỗ".</p>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#chap2">
+                                <strong>Chương 1: Khởi động & Đánh giá năng lực</strong>
+                            </button>
+                        </h2>
+                        <div id="chap2" class="accordion-collapse collapse show" data-bs-parent="#courseAccordion">
+                            <div class="accordion-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="py-2 border-bottom"><i class="fas fa-play-circle text-muted me-2"></i> Giới thiệu cấu trúc đề thi mới</li>
+                                    <li class="py-2"><i class="fas fa-file-alt text-muted me-2"></i> Bài test đầu vào (Entry Test)</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#chap3">
+                                <strong>Chương 1: Khởi động & Đánh giá năng lực</strong>
+                            </button>
+                        </h2>
+                        <div id="chap3" class="accordion-collapse collapse show" data-bs-parent="#courseAccordion">
+                            <div class="accordion-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="py-2 border-bottom"><i class="fas fa-play-circle text-muted me-2"></i> Giới thiệu cấu trúc đề thi mới</li>
+                                    <li class="py-2"><i class="fas fa-file-alt text-muted me-2"></i> Bài test đầu vào (Entry Test)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
             </div>
         </div>
 
         <div class="col-lg-4">
             <div class="card shadow border-0 sticky-top" style="top: 20px; z-index: 100;">
                 <div class="position-relative">
-                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763549688/toeic_banner_sample.jpg"
-                         class="card-img-top" alt="TOEIC Course" style="height: 200px; object-fit: cover;">
-                    <div class="position-absolute top-50 start-50 translate-middle">
-                        <i class="fas fa-play-circle text-white fa-4x opacity-75"></i>
-                    </div>
+                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545948/talkEngland.avif"
+                         class="card-img-top" alt="TOEIC Course" style="height: 200px; object-fit: cover;"/>
                 </div>
 
                 <div class="card-body p-4">
@@ -119,23 +129,13 @@
                         <span class="badge bg-danger ms-auto">-40%</span>
                     </div>
 
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between text-sm mb-1">
-                            <span class="fw-bold text-dark">Sĩ số lớp:</span>
-                            <span class="text-danger fw-bold">23/25 học viên</span>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar" style="width: 92%"></div>
-                        </div>
-                        <small class="text-danger mt-1 d-block"><i class="fas fa-fire me-1"></i> Chỉ còn 2 slot cuối cùng!</small>
-                    </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold small">Mục tiêu đầu ra:</label>
                         <select class="form-select">
-                            <option>Beginner (450+) - 1.5tr</option>
-                            <option>Intermediate (650+) - 2.0tr</option>
-                            <option>Advanced (800+) - 2.5tr</option>
+                            <option>Beginner (450+)</option>
+                            <option>Intermediate (650+)</option>
+                            <option>Advanced (800+)</option>
                         </select>
                     </div>
 
@@ -150,7 +150,6 @@
                         <li class="py-1"><i class="fas fa-video text-primary me-2" style="width:20px"></i> 45 giờ học trực tiếp</li>
                         <li class="py-1"><i class="fas fa-file-download text-primary me-2" style="width:20px"></i> Tài liệu PDF độc quyền</li>
                         <li class="py-1"><i class="fas fa-mobile-alt text-primary me-2" style="width:20px"></i> Truy cập trên Mobile/PC</li>
-                        <li class="py-1"><i class="fas fa-infinity text-primary me-2" style="width:20px"></i> Hỗ trợ trọn đời</li>
                     </ul>
                 </div>
             </div>
