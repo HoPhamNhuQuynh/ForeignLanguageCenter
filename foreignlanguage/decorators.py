@@ -8,5 +8,4 @@ def anonymous_required(f):
         if current_user.is_authenticated:
             return redirect('/')
         return f(*args, **kwargs)
-
     return decorated_func
