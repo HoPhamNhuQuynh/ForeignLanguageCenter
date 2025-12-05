@@ -1,7 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="/">
-            <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763549688/logo_Anqinko_ostpx4.png" alt="ANQUINKO" style="width: 70px">
+            <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763549688/logo_Anqinko_ostpx4.png"
+                 alt="ANQUINKO" style="width: 70px">
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
@@ -21,6 +22,7 @@
                 <!-- Dropdown Khóa học -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown">
+
                         Khóa học
                     </a>
                     <ul class="dropdown-menu">
@@ -38,7 +40,17 @@
                 </li>
             </ul>
 
-            {% if current_user %}
+            {% if current_user.is_authenticated %}
+            <div class="d-flex align-items-center">
+                <li class="nav-item me-2">
+                    <img src="{{ current_user.avatar }}" width="25">
+                    Chào {{ current_user.name }}!
+                </li>
+                <a class="btn btn-danger fw-bold" href="/logout">Đăng xuất</a>
+
+            </div>
+
+            {% else %}
             <div class="d-flex align-items-center">
                 <a href="/signin" class="text-dark fw-bold me-4">Đăng nhập</a>
 

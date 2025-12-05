@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "Tiếng Anh Giao Tiếp",
+    "description": "Cải thiện phản xạ nghe nói tự nhiên",
+    "period": 3.0,
+    "content": "Các chủ đề giao tiếp hàng ngày: công việc, mua sắm, du lịch, thuyết trình...",
+    "joined_date": "2023-01-01 08:00:00",
+    "active": 1
+  },
+  {
+    "id": 2,
+    "name": "IELTS Preparation",
+    "description": "Luyện thi IELTS toàn diện 4 kỹ năng",
+    "period": 6.0,
+    "content": "Chiến thuật làm bài Reading, Listening; tư duy Writing và Speaking chuyên sâu theo band điểm.",
+    "joined_date": "2023-01-01 08:00:00",
+    "active": 1
+  },
+  {
+    "id": 3,
+    "name": "TOEIC Intensive",
+    "description": "Luyện thi TOEIC cấp tốc",
+    "period": 4.5,
+    "content": "Hệ thống ngữ pháp, từ vựng thương mại và mẹo giải đề Listening & Reading tối ưu điểm số.",
+    "joined_date": "2023-01-01 08:00:00",
+    "active": 1
+  }
+]

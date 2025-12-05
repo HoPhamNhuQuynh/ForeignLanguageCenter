@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "name": "IELTS Academic",
+    "band_score": 8.0,
+    "provided_date": "2022-01-10 00:00:00",
+    "employee_id": 2,
+    "joined_date": "2023-01-15 09:00:00",
+    "active": 1
+  },
+  {
+    "id": 2,
+    "name": "TESOL Certificate",
+    "band_score": 92.5,
+    "provided_date": "2021-06-20 00:00:00",
+    "employee_id": 2,
+    "joined_date": "2023-01-15 09:00:00",
+    "active": 1
+  },
+  {
+    "id": 3,
+    "name": "IELTS Academic",
+    "band_score": 8.5,
+    "provided_date": "2022-12-05 00:00:00",
+    "employee_id": 5,
+    "joined_date": "2023-08-20 14:00:00",
+    "active": 1
+  },
+  {
+    "id": 4,
+    "name": "CELTA (Cambridge)",
+    "band_score": 100.0,
+    "provided_date": "2020-05-15 00:00:00",
+    "employee_id": 3,
+    "joined_date": "2023-03-01 08:30:00",
+    "active": 1
+  },
+  {
+    "id": 5,
+    "name": "TOEIC Listening & Reading",
+    "band_score": 980.0,
+    "provided_date": "2022-09-10 00:00:00",
+    "employee_id": 7,
+    "joined_date": "2022-11-12 10:00:00",
+    "active": 1
+  },
+  {
+    "id": 6,
+    "name": "Project Management Professional (PMP)",
+    "band_score": 0.0,
+    "provided_date": "2020-11-20 00:00:00",
+    "employee_id": 1,
+    "joined_date": "2022-05-10 08:00:00",
+    "active": 1
+  },
+  {
+    "id": 7,
+    "name": "IELTS Academic",
+    "band_score": 7.0,
+    "provided_date": "2019-08-15 00:00:00",
+    "employee_id": 9,
+    "joined_date": "2022-09-05 09:30:00",
+    "active": 0
+  },
+  {
+    "id": 8,
+    "name": "TOEIC Speaking & Writing",
+    "band_score": 350.0,
+    "provided_date": "2023-01-05 00:00:00",
+    "employee_id": 4,
+    "joined_date": "2024-01-10 08:00:00",
+    "active": 1
+  },
+  {
+    "id": 9,
+    "name": "TESOL Certificate",
+    "band_score": 88.0,
+    "provided_date": "2021-03-30 00:00:00",
+    "employee_id": 7,
+    "joined_date": "2022-11-12 10:00:00",
+    "active": 1
+  },
+  {
+    "id": 10,
+    "name": "IELTS General Training",
+    "band_score": 7.5,
+    "provided_date": "2021-02-14 00:00:00",
+    "employee_id": 10,
+    "joined_date": "2021-10-20 08:00:00",
+    "active": 1
+  }
+]
