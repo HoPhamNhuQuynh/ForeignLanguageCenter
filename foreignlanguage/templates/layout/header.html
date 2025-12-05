@@ -13,7 +13,7 @@
 
             <ul class="navbar-nav me-auto gap-5">
                 <li class="nav-item ">
-                    <a class="nav-link active fw-bold" href="/">Trang chủ</a>
+                    <a class="nav-link fw-bold text-dark" href="/">Trang chủ</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-bold" href="/about">Về chúng tôi</a>
@@ -42,14 +42,12 @@
 
             {% if current_user.is_authenticated %}
             <div class="d-flex align-items-center">
-                <li class="nav-item me-2">
-                    <img src="{{ current_user.avatar }}" width="25">
+                <div class="nav-item me-3">
+                    <img src="{{ current_user.avatar }}" alt="{{current_user.name}}" width="25">
                     Chào {{ current_user.name }}!
-                </li>
-                <a class="btn btn-danger fw-bold" href="/logout">Đăng xuất</a>
-
+                    <a class="btn btn-danger fw-bold ms-2" href="/logout">Đăng xuất</a>
+                </div>
             </div>
-
             {% else %}
             <div class="d-flex align-items-center">
                 <a href="/signin" class="text-dark fw-bold me-4">Đăng nhập</a>
@@ -57,10 +55,6 @@
                 <a href="/signup" class="btn btn-danger fw-bold">Đăng ký</a>
             </div>
 
-            {% else %}
-                <a href="/signin" class="text-dark fw-bold me-4">
-                    <img src="{{current_user.avatar}}" alt="{{current_user.name}}">
-                </a>
             {% endif %}
         </div>
     </div>
