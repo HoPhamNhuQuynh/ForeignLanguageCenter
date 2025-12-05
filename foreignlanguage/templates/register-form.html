@@ -1,0 +1,114 @@
+{% extends 'layout/base.html'%}
+
+{% block title %} Đăng ký khóa học {% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 mb-4 text-center">
+            <h2 class="fw-bold text-primary">Đăng ký khóa học</h2>
+            <p class="text-muted">Hoàn tất thông tin để giữ chỗ ngay hôm nay!</p>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-4">Thông tin học viên</h5>
+
+                    <form action="/register-course" method="POST">
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="fullName" name="fullname"
+                                   value="{{ current_user.name if current_user.is_authenticated else '' }}" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       value="{{ current_user.email if current_user.is_authenticated else '' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="phone" name="phone"
+                                       placeholder="VD: 0912..." required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="schedule" class="form-label fw-bold">Chọn lịch học mong muốn</label>
+                            <select class="form-select" id="schedule" name="schedule_id">
+                                <option value="ca_sang">Ca Sáng (8:00 - 10:00) - T2, T4, T6</option>
+                                <option value="ca_chieu">Ca Chiều (14:00 - 16:00) - T3, T5, T7</option>
+                                <option value="ca_toi">Ca Tối (19:00 - 21:00) - T2, T4, T6</option>
+                            </select>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h5 class="fw-bold mb-3">Phương thức thanh toán</h5>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="payment_method" id="pay_bank" value="bank" checked>
+                            <label class="form-check-label" for="pay_bank">
+                                <strong>Chuyển khoản ngân hàng (QR Code)</strong>
+                                <div class="text-muted small">Kích hoạt khóa học ngay lập tức.</div>
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="radio" name="payment_method" id="pay_cash" value="cash">
+                            <label class="form-check-label" for="pay_cash">
+                                <strong>Đóng tiền mặt tại trung tâm</strong>
+                                <div class="text-muted small">Giữ chỗ trong vòng 24h.</div>
+                            </label>
+                        </div>
+
+                        <input type="hidden" name="course_id" value="">
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold fs-5">Xác nhận đăng ký</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="card shadow border-0 bg-light">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-dark">Thông tin khóa học</h5>
+                    <hr>
+
+                    <img src="" class="img-fluid rounded mb-3" alt="Course Image">
+
+                    <h4 class="fw-bold text-primary"></h4>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2"><i class="fas fa-clock text-muted me-2"></i> Thời lượng: <strong>3 tháng</strong></li>
+                        <li class="mb-2"><i class="fas fa-book text-muted me-2"></i> Giáo trình: <strong>Miễn phí</strong></li>
+                        <li class="mb-2"><i class="fas fa-certificate text-muted me-2"></i> Cam kết: <strong>Đầu ra 6.5+</strong></li>
+                    </ul>
+
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Học phí gốc:</span>
+                        <span class="text-decoration-line-through"></span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="fw-bold fs-5">Thành tiền:</span>
+                        <span class="fw-bold fs-4 text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info mt-3 d-flex align-items-center" role="alert">
+                <i class="fas fa-phone-alt fs-4 me-3"></i>
+                <div>
+                    <strong>Cần tư vấn thêm?</strong><br>
+                    Gọi ngay hotline: 0988.888.888
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

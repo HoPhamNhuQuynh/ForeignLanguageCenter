@@ -96,6 +96,10 @@ def contact_us():
 def entry_test():
     return render_template("entry-test.html")
 
+@app.route("/register-course")
+def register_course():
+    return render_template("register-form.html")
+
 
 @login.user_loader
 def load_user(user_id):
