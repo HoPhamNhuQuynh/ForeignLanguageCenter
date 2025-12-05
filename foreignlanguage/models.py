@@ -32,7 +32,7 @@ class StatusTuition(ValueEnum):
 class Base(db.Model):  # base model
     __abstract__ = True
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
-    name = Column(String(50), nullable=False)
+    name = Column(String(50))
     joined_date = Column(DateTime, default=datetime.now)
     active = Column(Boolean, default=True)
 
@@ -166,10 +166,4 @@ class Score(db.Model):  # main model
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-
-        import hashlib
-        u1 = Student(name="User", username="user", password=hashlib.md5("123".encode("utf-8")).hexdigest(), email="user@gmail.com")
-
-        db.session.add(u1)
-
         db.session.commit()

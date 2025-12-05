@@ -8,6 +8,8 @@ from flask import render_template, request, redirect, session
 from foreignlanguage import app, dao, login, db, mail
 from flask_login import login_user, logout_user
 from decorators import anonymous_required
+from foreignlanguage.dao import check_email
+from foreignlanguage.models import Student
 
 
 @app.route("/")
@@ -52,9 +54,11 @@ def signup():
             existing_user = dao.auth_user(username, password)
             if existing_user:
                 err_msg = "Username đã tồn tại!"
+            elif dao.check_email(email):
+                err_msg = "Email đã tồn tại!"
             else:
                 try:
-                    dao.add_user(name=name, phone_num=phone_num, username=username, password=password, email=email, address=address)
+                    dao.add_user(username=username, password=password, email=email, address=address)
                     return redirect("/signin")
                 except:
                     db.session.rollback()

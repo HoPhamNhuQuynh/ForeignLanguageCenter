@@ -46,11 +46,11 @@
                 <a href="/user-profile"
                    class="d-flex align-items-center text-decoration-none text-dark bg-white border rounded-pill p-1 pe-3 shadow-sm">
                     <img src="{{ current_user.avatar }}"
-                         alt="{{ current_user.name }}"
+                         alt="{{ current_user.username }}"
                          class="rounded-circle me-2"
                          style="width: 32px; height: 32px; object-fit: cover;">
 
-                    <span class="fw-bold small">Chào {{ current_user.name }}!</span>
+                    <span class="fw-bold small">Chào {{ current_user.username }}!</span>
                 </a>
 
                 <a class="btn btn-danger btn-sm fw-bold rounded-pill px-3 d-flex align-items-center"
