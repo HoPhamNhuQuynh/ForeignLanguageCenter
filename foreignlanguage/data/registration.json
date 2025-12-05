@@ -1,0 +1,101 @@
+[
+  {
+    "id": 1,
+    "student_id": 1,
+    "class_id": 2,
+    "actual_tuition": 4500000.0,
+    "paid": 4500000.0,
+    "status": "PAID",
+    "transact_time": "2024-03-01 09:30:00"
+  },
+  {
+    "id": 2,
+    "student_id": 2,
+    "class_id": 2,
+    "actual_tuition": 4500000.0,
+    "paid": 4500000.0,
+    "status": "PAID",
+    "transact_time": "2024-03-05 14:15:00"
+  },
+  {
+    "id": 3,
+    "student_id": 3,
+    "class_id": 1,
+    "actual_tuition": 2000000.0,
+    "paid": 2000000.0,
+    "status": "PAID",
+    "transact_time": "2024-03-08 10:00:00"
+  },
+  {
+    "id": 4,
+    "student_id": 4,
+    "class_id": 3,
+    "actual_tuition": 4500000.0,
+    "paid": 4500000.0,
+    "status": "PAID",
+    "transact_time": "2024-03-25 16:45:00"
+  },
+  {
+    "id": 5,
+    "student_id": 5,
+    "class_id": 4,
+    "actual_tuition": 7000000.0,
+    "paid": 7000000.0,
+    "status": "PAID",
+    "transact_time": "2024-03-28 08:30:00"
+  },
+  {
+    "id": 6,
+    "student_id": 7,
+    "class_id": 5,
+    "actual_tuition": 2000000.0,
+    "paid": 1000000.0,
+    "status": "PARTIAL",
+    "transact_time": "2024-03-10 11:00:00"
+  },
+  {
+    "id": 7,
+    "student_id": 8,
+    "class_id": 5,
+    "actual_tuition": 2000000.0,
+    "paid": 2000000.0,
+    "status": "PAID",
+    "transact_time": "2024-03-15 09:15:00"
+  },
+  {
+    "id": 8,
+    "student_id": 9,
+    "class_id": 7,
+    "actual_tuition": 7000000.0,
+    "paid": 7000000.0,
+    "status": "PAID",
+    "transact_time": "2024-04-20 15:30:00"
+  },
+  {
+    "id": 9,
+    "student_id": 10,
+    "class_id": 1,
+    "actual_tuition": 2000000.0,
+    "paid": 2000000.0,
+    "status": "PAID",
+    "transact_time": "2024-03-02 10:45:00"
+  },
+  {
+    "id": 10,
+    "student_id": 1,
+    "class_id": 7,
+    "actual_tuition": 7000000.0,
+    "paid": 7000000.0,
+    "status": "PAID",
+    "transact_time": "2024-04-25 14:00:00"
+  },
+  {
+    "id": 11,
+    "student_id": 6,
+    "class_id": 1,
+    "actual_tuition": 2000000.0,
+    "paid": 0.0,
+    "status": "UNPAID",
+    "transact_time": "2024-03-01 08:00:00"
+  }
+]

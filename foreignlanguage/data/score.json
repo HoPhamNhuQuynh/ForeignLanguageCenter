@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "regis_id": 1,
+    "grade_cate_id": 1,
+    "value": 8.5
+  },
+  {
+    "id": 2,
+    "regis_id": 1,
+    "grade_cate_id": 2,
+    "value": 7.0
+  },
+  {
+    "id": 3,
+    "regis_id": 1,
+    "grade_cate_id": 3,
+    "value": 7.5
+  },
+  {
+    "id": 4,
+    "regis_id": 2,
+    "grade_cate_id": 1,
+    "value": 9.0
+  },
+  {
+    "id": 5,
+    "regis_id": 2,
+    "grade_cate_id": 2,
+    "value": 8.5
+  },
+  {
+    "id": 6,
+    "regis_id": 2,
+    "grade_cate_id": 3,
+    "value": 9.0
+  },
+  {
+    "id": 7,
+    "regis_id": 3,
+    "grade_cate_id": 1,
+    "value": 6.5
+  },
+  {
+    "id": 8,
+    "regis_id": 3,
+    "grade_cate_id": 2,
+    "value": 5.0
+  },
+  {
+    "id": 9,
+    "regis_id": 3,
+    "grade_cate_id": 3,
+    "value": 5.5
+  },
+  {
+    "id": 10,
+    "regis_id": 4,
+    "grade_cate_id": 1,
+    "value": 8.0
+  },
+  {
+    "id": 11,
+    "regis_id": 4,
+    "grade_cate_id": 2,
+    "value": 7.5
+  },
+  {
+    "id": 12,
+    "regis_id": 4,
+    "grade_cate_id": 3,
+    "value": 7.5
+  },
+  {
+    "id": 13,
+    "regis_id": 5,
+    "grade_cate_id": 1,
+    "value": 9.5
+  },
+  {
+    "id": 14,
+    "regis_id": 5,
+    "grade_cate_id": 2,
+    "value": 9.0
+  },
+  {
+    "id": 15,
+    "regis_id": 5,
+    "grade_cate_id": 3,
+    "value": 9.5
+  }
+]

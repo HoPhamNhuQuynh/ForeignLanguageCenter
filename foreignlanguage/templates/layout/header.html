@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="/">
             <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763549688/logo_Anqinko_ostpx4.png"
@@ -13,49 +13,59 @@
 
             <ul class="navbar-nav me-auto gap-5">
                 <li class="nav-item ">
-                    <a class="nav-link active text-dark fw-bold" href="/">Trang chủ</a>
+                    <a class="nav-link fw-bold text-dark" href="/">Trang chủ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark fw-bold" href="/about">Về chúng tôi</a>
+                    <a class="nav-link fw-bold" href="/about">Về chúng tôi</a>
                 </li>
 
                 <!-- Dropdown Khóa học -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-dark fw-bold" href="#" role="button"
-                       data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown">
+
                         Khóa học
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">TOEIC</a></li>
+                        <li><a class="dropdown-item" href="/course">TOEIC</a></li>
                         <li><a class="dropdown-item" href="#">IELTS</a></li>
                         <li><a class="dropdown-item" href="#">Tiếng Anh giao tiếp </a></li>
                     </ul>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link text-dark fw-bold" href="/entry-test">Kiểm tra đầu vào</a>
+                    <a class="nav-link fw-bold" href="/entry-test">Kiểm tra đầu vào</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark fw-bold" href="/contact">Liên hệ</a>
+                    <a class="nav-link fw-bold" href="/contact">Liên hệ</a>
                 </li>
             </ul>
 
             {% if current_user.is_authenticated %}
-            <div class="d-flex align-items-center">
-                <li class="nav-item me-2">
-                    <img src="{{ current_user.avatar }}" width="25">
-                    Chào {{ current_user.name }}!
-                </li>
-                <a class="btn btn-danger fw-bold" href="/logout">Đăng xuất</a>
+            <div class="d-flex align-items-center gap-2">
+
+                <a href="/user-profile"
+                   class="d-flex align-items-center text-decoration-none text-dark bg-white border rounded-pill p-1 pe-3 shadow-sm">
+                    <img src="{{ current_user.avatar }}"
+                         alt="{{ current_user.name }}"
+                         class="rounded-circle me-2"
+                         style="width: 32px; height: 32px; object-fit: cover;">
+
+                    <span class="fw-bold small">Chào {{ current_user.name }}!</span>
+                </a>
+
+                <a class="btn btn-danger btn-sm fw-bold rounded-pill px-3 d-flex align-items-center"
+                   href="/logout"
+                   style="height: 42px;"> Đăng xuất
+                </a>
 
             </div>
-
             {% else %}
             <div class="d-flex align-items-center">
                 <a href="/signin" class="text-dark fw-bold me-4">Đăng nhập</a>
 
                 <a href="/signup" class="btn btn-danger fw-bold">Đăng ký</a>
             </div>
+
             {% endif %}
         </div>
     </div>

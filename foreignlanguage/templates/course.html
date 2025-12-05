@@ -1,61 +1,159 @@
 {%extends 'layout/base.html'%}
 
+{% block title %} Khóa học {% endblock %}
+
 {%block content%}
-<div class="bg-dark text-white p-5 mb-5 mt-4">
+<div class="bg-dark text-white py-5">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-md-7 pe-md-5">
-                <h1 class="fw-bold display-5 mb-3">Khóa học Luyện thi TOEIC Toàn diện</h1>
-                <p class="lead fs-5 mb-4">
-                    Chinh phục mọi mục tiêu điểm số từ Beginner đến Advanced.
-                    Bao gồm ngữ pháp, từ vựng, luyện nghe và các bài thi thử sát thực tế.
+            <div class="col-lg-8">
+
+                <h1 class="display-5 fw-bold mb-3">Khóa học Luyện thi TOEIC Toàn diện</h1>
+                <p class="lead text-light mb-4">
+                    Chinh phục mọi mục tiêu điểm số từ Beginner đến Advanced. Bao gồm ngữ pháp, từ vựng, luyện nghe và các bài thi thử sát thực tế.
                 </p>
-                <span class="text-white p-4"> 23/25 hs</span>
-                <div class="mb-4 mt-4" style="font-size: 0.9rem;">
-                    <span class="me-3">Khóa học dạy bởi <strong>cô Ân</strong></span>
-                    <span class="me-3">Tình trạng: <span>còn slot</span>
-                </div>
-            </div>
 
-            <div class="col-lg-4 col-md-5">
-                <div class="card shadow-lg border-0 sticky-top">
-                    <div class="position-relative">
-                        <img src="https://d1hjkbq40fs2x4.cloudfront.net/2017-08-21/files/landscape-photography_1645.jpg"
-                             class="card-img-top rounded-0" alt="Course Preview" style="height: 200px; object-fit: cover;">
+                <div class="d-flex flex-wrap gap-4 align-items-center text-sm">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-warning text-dark me-2">Best Seller</span>
+                        <span class="text-warning">
+                            <i class="fas fa-star"></i> 4.8 (120 đánh giá)
+                        </span>
                     </div>
 
-                    <div class="card-body text-dark p-4">
-                        <h2 class="fw-bold mb-1">₫1.500.000</h2>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Chọn cấp độ của bạn:</label>
-                            <select class="form-select border-dark" aria-label="Select Level">
-                                <option value="1" selected>Beginner - 1.5tr</option>
-                                <option value="2">Intermediate - 2.2tr</option>
-                                <option value="3">Advanced - 3.0tr</option>
-                            </select>
-                        </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-graduate me-2"></i>
+                        <span>Đã có 1,234 học viên</span>
+                    </div>
 
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-danger text-white fw-bold">Đăng kí học ngay</button>
-                            <button class="btn btn-outline-info fw-bold">Đăng kí góp</button>
-                        </div>
-
-                        <div class="mt-4">
-                            <h6 class="fw-bold">Khóa học này gồm:</h6>
-                            <ul class="list-unstyled" style="font-size: 0.9rem;">
-                                <li class="mb-2"><i class="me-2"></i>abcxyz</li>
-                                <li class="mb-2"><i class="me-2"></i>abcxyz</li>
-                                <li class="mb-2"><i class="me-2"></i>abcxyz</li>
-                                <li class="mb-2"><i class="me-2"></i>abcxyz</li>
-                            </ul>
-                        </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-chalkboard-teacher me-2"></i>
+                        <span>Giảng viên: <a href="#" class="text-info text-decoration-none fw-bold">Cô Ấn</a></span>
                     </div>
                 </div>
-            </div>
 
+                <div class="mt-4 text-white-50">
+                    <i class="fas fa-history me-1"></i> Cập nhật lần cuối: 10/2025
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="border rounded p-4 mb-5 bg-white shadow-sm">
+                <h3 class="fw-bold mb-4">Bạn sẽ học được gì?</h3>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <i class="fas fa-check text-success me-2"></i> Nắm vững 12 chủ điểm ngữ pháp TOEIC
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <i class="fas fa-check text-success me-2"></i> Kỹ năng nghe hiểu Part 1 - Part 4
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <i class="fas fa-check text-success me-2"></i> Cải thiện tốc độ làm bài Reading
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <i class="fas fa-check text-success me-2"></i> 10 bộ đề thi thử sát thực tế
+                    </div>
+                </div>
+            </div>
 
+            <div class="mb-5">
+                <h3 class="fw-bold mb-3">Nội dung khóa học</h3>
+                <div class="accordion" id="courseAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#chap1">
+                                <strong>Chương 1: Khởi động & Đánh giá năng lực</strong>
+                            </button>
+                        </h2>
+                        <div id="chap1" class="accordion-collapse collapse show" data-bs-parent="#courseAccordion">
+                            <div class="accordion-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="py-2 border-bottom"><i class="fas fa-play-circle text-muted me-2"></i> Giới thiệu cấu trúc đề thi mới</li>
+                                    <li class="py-2"><i class="fas fa-file-alt text-muted me-2"></i> Bài test đầu vào (Entry Test)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#chap2">
+                                <strong>Chương 1: Khởi động & Đánh giá năng lực</strong>
+                            </button>
+                        </h2>
+                        <div id="chap2" class="accordion-collapse collapse show" data-bs-parent="#courseAccordion">
+                            <div class="accordion-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="py-2 border-bottom"><i class="fas fa-play-circle text-muted me-2"></i> Giới thiệu cấu trúc đề thi mới</li>
+                                    <li class="py-2"><i class="fas fa-file-alt text-muted me-2"></i> Bài test đầu vào (Entry Test)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#chap3">
+                                <strong>Chương 1: Khởi động & Đánh giá năng lực</strong>
+                            </button>
+                        </h2>
+                        <div id="chap3" class="accordion-collapse collapse show" data-bs-parent="#courseAccordion">
+                            <div class="accordion-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="py-2 border-bottom"><i class="fas fa-play-circle text-muted me-2"></i> Giới thiệu cấu trúc đề thi mới</li>
+                                    <li class="py-2"><i class="fas fa-file-alt text-muted me-2"></i> Bài test đầu vào (Entry Test)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow border-0 sticky-top" style="top: 20px; z-index: 100;">
+                <div class="position-relative">
+                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545948/talkEngland.avif"
+                         class="card-img-top" alt="TOEIC Course" style="height: 200px; object-fit: cover;"/>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-end mb-3">
+                        <h2 class="fw-bold text-danger mb-0 me-3">1.500.000đ</h2>
+                        <span class="text-decoration-line-through text-muted fs-5">2.500.000đ</span>
+                        <span class="badge bg-danger ms-auto">-40%</span>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Mục tiêu đầu ra:</label>
+                        <select class="form-select">
+                            <option>Beginner (450+)</option>
+                            <option>Intermediate (650+)</option>
+                            <option>Advanced (800+)</option>
+                        </select>
+                    </div>
+
+                    <a href="/register-course" class="btn btn-danger w-100 fw-bold py-3 fs-5 mb-3 shadow">
+                        ĐĂNG KÝ HỌC NGAY
+                    </a>
+
+                    <p class="text-center text-muted small mb-4">Hoàn tiền trong 7 ngày nếu không hài lòng</p>
+
+                    <h6 class="fw-bold">Khóa học này bao gồm:</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="py-1"><i class="fas fa-video text-primary me-2" style="width:20px"></i> 45 giờ học trực tiếp</li>
+                        <li class="py-1"><i class="fas fa-file-download text-primary me-2" style="width:20px"></i> Tài liệu PDF độc quyền</li>
+                        <li class="py-1"><i class="fas fa-mobile-alt text-primary me-2" style="width:20px"></i> Truy cập trên Mobile/PC</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {%endblock%}

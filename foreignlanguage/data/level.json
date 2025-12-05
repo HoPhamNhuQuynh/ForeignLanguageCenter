@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Beginner",
+    "tuition": 2000000.0,
+    "joined_date": "2020-01-01 08:00:00",
+    "active": 1
+  },
+  {
+    "id": 2,
+    "name": "Intermediate",
+    "tuition": 4500000.0,
+    "joined_date": "2020-01-01 08:00:00",
+    "active": 1
+  },
+  {
+    "id": 3,
+    "name": "Advanced",
+    "tuition": 7000000.0,
+    "joined_date": "2020-01-01 08:00:00",
+    "active": 1
+  }
+]

@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "money": 4500000.0,
+    "content": "Thu học phí lớp Giao Tiếp (Full)",
+    "method": "BANKING",
+    "date": "2024-03-01 09:30:00",
+    "status": "SUCCESS",
+    "employee_id": 4,
+    "regis_id": 1
+  },
+  {
+    "id": 2,
+    "money": 4500000.0,
+    "content": "Thu học phí lớp Giao Tiếp (Full)",
+    "method": "CASH",
+    "date": "2024-03-05 14:15:00",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 2
+  },
+  {
+    "id": 3,
+    "money": 2000000.0,
+    "content": "Thu học phí lớp Giao Tiếp Beginner",
+    "method": "CASH",
+    "date": "2024-03-08 10:00:00",
+    "status": "SUCCESS",
+    "employee_id": 8,
+    "regis_id": 3
+  },
+  {
+    "id": 4,
+    "money": 4500000.0,
+    "content": "Thu học phí lớp IELTS Intermediate",
+    "method": "BANKING",
+    "date": "2024-03-25 16:45:00",
+    "status": "SUCCESS",
+    "employee_id": 4,
+    "regis_id": 4
+  },
+  {
+    "id": 5,
+    "money": 7000000.0,
+    "content": "Thu học phí lớp IELTS Advanced",
+    "method": "BANKING",
+    "date": "2024-03-28 08:30:00",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 5
+  },
+  {
+    "id": 6,
+    "money": 1000000.0,
+    "content": "Đặt cọc lớp TOEIC (Đợt 1)",
+    "method": "CASH",
+    "date": "2024-03-10 11:00:00",
+    "status": "SUCCESS",
+    "employee_id": 8,
+    "regis_id": 6
+  },
+  {
+    "id": 7,
+    "money": 2000000.0,
+    "content": "Thu học phí lớp TOEIC Beginner",
+    "method": "CASH",
+    "date": "2024-03-15 09:15:00",
+    "status": "SUCCESS",
+    "employee_id": 4,
+    "regis_id": 7
+  },
+  {
+    "id": 8,
+    "money": 7000000.0,
+    "content": "Thu học phí lớp Giao Tiếp Advanced",
+    "method": "BANKING",
+    "date": "2024-04-20 15:30:00",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 8
+  },
+  {
+    "id": 9,
+    "money": 2000000.0,
+    "content": "Thu học phí lớp Giao Tiếp Beginner",
+    "method": "BANKING",
+    "date": "2024-03-02 10:45:00",
+    "status": "SUCCESS",
+    "employee_id": 8,
+    "regis_id": 9
+  },
+  {
+    "id": 10,
+    "money": 7000000.0,
+    "content": "Thu học phí lớp Giao Tiếp Advanced (Lớp 2)",
+    "method": "BANKING",
+    "date": "2024-04-25 14:00:00",
+    "status": "SUCCESS",
+    "employee_id": 4,
+    "regis_id": 10
+  }
+]

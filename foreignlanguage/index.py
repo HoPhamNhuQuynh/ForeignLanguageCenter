@@ -8,7 +8,6 @@ from flask import render_template, request, redirect, session
 from foreignlanguage import app, dao, login, db, mail
 from flask_login import login_user, logout_user
 from decorators import anonymous_required
-from foreignlanguage.models import Student
 
 
 @app.route("/")
@@ -17,6 +16,7 @@ def index():
 
 
 @app.route("/signin", methods=["GET", "POST"])
+@anonymous_required
 def signin():
     err_msg = None
     if request.method.__eq__("POST"):
@@ -41,10 +41,9 @@ def signup():
     err_msg = None
     if request.method.__eq__("POST"):
         password = request.form.get("password")
-        confirm = request.form.get("confirm")
+        confirm = request.form.get("confirm_pass")
 
         if password.__eq__(confirm):
-            name = request.form.get("name")
             phone_num = request.form.get("phone_num")
             username = request.form.get("username")
             email = request.form.get("email")
@@ -146,6 +145,14 @@ def contact_us():
 @app.route("/entry-test")
 def entry_test():
     return render_template("entry-test.html")
+
+@app.route("/register-course")
+def register_course():
+    return render_template("register-form.html")
+
+@app.route("/user-profile")
+def user_profile():
+    return render_template("student.html")
 
 
 @login.user_loader
