@@ -12,6 +12,7 @@ def index():
 
 
 @app.route("/signin", methods=["GET", "POST"])
+@anonymous_required
 def signin():
     err_msg = None
     if request.method.__eq__("POST"):
@@ -91,6 +92,10 @@ def entry_test():
 @app.route("/register-course")
 def register_course():
     return render_template("register-form.html")
+
+@app.route("/user-profile")
+def user_profile():
+    return render_template("student.html")
 
 
 @login.user_loader
