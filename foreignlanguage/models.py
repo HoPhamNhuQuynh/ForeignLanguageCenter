@@ -40,7 +40,7 @@ class Base(db.Model):  # base model
         return self.name
 
 
-class User(Base):  # base model of users
+class User(Base, UserMixin):  # base model of users
     __abstract__ = True
     username = Column(String(30), nullable=False, unique=True)
     password = Column(String(100), nullable=False)
@@ -58,7 +58,7 @@ class Employee(User):  # main model
     classrooms = relationship('Classroom', backref='employee', lazy=True)
 
 
-class Student(User, UserMixin):  # main model
+class Student(User):  # main model
     entry_score = Column(Float, default=0.0)
 
     sessions = relationship('Present', back_populates='student', lazy=True)
@@ -167,3 +167,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         db.session.commit()
+        # print(Student.query.first().role)

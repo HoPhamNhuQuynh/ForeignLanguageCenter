@@ -1,5 +1,7 @@
 {% extends 'layout/base.html' %}
 
+{%block title%} Trang chủ {%endblock%}
+
 {% block content %}
 <section class="hero-wrap py-5">
     <div class="row align-items-center g-5">
@@ -19,8 +21,8 @@
                     Lộ trình cá nhân hóa dành riêng cho bạn tại Anqinko.
                 </p>
 
-                <div class="d-flex gap-3">
-                    <a href="/course" class="btn btn-orange px-4 py-3 fw-bold rounded-3 shadow-sm">
+                <div>
+                    <a href="/course" class="btn btn-orange px-5 py-3 fw-bold shadow rounded-3">
                         Đăng ký ngay
                     </a>
                 </div>
@@ -39,9 +41,6 @@
         </div>
 
         <div class="col-lg-6 order-lg-2 order-1 position-relative text-center">
-
-            <div class="hero-bg-circle"></div>
-
             <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764829408/brooke-cagle-g1Kr4Ozfoac-unsplash_o0aewk.jpg"
                  alt="Student"
                  class="img-fluid position-relative hero-main-img">
@@ -51,7 +50,8 @@
                     <div class="avatar-group">
                         <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg" class="rounded-circle border border-2 border-white" width="40">
                         <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg" class="rounded-circle border border-2 border-white" width="40" style="margin-left: -15px;">
-                        <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center border border-2 border-white" style="width: 40px; height: 40px; margin-left: -15px; font-size: 12px;">+32</div>
+                        <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center border border-2 border-white"
+                             style="width: 40px; height: 40px; margin-left: -15px; font-size: 12px;">+32</div>
                     </div>
                 </div>
                 <div>
@@ -109,20 +109,21 @@
         </div>
 
         <div class="row g-4">
+            {% for c in courses %}
             <div class="col-md-6 col-lg-4">
                 <div class="card course-card border-0 shadow-sm h-100 rounded-3 overflow-hidden">
                     <div class="position-relative">
-                        <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545919/abroad.webp" class="card-img-top" alt="Course 1">
-                        <div class="course-badge bg-orange text-white position-absolute top-0 end-0 m-3 px-3 py-1 rounded-pill fw-bold">
-                            English Basic
+                        <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545919/abroad.webp" class="card-img-top" alt="{{c.name}}">
+                        <div class="course-badge bg-primary text-white position-absolute top-0 end-0 m-3 px-3 py-1 rounded-pill fw-bold">
+                            English
                         </div>
                     </div>
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between mb-3 text-muted small">
                             <span><i class="far fa-clock me-1"></i> 3 tháng</span>
-                            <span><i class="far fa-user me-1"></i> 25 Học viên</span>
+                            <span><i class="far fa-user me-1"></i> 22 Học viên</span>
                         </div>
-                        <h5 class="card-title fw-bold mb-3">Tiếng Anh Giao Tiếp Cơ Bản</h5>
+                        <h5 class="card-title fw-bold mb-3">{{c.name}}</h5>
                         <p class="card-text text-secondary mb-4">Xây dựng nền tảng vững chắc, tự tin phát âm và giao tiếp các chủ đề thông dụng.</p>
                         <div class="d-flex align-items-center justify-content-between border-top pt-3">
                             <h5 class="text-orange fw-bold mb-0">1.500.000đ</h5>
@@ -131,52 +132,8 @@
                     </div>
                 </div>
             </div>
+            {% endfor %}
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card course-card border-0 shadow-sm h-100 rounded-3 overflow-hidden">
-                    <div class="position-relative">
-                        <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545947/listening.webp" class="card-img-top" alt="Course 2">
-                        <div class="course-badge bg-primary text-white position-absolute top-0 end-0 m-3 px-3 py-1 rounded-pill fw-bold">
-                            IELTS
-                        </div>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between mb-3 text-muted small">
-                            <span><i class="far fa-clock me-1"></i> 6 tháng</span>
-                            <span><i class="far fa-user me-1"></i> 15 Học viên</span>
-                        </div>
-                        <h5 class="card-title fw-bold mb-3">Luyện Thi IELTS 6.5+</h5>
-                        <p class="card-text text-secondary mb-4">Chiến thuật làm bài chuyên sâu 4 kỹ năng. Cam kết đầu ra bằng văn bản.</p>
-                        <div class="d-flex align-items-center justify-content-between border-top pt-3">
-                            <h5 class="text-orange fw-bold mb-0">3.200.000đ</h5>
-                            <a href="#" class="btn btn-sm btn-outline-dark rounded-pill px-3">Chi tiết <i class="fas fa-arrow-right ms-1"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card course-card border-0 shadow-sm h-100 rounded-3 overflow-hidden">
-                    <div class="position-relative">
-                        <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545951/writting.avif" class="card-img-top" alt="Course 3">
-                        <div class="course-badge bg-success text-white position-absolute top-0 end-0 m-3 px-3 py-1 rounded-pill fw-bold">
-                            TOEIC
-                        </div>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between mb-3 text-muted small">
-                            <span><i class="far fa-clock me-1"></i> Quanh năm</span>
-                            <span><i class="far fa-user me-1"></i> 10 Học viên</span>
-                        </div>
-                        <h5 class="card-title fw-bold mb-3">Luyện Thi TOEIC 750+</h5>
-                        <p class="card-text text-secondary mb-4">Lộ trình cấp tốc Reading & Listening. Cam kết chuẩn đầu ra tốt nghiệp Đại học và xin việc làm.</p>
-                        <div class="d-flex align-items-center justify-content-between border-top pt-3">
-                            <h5 class="text-orange fw-bold mb-0">1.200.000đ</h5>
-                            <a href="#" class="btn btn-sm btn-outline-dark rounded-pill px-3">Chi tiết <i class="fas fa-arrow-right ms-1"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
         </div>
     </div>

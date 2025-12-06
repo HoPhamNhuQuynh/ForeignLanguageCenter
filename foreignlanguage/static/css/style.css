@@ -1,6 +1,102 @@
-    /* toan cuc */
+    /* TOAN CUC */
     body {
         font-family: 'Poppins', sans-serif;
+    }
+
+    /* ============== thiet lap ANIMATION cho trang =================== */
+
+    @keyframes floatMove {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    @media (max-width: 991px) {
+        .floating-card {
+            left: 5%;
+            top: 10%;
+        }
+    }
+
+    .move-y {
+        animation: floatY 3s ease-in-out infinite;
+    }
+    @keyframes floatY {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    /* ======== quy dinh ACTION cua trang web ============= */
+
+    .btn-orange:hover {
+        background-color: #e55a3b;
+        color: white;
+    }
+
+
+    .form-control:focus {
+        box-shadow: none;
+        border-color: #FF6B4A;
+        background-color: #fff !important;
+    }
+
+    .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+            border-color: transparent !important;
+    }
+
+    .course-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+    }
+
+    .level-card:hover {
+        transform: translateY(-5px);
+        border-color: #FF6B4A !important; /* viền màu cam */
+        background-color: white !important;
+    }
+
+    .hover-up:hover {
+        transform: translateY(-10px);
+    }
+
+    .form-control:focus, .form-select:focus {
+        box-shadow: none;
+        border-color: #0d6efd;
+        background-color: #fff !important;
+    }
+
+    .navbar-nav .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #0d6efd;
+    }
+
+    .teacher-card:hover img {
+        transform: scale(1.05);
+    }
+
+    .list-group-item-action:hover {
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+        transition: all 0.2s;
+    }
+
+    .course-hover {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .course-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+
+
+    /* ========== quy dinh COLORS elements cua trang web =========== */
+    .bg-orange {
+         background-color: #FF6B4A;
+    }
+
+    .bg-orange-light {
+         background-color: rgba(255, 107, 74, 0.15) !important;
     }
 
     .bg-light-blue {
@@ -18,39 +114,22 @@
     .btn-orange {
         background-color: #FF6B4A;
         color: white;
-        border: none;
         transition: 0.3s;
     }
 
-    .btn-orange:hover {
-        background-color: #e55a3b;
-        color: white;
+    .course-badge.bg-orange {
+        background-color: var(--primary-orange, #FF6B4A);
     }
 
+    .border-orange {
+        border: 2px solid #FF6B4A !important;
+    }
+
+
+    /* ============== quy dinh tuy chinh VI TRI, SPACE, .... cho class ========= */
     .form-control {
         border: 1px solid #eee;
         padding: 12px 15px;
-    }
-
-    .form-control:focus {
-        box-shadow: none;
-        border-color: #FF6B4A;
-        background-color: #fff !important;
-    }
-
-
-
-    /* xu ly anh nen cam trong about us */
-    .hero-bg-circle {
-        position: absolute;
-        width: 400px;
-        height: 400px;
-        background-color: #DDECF9;
-        border-radius: 50%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 0;
     }
 
     .hero-main-img {
@@ -70,31 +149,9 @@
         max-width: 250px;
     }
 
-    @keyframes floatMove {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-15px); }
-    }
-
-    @media (max-width: 991px) {
-        .hero-bg-circle {
-            width: 300px;
-            height: 300px;
-        }
-        .floating-card {
-            left: 5%;
-            top: 10%;
-        }
-    }
-
     .feature-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border-color: #f0f0f0 !important;
-    }
-
-    .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
-        border-color: transparent !important;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-color: #f0f0f0 !important;
     }
 
     .icon-box {
@@ -106,18 +163,9 @@
         transition: transform 0.3s ease;
     }
 
-    .course-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
-    }
-
     .course-card .card-img-top {
         height: 220px;
         object-fit: cover;
-    }
-
-    .course-badge.bg-orange {
-        background-color: var(--primary-orange, #FF6B4A);
     }
 
     .icon-circle {
@@ -130,24 +178,8 @@
         font-size: 1.2rem;
     }
 
-    .move-y {
-        animation: floatY 3s ease-in-out infinite;
-    }
-    @keyframes floatY {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-
     .level-card {
         transition: 0.3s;
-    }
-    .level-card:hover {
-        transform: translateY(-5px);
-        border-color: #FF6B4A !important; /* viền màu cam */
-        background-color: white !important;
-    }
-    .border-orange {
-        border: 2px solid #FF6B4A !important;
     }
 
     .level-icon {
@@ -162,10 +194,6 @@
         font-size: 1.5rem;
     }
 
-    .bg-orange-light {
-        background-color: rgba(255, 107, 74, 0.15) !important;
-    }
-
     .opacity-10 {
         opacity: 0.1;
     }
@@ -174,24 +202,14 @@
         z-index: 1;
     }
 
-    .bg-orange {
-        background-color: #FF6B4A;
-    }
-
     .hover-up {
         transition: transform 0.3s ease;
-    }
-    .hover-up:hover {
-        transform: translateY(-10px);
     }
 
     .teacher-card img {
         transition: transform 0.5s ease;
         height: 300px;
         object-fit: cover;
-    }
-    .teacher-card:hover img {
-        transform: scale(1.05);
     }
 
     .ls-1 {
@@ -204,46 +222,20 @@
         border-radius: 5px;
     }
 
-    .navbar-nav .nav-link:hover {
-        background-color: #f8f9fa;
-        color: #0d6efd;
-    }
-
-    .form-control:focus, .form-select:focus {
-        box-shadow: none;
-        border-color: #0d6efd;
-        background-color: #fff !important;
-    }
     .input-group-text {
         border: none;
     }
-    .form-control {
-        border: none;
-    }
-    .input-group {
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        overflow: hidden;
-        transition: 0.3s;
-    }
+
+    .object-fit-cover {
+        object-fit: cover;
+
     .input-group:focus-within {
         border-color: #0d6efd;
         box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
     }
 
-    .list-group-item-action:hover {
-        background-color: #f8f9fa;
-        transform: translateX(5px);
-        transition: all 0.2s;
-    }
 
-    .course-hover {
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .course-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-    }
 
-    .object-fit-cover {
-        object-fit: cover;
+
+
+
