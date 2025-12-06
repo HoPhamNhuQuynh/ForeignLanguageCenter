@@ -30,6 +30,15 @@
 
                 <form method="post" action="/signin">
                     <div class="mb-3">
+                        <label for="role" class="form-label">Chọn vai trò</label>
+                        <select id="role" name="role" class="form-select">
+                            {% for e in user_roles %}
+                            <option value="{{e.value}}" name="role">{{e.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
                         <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Username"
                                name="username" required>
                     </div>
