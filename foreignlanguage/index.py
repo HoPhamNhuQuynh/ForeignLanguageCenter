@@ -2,7 +2,7 @@ import hashlib
 import random
 from flask_mail import Message
 from flask import render_template, request, redirect, session
-from foreignlanguage import app, dao, login, db, mail
+from foreignlanguage import app, dao, login, db, mail, admin
 from flask_login import login_user, logout_user
 from decorators import anonymous_required
 from foreignlanguage.dao import check_email
@@ -18,27 +18,22 @@ def index():
 @anonymous_required
 def signin():
     err_msg = None
-    user_roles = dao.load_user_roles()
 
     if request.method.__eq__("POST"):
         username = request.form.get("username")
-        role = request.form.get("role")
-
-        # import pdb; pdb.set_trace()
 
         password = request.form.get("password")
         remmember = request.form.get("rememberMe") == "true"
 
-        user = dao.auth_user(username, password, role)
+        user = dao.auth_user(username, password)
 
         if user:
-            session['role'] = user.role.name
             login_user(user, remember=remmember)
             return redirect("/")
         else:
             err_msg = "Tài khoản hoặc mật khẩu không đúng!"
 
-    return render_template("signin.html", err_msg=err_msg, user_roles=user_roles)
+    return render_template("signin.html", err_msg=err_msg)
 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -165,9 +160,7 @@ def user_profile():
 
 @login.user_loader
 def load_user(user_id):
-    role = session.get('role')
-    user = dao.get_user_by_id(user_id, role=role)
-    return user
+    return dao.get_user_by_id(user_id)
 
 @app.context_processor
 def common_attributes():

@@ -16,7 +16,7 @@
     document.addEventListener("DOMContentLoaded", function() {
     const currentPath = window.location.pathname;
 
-    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link, .navbar-nav .dropdown-item ');
 
     navLinks.forEach(link => {
         const href = link.getAttribute('href');
@@ -25,7 +25,7 @@
             link.classList.add('active');
 
             if(link.classList.contains('dropdown-item')){
-                link.closest('.dropdown').querySelector('.nav-link').classList.add('active');
+                link.closest('.dropdown').querySelector('.nav-link.dropdown-toggle').classList.add('active');
             }
         }
     });

@@ -4,8 +4,6 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
 from flask_login import current_user, login_user, logout_user
 from sqlalchemy import func, or_
-
-# Import app, db, models
 from foreignlanguage import app, db
 from foreignlanguage.models import (
     Student, Course, Classroom, Employee,
