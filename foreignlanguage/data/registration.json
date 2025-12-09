@@ -97,5 +97,50 @@
     "paid": 0.0,
     "status": "UNPAID",
     "transact_time": "2024-03-01 08:00:00"
+  },
+  {
+    "id": 12,
+    "student_id": 3,
+    "class_id": 4,
+    "actual_tuition": 4500000.0,
+    "paid": 0.0,
+    "status": "OVERDUE",
+    "transact_time": "2024-04-01 08:00:00"
+  },
+  {
+    "id": 13,
+    "student_id": 6,
+    "class_id": 9,
+    "actual_tuition": 7000000.0,
+    "paid": 0.0,
+    "status": "UNPAID",
+    "transact_time": "2024-05-10 10:15:00"
+  },
+  {
+    "id": 14,
+    "student_id": 8,
+    "class_id": 2,
+    "actual_tuition": 4500000.0,
+    "paid": 0.0,
+    "status": "UNPAID",
+    "transact_time": "2024-05-12 14:30:00"
+  },
+  {
+    "id": 15,
+    "student_id": 2,
+    "class_id": 10,
+    "actual_tuition": 6000000.0,
+    "paid": 2000000.0,
+    "status": "PARTIAL",
+    "transact_time": "2024-05-15 09:00:00"
+  },
+  {
+    "id": 16,
+    "student_id": 9,
+    "class_id": 1,
+    "actual_tuition": 2000000.0,
+    "paid": 2000000.0,
+    "status": "PAID",
+    "transact_time": "2024-05-16 16:45:00"
   }
 ]

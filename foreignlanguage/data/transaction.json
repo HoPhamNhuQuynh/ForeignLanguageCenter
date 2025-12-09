@@ -98,5 +98,55 @@
     "status": "SUCCESS",
     "employee_id": 4,
     "regis_id": 10
+  },
+  {
+    "id": 11,
+    "money": 0.0,
+    "content": "Hủy đóng phí lớp IELTS (User Cancelled)",
+    "method": "BANKING",
+    "date": "2024-04-01 08:05:00",
+    "status": "CANCELLED",
+    "employee_id": 4,
+    "regis_id": 12
+  },
+  {
+    "id": 12,
+    "money": 7000000.0,
+    "content": "Thu học phí lớp Giao Tiếp Master",
+    "method": "BANKING",
+    "date": "2024-05-10 10:15:00",
+    "status": "FAILED",
+    "employee_id": 6,
+    "regis_id": 13
+  },
+  {
+    "id": 13,
+    "money": 4500000.0,
+    "content": "Thu học phí lớp Giao Tiếp (Full)",
+    "method": "BANKING",
+    "date": "2024-05-12 14:35:00",
+    "status": "PENDING",
+    "employee_id": 8,
+    "regis_id": 14
+  },
+  {
+    "id": 14,
+    "money": 2000000.0,
+    "content": "Đặt cọc lớp Business English",
+    "method": "CASH",
+    "date": "2024-05-15 09:00:00",
+    "status": "SUCCESS",
+    "employee_id": 4,
+    "regis_id": 15
+  },
+  {
+    "id": 15,
+    "money": 2000000.0,
+    "content": "Thu học phí lớp Giao Tiếp Beginner",
+    "method": "BANKING",
+    "date": "2024-05-16 16:45:00",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 16
   }
 ]

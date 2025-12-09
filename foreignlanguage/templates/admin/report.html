@@ -1,94 +1,182 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-<div class="container-fluid mt-4">
-    <!-- Header đơn giản -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    /* CSS Tùy chỉnh cho Dashboard */
+    :root {
+        --primary-orange: #FF6B4A;
+        --dark-bg: #2c3e50;
+    }
+
+    .card-stat {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+    }
+    .card-stat:hover {
+        transform: translateY(-5px);
+    }
+
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .card-chart {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        background: white;
+    }
+</style>
+
+<div class="container-fluid mt-4 mb-5">
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="font-weight-light">Dashboard</h2>
-            <p class="text-muted mb-0">Tổng quan tình hình hoạt động</p>
+            <h2 class="font-weight-bold text-dark">Dashboard Quản trị</h2>
+            <p class="text-muted">Tổng quan tình hình hoạt động của trung tâm</p>
         </div>
-        <div class="text-secondary">
-            <i class="fa fa-user-circle mr-1"></i>
-            {% if current_user.is_authenticated %}
-                {{ current_user.email }}
-            {% else %}
-                Admin
-            {% endif %}
+        <div class="text-right">
+            <span class="badge badge-light p-2 border">
+                <i class="fa fa-calendar"></i> Hôm nay: {{ now_str if now_str else '...' }}
+            </span>
         </div>
     </div>
 
-    <!-- Filter Section (Dùng Card trắng) -->
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-body py-3">
-            <form method="GET" action="/admin" class="form-inline">
-                <div class="form-group mr-3 mb-2">
-                    <label class="mr-2 font-weight-bold text-dark small text-uppercase">Thời gian:</label>
-                    <select class="form-control form-control-sm border-secondary">
-                        <option>Tháng này</option>
-                        <option>Quý này</option>
-                        <option>Năm nay</option>
-                    </select>
-                </div>
-                <div class="form-group mr-3 mb-2">
-                    <label class="mr-2 font-weight-bold text-dark small text-uppercase">Khóa học:</label>
-                    <select class="form-control form-control-sm border-secondary">
-                        <option>Tất cả khóa học</option>
-                        <option>Tiếng Anh Giao Tiếp</option>
-                        <option>IELTS</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-dark btn-sm mb-2 px-3">
-                    <i class="fa fa-filter"></i> Lọc dữ liệu
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Stats Section -->
-    <div class="row">
-        <!-- Card 1: Học viên -->
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body d-flex flex-column justify-content-center text-center">
-                    <div class="text-muted text-uppercase small font-weight-bold mb-2">Tổng số học viên</div>
-                    <h1 class="display-4 font-weight-bold text-dark mb-0">{{ stu_count }}</h1>
-                    <div class="text-muted small mt-2"><i class="fa fa-users"></i> Học viên đang theo học</div>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card card-stat bg-white h-100 p-3">
+                <div class="card-body">
+                    <div class="icon-box bg-light text-success">
+                        <i class="fa fa-money"></i>
+                    </div>
+                    <h5 class="text-muted text-uppercase small font-weight-bold">Doanh thu tổng</h5>
+                    <h2 class="font-weight-bold text-dark">
+                        {{ "{:,.0f}".format(total_revenue) }} <small>đ</small>
+                    </h2>
+                    <span class="text-success small"><i class="fa fa-arrow-up"></i> Tăng trưởng ổn định</span>
                 </div>
             </div>
         </div>
 
-        <!-- Card 2: Tỷ lệ đạt -->
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body d-flex flex-column justify-content-center text-center">
-                    <div class="text-muted text-uppercase small font-weight-bold mb-2">Tỷ lệ đạt yêu cầu</div>
-                    <h1 class="display-4 font-weight-bold text-dark mb-0">{{ pass_rate }}%</h1>
-                    <div class="progress mt-3" style="height: 5px;">
-                        <div class="progress-bar bg-dark" role="progressbar" style="width: {{ pass_rate }}%"></div>
+        <div class="col-md-4">
+            <div class="card card-stat bg-white h-100 p-3">
+                <div class="card-body">
+                    <div class="icon-box bg-light text-primary">
+                        <i class="fa fa-users"></i>
+                    </div>
+                    <h5 class="text-muted text-uppercase small font-weight-bold">Tổng học viên</h5>
+                    <h2 class="font-weight-bold text-dark">{{ stu_count }}</h2>
+                    <span class="text-primary small">Đang theo học các khóa</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-stat bg-white h-100 p-3">
+                <div class="card-body">
+                    <div class="icon-box bg-light text-warning">
+                        <i class="fa fa-graduation-cap"></i>
+                    </div>
+                    <h5 class="text-muted text-uppercase small font-weight-bold">Tỷ lệ đạt yêu cầu</h5>
+                    <h2 class="font-weight-bold text-dark">{{ pass_rate }}%</h2>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: {{ pass_rate }}%"></div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Card 3: Doanh thu -->
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm border-0 h-100 bg-dark text-white">
-                <div class="card-body d-flex flex-column justify-content-center text-center">
-                    <div class="text-white-50 text-uppercase small font-weight-bold mb-2">Doanh thu tạm tính</div>
-                    <h1 class="display-4 font-weight-bold mb-0">
-                        {{ "{:,.0f}".format(total_revenue/1000000) }}<small class="h4">tr</small>
-                    </h1>
-                    <div class="text-white-50 small mt-2">VNĐ (Việt Nam Đồng)</div>
+    <div class="row">
+
+        <div class="col-lg-8 mb-4">
+            <div class="card card-chart h-100">
+                <div class="card-header bg-white border-0 font-weight-bold py-3">
+                    <i class="fa fa-bar-chart mr-2 text-primary"></i> Biểu đồ doanh thu năm nay
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card card-chart h-100">
+                <div class="card-header bg-white border-0 font-weight-bold py-3">
+                    <i class="fa fa-pie-chart mr-2 text-danger"></i> Tỷ lệ học viên theo khóa
+                </div>
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <canvas id="courseChart" style="max-height: 250px;"></canvas>
+                </div>
+                <div class="card-footer bg-white border-0 text-center text-muted small">
+                    Phân bố học viên đăng ký các khóa
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Action Buttons -->
-    <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-outline-dark mr-2"><i class="fa fa-print"></i> In báo cáo</button>
-        <button class="btn btn-outline-dark"><i class="fa fa-download"></i> Xuất Excel</button>
-    </div>
 </div>
+
+<script>
+    // 1. Cấu hình Biểu đồ Doanh thu (Cột)
+    const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+    const revenueChart = new Chart(ctxRevenue, {
+        type: 'bar', // Dạng cột
+        data: {
+            labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+            datasets: [{
+                label: 'Doanh thu (VNĐ)',
+                data: {{ revenue_data | safe }}, // Dữ liệu từ Python truyền sang
+                backgroundColor: 'rgba(54, 162, 235, 0.6)', // Màu xanh dương nhạt
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // 2. Cấu hình Biểu đồ Khóa học (Tròn)
+    const ctxCourse = document.getElementById('courseChart').getContext('2d');
+    const courseChart = new Chart(ctxCourse, {
+        type: 'doughnut', // Dạng bánh Donut
+        data: {
+            labels: {{ course_labels | safe }}, // Tên các khóa học
+            datasets: [{
+                data: {{ course_values | safe }}, // Số lượng học viên
+                backgroundColor: [
+                    '#FF6B6B', // Đỏ
+                    '#4ECDC4', // Xanh ngọc
+                    '#FFE66D', // Vàng
+                    '#1A535C', // Xanh đậm
+                    '#FF9F1C'  // Cam
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+</script>
 {% endblock %}

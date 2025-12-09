@@ -1,56 +1,133 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
+<style>
+    /* --- ĐỒNG BỘ MÀU SẮC THEO STYLE.CSS --- */
+    :root {
+        --primary-orange: #FF6B4A; /* Màu cam chuẩn của bạn */
+        --hover-orange: #e55a3b;
+        --light-orange: rgba(255, 107, 74, 0.1);
+    }
+
+    /* Card sắc nét, gọn gàng */
+    .card-custom {
+        border: 1px solid #eee; /* Viền mỏng tinh tế */
+        border-radius: 8px;     /* Bo góc nhẹ vừa phải */
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03); /* Đổ bóng rất nhẹ */
+        background: white;
+        overflow: hidden;
+    }
+
+    /* Header màu cam đậm */
+    .card-header-orange {
+        background-color: var(--primary-orange);
+        color: white;
+        font-weight: 600;
+        padding: 12px 20px;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Input khi bấm vào sẽ sáng màu cam */
+    .form-control:focus, .custom-select:focus {
+        border-color: var(--primary-orange);
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 74, 0.25);
+    }
+
+    /* Nút bấm chuẩn màu */
+    .btn-orange {
+        background-color: var(--primary-orange);
+        color: white;
+        font-weight: bold;
+        border: none;
+        padding: 10px 30px;
+        border-radius: 5px;
+        transition: 0.3s;
+    }
+    .btn-orange:hover {
+        background-color: var(--hover-orange);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    /* Bảng dữ liệu */
+    .table-custom thead th {
+        background-color: var(--light-orange);
+        color: #d35400; /* Cam đậm cho chữ tiêu đề */
+        border-bottom: 2px solid var(--primary-orange);
+    }
+    .input-money {
+        font-weight: bold;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+</style>
+
 <div class="container mt-4" style="max-width: 900px;">
 
-    <!-- Header + Flash Messages -->
-    <div class="d-flex justify-content-between align-items-end mb-3 border-bottom pb-2">
-        <h3 class="font-weight-light mb-0">Cấu hình quy định</h3>
-        <span class="text-muted small">Cập nhật lần cuối: Hôm nay</span>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="font-weight-bold text-dark">Thay đổi quy định</h3>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-secondary alert-dismissible fade show shadow-sm" role="alert">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-        {% endfor %}
-      {% endif %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} shadow-sm">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
     {% endwith %}
 
-    <form method="POST">
-        <!-- Card 1: Quy định học phí (Dùng Table) -->
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-white border-bottom-0 pt-4 px-4">
-                <h5 class="mb-0 text-dark"><i class="fa fa-money mr-2"></i>Biểu phí khóa học</h5>
-                <p class="text-muted small mb-0">Điều chỉnh mức học phí cơ bản cho từng cấp độ.</p>
+    <div class="card-custom">
+        <div class="card-header-orange">
+            <i class="fa fa-cogs mr-2"></i> Cấu hình hệ thống
+        </div>
+
+        <div class="card-body p-4">
+
+            <div class="form-group row align-items-center">
+                <label class="col-sm-3 font-weight-bold text-muted">Lọc theo khóa học:</label>
+                <div class="col-sm-6">
+                    <select class="form-control custom-select border-secondary"
+                            onchange="window.location.href='?course_id='+this.value"
+                            style="font-weight: 500;">
+                        <option value="all">-- Tất cả khóa học --</option>
+                        {% for c in courses %}
+                        <option value="{{ c.id }}" {% if selected_course_id|int == c.id %}selected{% endif %}>
+                            {{ c.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead class="bg-light text-muted">
+
+            <hr class="my-4">
+
+            <form method="POST">
+                <h5 class="font-weight-bold mb-3" style="color: var(--primary-orange);">
+                    <i class="fa fa-money"></i> Biểu phí khóa học
+                </h5>
+
+                {% if levels %}
+                <table class="table table-custom table-hover">
+                    <thead>
                         <tr>
-                            <th class="px-4 border-top-0 w-50">Cấp độ (Level)</th>
-                            <th class="px-4 border-top-0">Học phí hiện tại (VNĐ)</th>
+                            <th class="pl-3">Cấp độ (Level)</th>
+                            <th width="35%">Học phí (VNĐ)</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for level in levels %}
                         <tr>
-                            <td class="px-4 align-middle font-weight-bold text-dark">
-                                {{ level.name }}
-                            </td>
-                            <td class="px-4">
+                            <td class="align-middle pl-3 font-weight-bold">{{ level.name }}</td>
+                            <td>
                                 <div class="input-group">
                                     <input type="number"
-                                           class="form-control border-secondary"
+                                           class="form-control input-money"
                                            name="tuition_{{ level.id }}"
                                            value="{{ '{:.0f}'.format(level.tuition) }}">
                                     <div class="input-group-append">
-                                        <span class="input-group-text bg-light border-secondary">₫</span>
+                                        <span class="input-group-text bg-white font-weight-bold text-muted">₫</span>
                                     </div>
                                 </div>
                             </td>
@@ -58,41 +135,32 @@
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
-        </div>
-
-        <!-- Card 2: Quy định lớp học -->
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-white border-bottom-0 pt-4 px-4">
-                <h5 class="mb-0 text-dark"><i class="fa fa-graduation-cap mr-2"></i>Quy định lớp học</h5>
-            </div>
-            <div class="card-body px-4 pb-4">
-                <div class="form-group row align-items-center mb-0">
-                    <label class="col-sm-4 col-form-label font-weight-bold">Sỉ số tối đa:</label>
-                    <div class="col-sm-4">
-                        <input type="number"
-                               class="form-control border-secondary"
-                               name="max_stu"
-                               value="{{ max_stu }}">
+                {% else %}
+                    <div class="alert alert-light text-center border">
+                        Không có cấp độ nào được tìm thấy.
                     </div>
-                    <div class="col-sm-4 text-muted small">
-                        Học viên / Lớp
+                {% endif %}
+
+                <h5 class="font-weight-bold mt-5 mb-3" style="color: var(--primary-orange);">
+                    <i class="fa fa-users"></i> Quy định lớp học
+                </h5>
+                <div class="form-group row align-items-center">
+                    <label class="col-sm-4 font-weight-bold">Sỉ số tối đa (Học viên/lớp):</label>
+                    <div class="col-sm-3">
+                        <input type="number"
+                               class="form-control font-weight-bold text-center border-secondary"
+                               name="max_stu" value="{{ max_stu }}">
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Sticky Bottom Actions -->
-        <div class="card shadow-sm border-0 bg-light">
-            <div class="card-body d-flex justify-content-end p-3">
-                <button type="button" class="btn btn-link text-muted mr-3" style="text-decoration: none;">Hủy bỏ</button>
-                <button type="submit" class="btn btn-dark px-4 font-weight-bold">
-                    <i class="fa fa-save mr-1"></i> Lưu thay đổi
-                </button>
-            </div>
+                <div class="mt-5 text-right">
+                    <a href="/admin" class="btn btn-secondary mr-2">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-orange shadow-sm">
+                        <i class="fa fa-save"></i> Lưu thay đổi
+                    </button>
+                </div>
+            </form>
         </div>
-    </form>
-
-    <div class="mb-5"></div> <!-- Spacer for footer -->
+    </div>
 </div>
 {% endblock %}

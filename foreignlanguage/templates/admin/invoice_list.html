@@ -2,75 +2,207 @@
 
 {% block body %}
 <style>
-    .bg-custom-orange { background-color: #ff9800; color: white; }
-    .bg-light-yellow { background-color: #fff3e0; }
-    .btn-print { background-color: #5d4037; color: white; } /* Màu nâu nút in lại */
-    .btn-create { background-color: #2196F3; color: white; }
-    .text-success-bold { color: #2e7d32; font-weight: bold; }
+    /* Dùng lại bộ màu cam thương hiệu */
+    :root {
+        --primary-orange: #ff9800;
+        --dark-orange: #f57c00;
+        --light-bg: #fff3e0;
+    }
+
+    .card-manager {
+        border-top: 4px solid var(--primary-orange);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    /* Style cho thanh tìm kiếm */
+    .search-bar {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+    }
+
+    /* Style cho bảng */
+    .table-hover tbody tr:hover {
+        background-color: var(--light-bg);
+    }
+
+    .table thead th {
+        border-top: none;
+        background-color: var(--primary-orange);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    /* Badge trạng thái */
+    .badge-status {
+        padding: 8px 12px;
+        border-radius: 30px;
+        font-weight: normal;
+        font-size: 0.85rem;
+    }
+
+    .money-text {
+        color: #d32f2f;
+        font-weight: bold;
+    }
 </style>
 
-<div class="container-fluid mt-4">
-    <h3 class="font-weight-light mb-3">Xin chào, Thu ngân</h3>
-    <h5 class="mb-4 text-muted">Quản lí hóa đơn</h5>
-
-    <div class="card border-0 bg-light-yellow p-4 shadow-sm">
-        
-        <form method="GET" class="form-inline mb-4 justify-content-between">
-            <div class="d-flex w-75">
-                <input type="text" name="kw" value="{{ request.args.get('kw', '') }}" 
-                       class="form-control mr-2 w-50 border-dark" 
-                       placeholder="Tìm theo tên, SĐT, mã HĐ...">
-                       
-                <select class="form-control mr-2 border-dark">
-                    <option>Tất cả trạng thái</option>
-                    <option>Đã thanh toán</option>
-                </select>
-                
-                <button type="submit" class="btn" style="background-color: #e040fb; color: white;">Tìm kiếm</button>
-            </div>
-        </form>
-
-        <div class="table-responsive">
-            <table class="table table-bordered text-center" style="border-color: #000;">
-                <thead class="bg-custom-orange text-dark font-weight-bold">
-                    <tr>
-                        <th>Mã HĐ</th>
-                        <th>Học viên</th>
-                        <th>Khóa học</th>
-                        <th>Ngày nộp</th>
-                        <th>Số tiền</th>
-                        <th>Trạng thái</th>
-                        <th>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white">
-                    {% for t in transactions %}
-                    <tr>
-                        <td class="align-middle">HD-{{ "%04d" % t.id }}</td>
-                        <td class="align-middle font-weight-bold">{{ t.registration.student.name }}</td>
-                        <td class="align-middle">{{ t.registration.classroom.course.name }}</td>
-                        <td class="align-middle">{{ t.date.strftime('%d/%m/%Y') }}</td>
-                        <td class="align-middle">{{ "{:,.0f}".format(t.money) }}</td>
-                        <td class="align-middle text-success-bold">
-                            {% if t.status.name == 'SUCCESS' %}Đã thanh toán{% else %}{{ t.status.name }}{% endif %}
-                        </td>
-                        <td class="align-middle">
-                            <button class="btn btn-sm btn-print rounded px-3">In lại</button>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="7" class="text-muted">Không tìm thấy hóa đơn nào.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<div class="container-fluid pt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h3 class="font-weight-bold mb-0">Quản lý hóa đơn</h3>
+            <p class="text-muted small">Xem lịch sử giao dịch và in lại hóa đơn</p>
         </div>
-        
-        <div class="d-flex justify-content-end mt-3">
-            <span class="mr-3 mt-1">Trang 1/5</span>
-            <button class="btn btn-sm btn-success mr-1"><i class="fa fa-arrow-left"></i></button>
-            <button class="btn btn-sm btn-success"><i class="fa fa-arrow-right"></i></button>
+        <div>
+            <a href="{{ url_for('invoice.index') }}" class="btn btn-outline-warning">
+                <i class="fa fa-plus"></i> Lập hóa đơn mới
+            </a>
+        </div>
+    </div>
+
+    <div class="card card-manager border-0">
+        <div class="card-body">
+
+            <form method="GET" class="search-bar mb-4">
+                <div class="row align-items-end">
+                    <div class="col-md-4 mb-2">
+                        <label class="font-weight-bold small text-muted">Từ khóa</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-white"><i class="fa fa-search"></i></span>
+                            </div>
+                            <input type="text" name="kw" value="{{ request.args.get('kw', '') }}"
+                                   class="form-control" placeholder="Tên học viên, SĐT, Mã HĐ...">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                         <label class="font-weight-bold small text-muted">Trạng thái</label>
+                         <select class="form-control" name="status">
+                            <option value="">-- Tất cả --</option>
+                            <option value="SUCCESS">Đã thanh toán</option>
+                            <option value="PENDING">Chờ xử lý</option>
+                             <option value="FAILED">Thất bại</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <button type="submit" class="btn btn-warning text-white btn-block font-weight-bold">
+                            Lọc dữ liệu
+                        </button>
+                    </div>
+
+                    <div class="col-md-2 mb-2 text-right">
+                        <a href="{{ url_for('management.index') }}" class="btn btn-light btn-sm" title="Xóa bộ lọc">
+                            <i class="fa fa-refresh"></i> Reset
+                        </a>
+                    </div>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered text-center vertical-middle">
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">Mã HĐ</th>
+                            <th class="text-left">Học viên / Khóa học</th>
+                            <th>Ngày nộp</th>
+                            <th>Hình thức</th>
+                            <th>Số tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                            <td class="align-middle">
+                                <span class="font-weight-bold text-secondary">#{{ "%04d" % t.id }}</span>
+                            </td>
+
+                            <td class="text-left align-middle">
+                                <div class="font-weight-bold text-dark">{{ t.registration.student.name }}</div>
+                                <div class="small text-muted">
+                                    <i class="fa fa-book"></i> {{ t.registration.classroom.course.name }}
+                                </div>
+                            </td>
+
+                            <td class="align-middle">
+                                {{ t.date.strftime('%d/%m/%Y') }}<br>
+                                <small class="text-muted">{{ t.date.strftime('%H:%M') }}</small>
+                            </td>
+
+                            <td class="align-middle">
+                                {% if t.method.name == 'BANKING' %}
+                                    <span class="badge badge-light border">
+                                        <i class="fa fa-university text-primary"></i> CK
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-light border">
+                                        <i class="fa fa-money text-success"></i> TM
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="align-middle text-right">
+                                <span class="money-text">{{ "{:,.0f}".format(t.money) }} ₫</span>
+                            </td>
+
+                            <td class="align-middle">
+                                {% if t.status.name == 'SUCCESS' %}
+                                    <span class="badge badge-success badge-status">
+                                        <i class="fa fa-check-circle"></i> Thành công
+                                    </span>
+                                {% elif t.status.name == 'PENDING' %}
+                                    <span class="badge badge-warning text-white badge-status">
+                                        <i class="fa fa-clock-o"></i> Chờ xử lý
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-danger badge-status">
+                                        <i class="fa fa-times-circle"></i> Thất bại
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="align-middle">
+                                <button class="btn btn-sm btn-info" title="In lại hóa đơn">
+                                    <i class="fa fa-print"></i>
+                                </button>
+                                <button class="btn btn-sm btn-secondary" title="Chi tiết">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="py-5 text-center text-muted">
+                                <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" width="60" class="mb-3 opacity-50">
+                                <p>Không tìm thấy hóa đơn nào phù hợp.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                <div class="text-muted small">
+                    Hiển thị <b>{{ transactions|length }}</b> giao dịch gần nhất
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
+                        <li class="page-item active"><a class="page-link bg-warning border-warning" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link text-warning" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link text-warning" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link text-warning" href="#">Sau</a></li>
+                    </ul>
+                </nav>
+            </div>
+
         </div>
     </div>
 </div>
