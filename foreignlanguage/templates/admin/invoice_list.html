@@ -1,0 +1,77 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<style>
+    .bg-custom-orange { background-color: #ff9800; color: white; }
+    .bg-light-yellow { background-color: #fff3e0; }
+    .btn-print { background-color: #5d4037; color: white; } /* Màu nâu nút in lại */
+    .btn-create { background-color: #2196F3; color: white; }
+    .text-success-bold { color: #2e7d32; font-weight: bold; }
+</style>
+
+<div class="container-fluid mt-4">
+    <h3 class="font-weight-light mb-3">Xin chào, Thu ngân</h3>
+    <h5 class="mb-4 text-muted">Quản lí hóa đơn</h5>
+
+    <div class="card border-0 bg-light-yellow p-4 shadow-sm">
+        
+        <form method="GET" class="form-inline mb-4 justify-content-between">
+            <div class="d-flex w-75">
+                <input type="text" name="kw" value="{{ request.args.get('kw', '') }}" 
+                       class="form-control mr-2 w-50 border-dark" 
+                       placeholder="Tìm theo tên, SĐT, mã HĐ...">
+                       
+                <select class="form-control mr-2 border-dark">
+                    <option>Tất cả trạng thái</option>
+                    <option>Đã thanh toán</option>
+                </select>
+                
+                <button type="submit" class="btn" style="background-color: #e040fb; color: white;">Tìm kiếm</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-bordered text-center" style="border-color: #000;">
+                <thead class="bg-custom-orange text-dark font-weight-bold">
+                    <tr>
+                        <th>Mã HĐ</th>
+                        <th>Học viên</th>
+                        <th>Khóa học</th>
+                        <th>Ngày nộp</th>
+                        <th>Số tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    {% for t in transactions %}
+                    <tr>
+                        <td class="align-middle">HD-{{ "%04d" % t.id }}</td>
+                        <td class="align-middle font-weight-bold">{{ t.registration.student.name }}</td>
+                        <td class="align-middle">{{ t.registration.classroom.course.name }}</td>
+                        <td class="align-middle">{{ t.date.strftime('%d/%m/%Y') }}</td>
+                        <td class="align-middle">{{ "{:,.0f}".format(t.money) }}</td>
+                        <td class="align-middle text-success-bold">
+                            {% if t.status.name == 'SUCCESS' %}Đã thanh toán{% else %}{{ t.status.name }}{% endif %}
+                        </td>
+                        <td class="align-middle">
+                            <button class="btn btn-sm btn-print rounded px-3">In lại</button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-muted">Không tìm thấy hóa đơn nào.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="d-flex justify-content-end mt-3">
+            <span class="mr-3 mt-1">Trang 1/5</span>
+            <button class="btn btn-sm btn-success mr-1"><i class="fa fa-arrow-left"></i></button>
+            <button class="btn btn-sm btn-success"><i class="fa fa-arrow-right"></i></button>
+        </div>
+    </div>
+</div>
+{% endblock %}

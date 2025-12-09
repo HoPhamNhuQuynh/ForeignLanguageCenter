@@ -1,10 +1,11 @@
-from flask import redirect, url_for, request, flash
-from flask_admin import Admin, AdminIndexView, BaseView, expose
+from flask import redirect, request, flash, url_for
+from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
 from flask_login import current_user, login_user, logout_user
 from sqlalchemy import func, or_
-from foreignlanguage import app, db
+
+from foreignlanguage import app, db, login
 from foreignlanguage.models import (
     Student, Course, Classroom, Employee,
     Registration, Transaction, Score, UserRole, Level,
@@ -13,143 +14,102 @@ from foreignlanguage.models import (
 import dao
 
 # =========================================================
-# 1. BASE VIEWS & PHÂN QUYỀN
+# 1. CÁC CLASS CƠ CHẾ PHÂN QUYỀN
 # =========================================================
 
-class AdminOnlyMixin:
-    """Mixin kiểm tra quyền Admin"""
-
+class AdminView(ModelView):
+    """Dùng cho các bảng chỉ Admin mới thấy"""
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role == UserRole.ADMIN
 
-    def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('admin.index'))
+
+class AdminBaseView(BaseView):
+    """Dùng cho các trang custom (như Regulation) của Admin"""
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role == UserRole.ADMIN
 
 
-class CashierOnlyMixin:
-    """Mixin kiểm tra quyền Cashier"""
+class CashierView(BaseView):
+    """Dùng cho các trang custom của Cashier"""
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role == UserRole.CASHIER
 
-    def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('admin.index'))
 
+class CashierModelView(ModelView):
+    """Dùng cho các bảng Cashier quản lý"""
 
-# Các class View thực tế kế thừa từ Mixin + View gốc
-class AdminModelView(AdminOnlyMixin, ModelView):
-    pass
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role == UserRole.CASHIER
 
-
-class AdminBaseView(AdminOnlyMixin, BaseView):
-    pass
-
-
-class CashierBaseView(CashierOnlyMixin, BaseView):
-    pass
-
-
-class CashierModelView(CashierOnlyMixin, ModelView):
-    pass
 
 # =========================================================
-# 2. TRANG CHỦ (INDEX) & XỬ LÝ LOGIN TẬP TRUNG
+# 2. CÁC VIEW CHỨC NĂNG
 # =========================================================
 
-class MyHomeScreen(AdminIndexView):
-    @expose('/', methods=['GET', 'POST'])
+# --- View Logout ---
+class MyLogoutView(BaseView):
+    @expose('/')
     def index(self):
-        # --- XỬ LÝ ĐĂNG NHẬP (POST) ---
-        if request.method == 'POST':
-            username = request.form.get('username')
-            password = request.form.get('password')
+        logout_user()
+        return redirect('/admin')
 
-            user = dao.auth_user(username, password)
-            if user:
-                login_user(user)
-                return redirect(url_for('admin.index'))
-            else:
-                flash('Sai tên đăng nhập hoặc mật khẩu!', 'danger')
-
-        # --- ĐIỀU HƯỚNG SAU KHI LOGIN (GET) ---
-        if current_user.is_authenticated:
-            # 1. Admin -> Xem Báo cáo
-            if current_user.role == UserRole.ADMIN:
-                stu_count = Student.query.count()
-                revenue_data = db.session.query(func.sum(Transaction.money)).scalar() or 0
-                pass_count = Score.query.filter(Score.value >= 5.0).count()
-                total_scores = Score.query.count()
-                pass_rate = round((pass_count / total_scores * 100), 1) if total_scores > 0 else 0
-
-                return self.render('admin/report.html',
-                                   stu_count=stu_count,
-                                   total_revenue=revenue_data,
-                                   pass_rate=pass_rate)
-
-            # 2. Cashier -> Xem Lập hóa đơn
-            if current_user.role == UserRole.CASHIER:
-                return redirect(url_for('invoice.index'))
-
-            # Role khác -> Logout
-            logout_user()
-            return redirect(url_for('admin.index'))
-
-        # --- CHƯA LOGIN -> HIỆN FORM ---
-        # Render file admin/index.html chứa form login
-        return self.render('admin/index.html')
+    def is_accessible(self):
+        return current_user.is_authenticated
 
 
-# =========================================================
-# 3. CÁC CHỨC NĂNG CỤ THỂ
-# =========================================================
-
-# --- ADMIN: Thay đổi quy định ---
+# --- View Quy định (Admin) ---
 class RegulationView(AdminBaseView):
     @expose('/', methods=['GET', 'POST'])
     def index(self):
         levels = Level.query.all()
-        default_max_stu = 25
+        # Mặc định max_stu, nếu bạn có lưu trong DB thì query ra, ko thì để cứng
+        max_stu = 25
+
         if request.method == 'POST':
             try:
                 for level in levels:
                     new_tuition = request.form.get(f'tuition_{level.id}')
-                    if new_tuition: level.tuition = float(new_tuition)
-                # new_max_stu = request.form.get('max_stu') # Lưu setting nếu có bảng settings
+                    if new_tuition:
+                        level.tuition = float(new_tuition)
                 db.session.commit()
                 flash('Cập nhật quy định thành công!', 'success')
             except Exception as e:
                 db.session.rollback()
                 flash(f'Lỗi: {str(e)}', 'error')
-        return self.render('admin/regulation.html', levels=levels, max_stu=default_max_stu)
+
+        return self.render('admin/regulation.html', levels=levels, max_stu=max_stu)
 
 
-# --- CASHIER: Lập hóa đơn ---
-class CreateInvoiceView(CashierBaseView):
+# --- View Lập hóa đơn (Cashier) ---
+class CreateInvoiceView(CashierView):
     @expose('/', methods=['GET', 'POST'])
     def index(self):
         search_kw = request.args.get('search')
-        unpaid_regis = []
         student_info = None
+        unpaid_regis = []
 
+        # Logic tìm kiếm học viên
         if search_kw:
             search_kw = search_kw.strip()
-            student = Student.query.filter(or_(
+            student_info = Student.query.filter(or_(
                 Student.name.contains(search_kw),
                 Student.phone_num.contains(search_kw)
             )).first()
 
-            if student:
-                student_info = student
+            if student_info:
                 unpaid_regis = Registration.query.filter(
-                    Registration.student_id == student.id,
+                    Registration.student_id == student_info.id,
                     Registration.status != StatusTuition.PAID
                 ).all()
 
+        # Logic thanh toán (POST)
         if request.method == 'POST':
             try:
                 regis_id = request.form.get('regis_id')
                 amount = float(request.form.get('amount'))
                 regis = Registration.query.get(regis_id)
+
                 if regis:
                     new_trans = Transaction(
                         money=amount,
@@ -160,69 +120,102 @@ class CreateInvoiceView(CashierBaseView):
                         employee_id=current_user.id
                     )
                     db.session.add(new_trans)
+
+                    # Cập nhật số tiền đã đóng
                     regis.paid += amount
-                    regis.status = StatusTuition.PAID if regis.paid >= regis.actual_tuition else StatusTuition.PARTIAL
+                    if regis.paid >= regis.actual_tuition:
+                        regis.status = StatusTuition.PAID
+                    else:
+                        regis.status = StatusTuition.PARTIAL
+
                     db.session.commit()
                     flash('Thanh toán thành công!', 'success')
-                    return redirect(url_for('invoice.index', search=student.phone_num))
+                    return redirect(url_for('invoice.index', search=student_info.phone_num))
             except Exception as e:
                 db.session.rollback()
-                flash(f'Lỗi: {str(e)}', 'error')
+                flash(f'Lỗi thanh toán: {str(e)}', 'error')
 
         return self.render('admin/invoice_create.html', student=student_info, registrations=unpaid_regis)
 
 
-# --- CASHIER: Lịch sử giao dịch ---
-class TransactionView(CashierModelView):
+# --- View Lịch sử giao dịch (Cashier) ---
+class TransactionHistoryView(CashierModelView):
     can_create = False
     can_edit = False
     can_delete = False
     column_list = ('id', 'date', 'student_name', 'content', 'money', 'method', 'status')
-    column_labels = dict(id='Mã HD', date='Ngày thu', student_name='Học viên', content='Nội dung', money='Số tiền',
+    column_labels = dict(id='Mã', date='Ngày', student_name='Học viên', content='Nội dung', money='Số tiền',
                          method='PTTT', status='Trạng thái')
-    column_searchable_list = ['content']
-    column_filters = ['status', 'method', 'date']
 
+    # Format hiển thị tên học viên từ relationship
     def _student_formatter(view, context, model, name):
-        return model.registration.student.name if model.registration and model.registration.student else "N/A"
+        if model.registration and model.registration.student:
+            return model.registration.student.name
+        return "N/A"
 
     column_formatters = {'student_name': _student_formatter}
 
 
-# --- CHUNG: Đăng xuất ---
-class LogoutView(BaseView):
-    @expose('/')
+# =========================================================
+# 3. ADMIN INDEX VIEW (XỬ LÝ LOGIN)
+# =========================================================
+
+class MyAdminIndexView(AdminIndexView):
+    @expose('/', methods=['GET', 'POST'])
     def index(self):
-        logout_user()
-        return redirect('/admin')
+        # 1. Xử lý Login Form submit
+        if request.method == 'POST':
+            username = request.form.get('username')
+            password = request.form.get('password')
 
-    def is_accessible(self):
-        return current_user.is_authenticated
+            user = dao.auth_user(username, password)
+            if user:
+                login_user(user)
+                # Đăng nhập xong redirect về chính trang admin để nạp menu đúng quyền
+                return redirect('/admin')
+            else:
+                flash('Sai tên đăng nhập hoặc mật khẩu!', 'danger')
 
+        # 2. Điều hướng nếu đã đăng nhập
+        if current_user.is_authenticated:
+            if current_user.role == UserRole.ADMIN:
+                # Nếu là Admin -> Hiện thống kê (Report)
+                stu_count = Student.query.count()
+                revenue = db.session.query(func.sum(Transaction.money)).scalar() or 0
+                return self.render('admin/report.html', stu_count=stu_count, total_revenue=revenue)
+
+            elif current_user.role == UserRole.CASHIER:
+                # Nếu là Cashier -> Chuyển ngay sang trang Lập hóa đơn
+                return redirect(url_for('invoice.index'))
+
+            else:
+                # Role khác không được vào
+                logout_user()
+                return redirect('/admin')
+
+        # 3. Chưa đăng nhập -> Hiện Form Login
+        return self.render('admin/index.html')
+
+@login.user_loader
+def load_user(user_id):
+    return dao.get_user_by_id(user_id)
 
 # =========================================================
 # 4. KHỞI TẠO ADMIN & ADD VIEW
 # =========================================================
 
-admin = Admin(
-    app=app,
-    name='ANQUINKO',
-    theme=Bootstrap4Theme(),
-    index_view=MyHomeScreen(name='Trang chủ', url='/admin')
-)
+admin = Admin(app=app, name='ANQUINKO', theme=Bootstrap4Theme(), index_view=MyAdminIndexView())
 
-# --- MENU ADMIN (Có Category để gom nhóm) ---
-admin.add_view(AdminModelView(Course, db.session, name='Khóa học', category='Quản lí khóa học'))
-admin.add_view(AdminModelView(Classroom, db.session, name='Lớp học', category='Quản lí khóa học'))
-admin.add_view(RegulationView(name='Thay đổi quy định', endpoint='regulation'))  # Không category -> Nằm ngang
-admin.add_view(AdminModelView(Student, db.session, name='Học viên', category='Thông tin nhân sự'))
-admin.add_view(AdminModelView(Employee, db.session, name='Nhân viên', category='Thông tin nhân sự'))
+# --- Menu cho ADMIN ---
+admin.add_view(AdminView(Course, db.session, name='Khóa học', category='Đào tạo'))
+admin.add_view(AdminView(Classroom, db.session, name='Lớp học', category='Đào tạo'))
+admin.add_view(AdminView(Employee, db.session, name='Nhân viên', category='Nhân sự'))
+admin.add_view(AdminView(Student, db.session, name='Học viên', category='Nhân sự'))
+admin.add_view(RegulationView(name='Quy định', endpoint='regulation'))
 
+# --- Menu cho CASHIER ---
 admin.add_view(CreateInvoiceView(name='Lập hóa đơn', endpoint='invoice'))
-admin.add_view(TransactionView(Transaction, db.session, name='Lịch sử giao dịch', endpoint='history'))
+admin.add_view(TransactionHistoryView(Transaction, db.session, name='Lịch sử giao dịch', endpoint='history'))
 
-# --- LOGOUT ---
-admin.add_view(LogoutView(name='Đăng xuất'))
-
-if __name__ == '__main__':
-    app.run(debug=True)
+# --- Menu chung ---
+admin.add_view(MyLogoutView(name='Đăng xuất'))

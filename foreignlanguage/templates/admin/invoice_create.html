@@ -1,148 +1,112 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-<div class="container mt-4">
-    
-    <!-- Title Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-        <div>
-            <h3 class="font-weight-light text-dark mb-0">Lập hóa đơn thu phí</h3>
-            <p class="text-muted small mb-0">Tìm kiếm học viên và ghi nhận thanh toán.</p>
-        </div>
-        <div>
-            <a href="/admin/transaction" class="btn btn-outline-dark btn-sm">
-                <i class="fa fa-history"></i> Xem lịch sử
-            </a>
-        </div>
-    </div>
+<style>
+    .bg-custom-orange { background-color: #ff9800; color: white; }
+    .bg-custom-yellow { background-color: #fff3e0; }
+    .btn-custom { background-color: #2196F3; color: white; font-weight: bold; }
+    .btn-confirm { background-color: #00c853; color: white; font-weight: bold; }
+</style>
 
-    <!-- Layout 2 cột nằm ngang -->
+<div class="container-fluid mt-4">
     <div class="row">
-        
-        <!-- Cột Trái: Tìm kiếm & Danh sách nợ -->
-        <div class="col-md-7">
-            <!-- 1. Form Tìm kiếm -->
-            <div class="card shadow-sm border-0 mb-4">
+        <div class="col-md-5">
+            <h3 class="mb-3 font-weight-bold">Lập hóa đơn</h3>
+
+            <div class="card border-0 bg-custom-yellow mb-4 shadow-sm">
                 <div class="card-body">
-                    <form method="GET" class="input-group">
-                        <input type="text" name="search" class="form-control border-secondary" placeholder="Nhập tên hoặc số điện thoại học viên..." value="{{ request.args.get('search', '') }}">
-                        <div class="input-group-append">
-                            <button class="btn btn-dark" type="submit">
-                                <i class="fa fa-search"></i> Tìm kiếm
-                            </button>
+                    <label class="font-weight-bold">Tìm đăng ký (SĐT, Email, ID)</label>
+                    <form method="GET" action="{{ url_for('invoice.index') }}">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control rounded-pill mr-2"
+                                   placeholder="Nhập..." value="{{ request.args.get('search', '') }}">
+                            <button type="submit" class="btn btn-dark rounded-pill">Tìm</button>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- 2. Kết quả tìm kiếm -->
-            {% if student %}
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-light border-bottom-0">
-                    <h6 class="mb-0 text-dark font-weight-bold"><i class="fa fa-user mr-2"></i>Thông tin học viên</h6>
-                </div>
+            <div class="card border-0 bg-custom-yellow shadow-sm">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <small class="text-muted d-block">Họ và tên</small>
-                            <span class="h5 font-weight-light">{{ student.name }}</span>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-muted d-block">Số điện thoại</small>
-                            <span class="h5 font-weight-light">{{ student.phone_num }}</span>
-                        </div>
+                    <label class="font-weight-bold">Danh sách chờ thanh toán</label>
+                    {% if registrations %}
+                    <div class="table-responsive bg-white rounded">
+                        <table class="table table-bordered mb-0">
+                            <thead class="bg-custom-orange">
+                                <tr>
+                                    <th>Học viên</th>
+                                    <th>Khóa học</th>
+                                    <th>Học phí còn nợ</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for r in registrations %}
+                                {% set debt = r.actual_tuition - r.paid %}
+                                <tr>
+                                    <td>
+                                        <b>{{ r.student.name }}</b><br>
+                                        <small>{{ r.student.phone_num }}</small>
+                                    </td>
+                                    <td>{{ r.classroom.course.name }}</td>
+                                    <td class="text-danger font-weight-bold">{{ "{:,.0f}".format(debt) }} đ</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-custom btn-select"
+                                                data-id="{{ r.id }}"
+                                                data-name="{{ r.student.name }}"
+                                                data-course="{{ r.classroom.course.name }}"
+                                                data-debt="{{ debt }}">
+                                            Chọn
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
+                    {% else %}
+                        <p class="text-muted text-center mt-3">Chưa có thông tin hoặc học viên không nợ phí.</p>
+                    {% endif %}
                 </div>
             </div>
-
-            <!-- 3. Danh sách các khoản chưa đóng -->
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white border-bottom-0">
-                    <h6 class="mb-0 text-dark font-weight-bold">Danh sách chờ thanh toán</h6>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="bg-light text-muted small">
-                            <tr>
-                                <th class="pl-4">Khóa học</th>
-                                <th>Học phí gốc</th>
-                                <th>Đã đóng</th>
-                                <th>Còn nợ</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for reg in registrations %}
-                            {% set debt = reg.actual_tuition - reg.paid %}
-                            <tr>
-                                <td class="pl-4 align-middle font-weight-bold">{{ reg.classroom.course.name }}</td>
-                                <td class="align-middle">{{ "{:,.0f}".format(reg.actual_tuition) }}</td>
-                                <td class="align-middle text-success">{{ "{:,.0f}".format(reg.paid) }}</td>
-                                <td class="align-middle text-danger font-weight-bold">{{ "{:,.0f}".format(debt) }}</td>
-                                <td class="text-right pr-4">
-                                    <button class="btn btn-sm btn-outline-dark btn-select-pay" 
-                                            data-id="{{ reg.id }}" 
-                                            data-course="{{ reg.classroom.course.name }}"
-                                            data-debt="{{ debt }}">
-                                        Chọn
-                                    </button>
-                                </td>
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td colspan="5" class="text-center py-4 text-muted">
-                                    <em>Học viên này đã hoàn thành mọi khoản phí.</em>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            {% elif request.args.get('search') %}
-            <div class="alert alert-warning shadow-sm border-0">Không tìm thấy học viên nào.</div>
-            {% endif %}
         </div>
 
-        <!-- Cột Phải: Form Thanh toán (Sticky) -->
-        <div class="col-md-5">
-            <div class="card shadow-sm border-0 bg-dark text-white sticky-top" style="top: 20px;">
-                <div class="card-header border-secondary">
-                    <h5 class="mb-0"><i class="fa fa-credit-card mr-2"></i>Thanh toán</h5>
-                </div>
+        <div class="col-md-7">
+            <div class="card border-0 bg-custom-yellow h-100 shadow-sm">
                 <div class="card-body">
+                    <h4 class="mb-4">Hóa đơn</h4>
+
                     <form method="POST">
-                        <input type="hidden" name="regis_id" id="pay_regis_id">
-                        
+                        <input type="hidden" name="regis_id" id="inp_regis_id">
+
                         <div class="form-group">
-                            <label class="text-white-50 small text-uppercase">Khóa học đang chọn</label>
-                            <input type="text" class="form-control bg-secondary text-white border-0" id="pay_course_name" readonly placeholder="Chưa chọn khoản phí...">
+                            <label class="font-weight-bold">Tên học viên</label>
+                            <input type="text" class="form-control bg-transparent border-dark" id="inp_name" readonly>
                         </div>
 
                         <div class="form-group">
-                            <label class="text-white-50 small text-uppercase">Số tiền thanh toán (VNĐ)</label>
-                            <div class="input-group">
-                                <input type="number" name="amount" id="pay_amount" class="form-control form-control-lg font-weight-bold border-0" placeholder="0">
-                                <div class="input-group-append">
-                                    <span class="input-group-text border-0 bg-white font-weight-bold">₫</span>
-                                </div>
-                            </div>
-                            <small class="text-white-50 mt-1 d-block">Tối đa cần đóng: <span id="pay_max_debt">0</span> ₫</small>
+                            <label class="font-weight-bold">Khóa học</label>
+                            <input type="text" class="form-control bg-transparent border-dark" id="inp_course" readonly>
                         </div>
 
                         <div class="form-group">
-                             <label class="text-white-50 small text-uppercase">Hình thức</label>
-                             <select class="form-control border-0" name="method">
-                                 <option value="CASH">Tiền mặt</option>
-                                 <option value="BANKING">Chuyển khoản</option>
-                             </select>
+                            <label class="font-weight-bold">Số tiền thanh toán</label>
+                            <input type="number" name="amount" class="form-control border-dark" id="inp_amount" placeholder="Nhập số tiền...">
+                            <small class="text-danger">Tối đa cần đóng: <span id="lbl_debt">0</span> đ</small>
                         </div>
 
-                        <hr class="border-secondary my-4">
+                        <div class="form-group">
+                            <label class="font-weight-bold">Hình thức thanh toán</label>
+                            <select name="method" class="form-control border-dark">
+                                <option value="CASH">Tiền mặt</option>
+                                <option value="BANKING">Chuyển khoản</option>
+                            </select>
+                        </div>
 
-                        <button type="submit" class="btn btn-light btn-block btn-lg font-weight-bold text-dark shadow-none" id="btn-submit-pay" disabled>
-                            <i class="fa fa-check-circle mr-1"></i> Xác nhận & In phiếu
-                        </button>
+                        <div class="mt-5 d-flex justify-content-end">
+                            <a href="{{ url_for('invoice.index') }}" class="btn btn-secondary mr-2">Hủy</a>
+                            <button type="submit" class="btn btn-confirm px-4 rounded-pill">Xác nhận và in</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -150,23 +114,15 @@
     </div>
 </div>
 
-<!-- Javascript nhỏ để xử lý chọn khóa học -->
 <script>
-    document.querySelectorAll('.btn-select-pay').forEach(button => {
-        button.addEventListener('click', function() {
-            // Lấy dữ liệu từ nút bấm
-            const regisId = this.dataset.id;
-            const courseName = this.dataset.course;
-            const debt = this.dataset.debt;
-
-            // Điền vào form bên phải
-            document.getElementById('pay_regis_id').value = regisId;
-            document.getElementById('pay_course_name').value = courseName;
-            document.getElementById('pay_amount').value = debt; // Mặc định điền số tiền nợ
-            document.getElementById('pay_max_debt').innerText = new Intl.NumberFormat().format(debt);
-
-            // Active nút submit
-            document.getElementById('btn-submit-pay').disabled = false;
+    // Script JS để lấy dữ liệu từ nút Chọn bên trái bỏ sang Form bên phải
+    document.querySelectorAll('.btn-select').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('inp_regis_id').value = this.dataset.id;
+            document.getElementById('inp_name').value = this.dataset.name;
+            document.getElementById('inp_course').value = this.dataset.course;
+            document.getElementById('inp_amount').value = this.dataset.debt;
+            document.getElementById('lbl_debt').innerText = new Intl.NumberFormat().format(this.dataset.debt);
         });
     });
 </script>
