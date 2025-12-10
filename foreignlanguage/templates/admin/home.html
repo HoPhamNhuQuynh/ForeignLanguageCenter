@@ -1,0 +1,48 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="jumbotron bg-white shadow-sm border-0 text-center py-5" style="border-radius: 20px;">
+        <div class="mb-4">
+            {% if current_user.avatar %}
+                <img src="{{ current_user.avatar }}" class="rounded-circle shadow" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid var(--primary-orange, #FF6B4A);">
+            {% else %}
+                <div style="width: 120px; height: 120px; background: #eee; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #aaa;">
+                    <i class="fa fa-user"></i>
+                </div>
+            {% endif %}
+        </div>
+
+        <h1 class="display-4 font-weight-bold" style="color: #333;">Xin chào, {{ current_user.name }}!</h1>
+        
+        <p class="lead text-muted text-uppercase letter-spacing-1 mt-2">
+            {% if current_user.role.name == 'ADMIN' %}
+                QUẢN TRỊ VIÊN HỆ THỐNG
+            {% elif current_user.role.name == 'CASHIER' %}
+                NHÂN VIÊN THU NGÂN
+            {% else %}
+                {{ current_user.role.name }}
+            {% endif %}
+        </p>
+
+        <hr class="my-4" style="width: 100px; border-top: 3px solid var(--primary-orange, #FF6B4A);">
+
+        <p class="text-muted mb-5">Chào mừng bạn quay trở lại hệ thống quản lý ANQUINKO.</p>
+
+        <div class="d-flex justify-content-center gap-3">
+            {% if current_user.role.name == 'ADMIN' %}
+                <a href="{{ url_for('stats.index') }}" class="btn btn-warning text-white btn-lg px-4 mx-2 rounded-pill shadow-sm">
+                    <i class="fa fa-bar-chart mr-2"></i> Xem báo cáo
+                </a>
+                <a href="{{ url_for('employee.index_view') }}" class="btn btn-outline-dark btn-lg px-4 mx-2 rounded-pill">
+                    <i class="fa fa-users mr-2"></i> Quản lý nhân sự
+                </a>
+            {% elif current_user.role.name == 'CASHIER' %}
+                <a href="{{ url_for('invoice.index') }}" class="btn btn-warning text-white btn-lg px-4 mx-2 rounded-pill shadow-sm">
+                    <i class="fa fa-file-text-o mr-2"></i> Lập hóa đơn ngay
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

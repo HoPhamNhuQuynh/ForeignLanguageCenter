@@ -121,8 +121,7 @@
 
                             <td class="align-middle">
                                 <span class="font-weight-bold text-dark">{{ r.student.name }}</span><br>
-                                <small class="text-muted"><i class="fa fa-phone"></i> {{ r.student.phone_num
-                                    }}</small><br>
+                                <small class="text-muted"><i class="fa fa-phone"></i> {{ r.student.phone_num }}</small><br>
                                 <span class="badge badge-info mt-1">{{ r.classroom.course.name }}</span>
                             </td>
 
@@ -175,7 +174,7 @@
                     <form method="POST" id="invoiceForm">
                         <input type="hidden" name="regis_id" id="inp_regis_id" required>
 
-                        <div class="row mb-4">
+                        <div class="row mb-3">
                             <div class="col-md-6 mb-3">
                                 <label class="text-muted small text-uppercase">Học viên</label>
                                 <input type="text" class="form-control form-control-custom" id="inp_name"
@@ -186,7 +185,19 @@
                                 <input type="text" class="form-control form-control-custom" id="inp_course"
                                        placeholder="--" readonly>
                             </div>
-                            <div class="col-12 mb-3">
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-8 mb-3">
+                                <label class="font-weight-bold">Nội dung thu</label>
+                                <input type="text"
+                                       name="content"
+                                       id="inp_content"
+                                       class="form-control form-control-custom text-dark"
+                                       placeholder="Ví dụ: Thu học phí..."
+                                       required>
+                            </div>
+                            <div class="col-md-4 mb-3">
                                 <label class="font-weight-bold">Ngày nộp</label>
                                 <input type="date"
                                        name="created_date"
@@ -204,14 +215,21 @@
                                 <div class="input-group input-group-lg">
                                     <input type="number" name="amount"
                                            class="form-control border-warning text-primary font-weight-bold"
-                                           id="inp_amount" placeholder="0" required min="1000">
+                                           id="inp_amount"
+                                           placeholder="0"
+                                           required min="1000">
                                     <div class="input-group-append">
                                         <span class="input-group-text bg-warning text-white font-weight-bold">₫</span>
                                     </div>
                                 </div>
-                                <small class="form-text text-danger mt-1">
-                                    * Tối đa cần đóng: <span id="lbl_debt_limit" class="font-weight-bold">0</span> ₫
-                                </small>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="form-text text-danger">
+                                        * Tối đa cần đóng: <span id="lbl_debt_limit" class="font-weight-bold">0</span> ₫
+                                    </small>
+                                    <small class="text-muted font-italic">
+                                        (Nhập ít hơn để thanh toán từng phần)
+                                    </small>
+                                </div>
                             </div>
 
                             <div class="col-12 mb-4">
@@ -239,7 +257,7 @@
                             <button type="submit"
                                     class="btn btn-warning btn-lg font-weight-bold text-white px-5 shadow-sm"
                                     id="btnSubmit" disabled>
-                                <i class="fa fa-print"></i> LẬP PHIẾU & IN
+                                <i class="fa fa-print"></i> LẬP PHIẾU
                             </button>
                         </div>
                     </form>
@@ -250,29 +268,52 @@
 </div>
 
 <script>
-    // Hàm reset form đơn giản
+    // Hàm reset form
     function resetForm() {
         document.getElementById('invoiceForm').reset();
         document.getElementById('btnSubmit').disabled = true;
+        document.getElementById('btnSubmit').classList.remove('btn-warning');
+        document.getElementById('btnSubmit').classList.add('btn-secondary');
+
+        // Xóa class active ở bảng bên trái
         document.querySelectorAll('.student-row').forEach(r => r.classList.remove('row-active'));
+
+        // Reset hiển thị số tiền
         document.getElementById('lbl_debt_limit').innerText = "0";
+        document.getElementById('inp_amount').removeAttribute('max');
     }
 
-    // Giữ nguyên hàm selectRow cũ của bạn
+    // Hàm chọn dòng học viên
     function selectRow(row, id, name, course, debt) {
+        // 1. Highlight dòng được chọn
         document.querySelectorAll('.student-row').forEach(r => r.classList.remove('row-active'));
         row.classList.add('row-active');
 
+        // 2. Điền thông tin cơ bản
         document.getElementById('inp_regis_id').value = id;
         document.getElementById('inp_name').value = name;
         document.getElementById('inp_course').value = course;
 
-        document.getElementById('inp_amount').value = debt;
+        // 3. Tự động điền nội dung: "Thu học phí: [Tên khóa]"
+        document.getElementById('inp_content').value = "Thu học phí: " + course;
+
+        // 4. Xử lý logic tiền nợ
+        let inputAmount = document.getElementById('inp_amount');
+
+        // Điền sẵn toàn bộ số nợ vào ô nhập tiền (để tiện thanh toán full)
+        inputAmount.value = debt;
+
+        // Đặt thuộc tính max = debt để không cho nhập lố (Validation HTML5)
+        inputAmount.setAttribute("max", debt);
+
+        // Hiển thị text nhắc nhở
         document.getElementById('lbl_debt_limit').innerText = new Intl.NumberFormat('vi-VN').format(debt);
 
-        document.getElementById('btnSubmit').disabled = false;
-        document.getElementById('btnSubmit').classList.remove('btn-secondary');
-        document.getElementById('btnSubmit').classList.add('btn-warning');
+        // 5. Kích hoạt nút Submit
+        let btn = document.getElementById('btnSubmit');
+        btn.disabled = false;
+        btn.classList.remove('btn-secondary');
+        btn.classList.add('btn-warning');
     }
 </script>
 {% endblock %}
