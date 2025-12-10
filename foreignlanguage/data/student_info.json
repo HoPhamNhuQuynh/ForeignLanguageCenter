@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "entry_score": 6.5,
+    "u_id": 1
+  },
+  {
+    "id": 2,
+    "entry_score": 5.0,
+    "u_id": 2
+  },
+  {
+    "id": 3,
+    "entry_score": 4.5,
+    "u_id": 3
+  },
+  {
+    "id": 4,
+    "entry_score": 7.0,
+    "u_id": 4
+  },
+  {
+    "id": 5,
+    "entry_score": 8.5,
+    "u_id": 5
+  },
+  {
+    "id": 6,
+    "entry_score": 3.0,
+    "u_id": 6
+  },
+  {
+    "id": 7,
+    "entry_score": 5.5,
+    "u_id": 7
+  },
+  {
+    "id": 8,
+    "entry_score": 6.0,
+    "u_id": 8
+  },
+  {
+    "id": 9,
+    "entry_score": 9.0,
+    "u_id": 9
+  },
+  {
+    "id": 10,
+    "entry_score": 4.0,
+    "u_id": 10
+  }
+]

@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from flask import redirect, request, flash, url_for
 from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
@@ -9,11 +8,12 @@ from sqlalchemy import func, or_, extract
 
 from foreignlanguage import app, db, login
 from foreignlanguage.models import (
-    Student, Course, Classroom, Employee,
+    StudentInfo, Course, Classroom, EmployeeInfo,
     Registration, Transaction, Score, UserRole, Level,
     StatusTuition, StatusPayment, MethodEnum
 )
 import dao
+
 
 # 1. CÁC CLASS CƠ CHẾ PHÂN QUYỀN
 class AdminView(ModelView):
@@ -309,8 +309,8 @@ admin = Admin(app=app, name='ANQUINKO', theme=Bootstrap4Theme(), index_view=MyAd
 admin.add_view(StatsView(name='Thống kê báo cáo', endpoint='stats'))
 admin.add_view(AdminView(Course, db.session, name='Khóa học', category='Đào tạo'))
 admin.add_view(AdminView(Classroom, db.session, name='Lớp học', category='Đào tạo'))
-admin.add_view(AdminView(Employee, db.session, name='Nhân viên', category='Người dùng'))
-admin.add_view(AdminView(Student, db.session, name='Học viên', category='Người dùng'))
+admin.add_view(AdminView(EmployeeInfo, db.session, name='Nhân viên', category='Người dùng'))
+admin.add_view(AdminView(StudentInfo, db.session, name='Học viên', category='Người dùng'))
 admin.add_view(RegulationView(name='Quy định', endpoint='regulation'))
 
 # --- Menu cho CASHIER ---

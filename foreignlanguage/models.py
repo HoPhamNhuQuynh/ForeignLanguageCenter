@@ -1,10 +1,12 @@
 import json
+
+from foreignlanguage import db, app
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Enum, values
+from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 from enum import Enum as ValueEnum
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Enum
-from sqlalchemy.orm import relationship, backref
-from foreignlanguage import db, app
+
 
 class UserRole(ValueEnum):
     STUDENT = 1
@@ -12,9 +14,11 @@ class UserRole(ValueEnum):
     CASHIER = 3
     TEACHER = 4
 
+
 class MethodEnum(ValueEnum):
     CASH = 1
     BANKING = 2
+
 
 class StatusPayment(ValueEnum):
     SUCCESS = 1
@@ -22,13 +26,15 @@ class StatusPayment(ValueEnum):
     PENDING = 3
     CANCELLED = 4
 
+
 class StatusTuition(ValueEnum):
     UNPAID = 1
     PAID = 2
     PARTIAL = 3
     OVERDUE = 4
 
-class Base(db.Model):  # base model
+
+class Base(db.Model):
     __abstract__ = True
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     name = Column(String(50))
@@ -38,23 +44,34 @@ class Base(db.Model):  # base model
     def __str__(self):
         return self.name
 
-class User(Base, UserMixin):  # base model of users
-    __abstract__ = True
+
+class UserAccount(Base, UserMixin):
     username = Column(String(30), nullable=False, unique=True)
-    password = Column(String(100), nullable=False)
+    password = Column(String(50), nullable=False)
     email = Column(String(100), nullable=False)
     address = Column(String(200))
     phone_num = Column(String(20))
     role = Column(Enum(UserRole), default=UserRole.STUDENT)
-    avatar = Column(String(300),default="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg")
+    avatar = Column(String(300),
+                    default="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg")
 
-class Employee(User):  # main model
+
+class EmployeeInfo(db.Model):  # main model
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     base_salary = Column(Float, default=0.0)
+
+    u_id = Column(Integer, ForeignKey("user_account.id"), nullable=False, unique=True)
+
     certifications = relationship('Certification', backref='employee', lazy=True)
     classrooms = relationship('Classroom', backref='employee', lazy=True)
 
-class Student(User):
+
+class StudentInfo(db.Model):
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     entry_score = Column(Float, default=0.0)
+
+    u_id = Column(Integer, ForeignKey("user_account.id"), nullable=False, unique=True)
+
     sessions = relationship('Present', back_populates='student', lazy=True)
     classes = relationship('Registration', back_populates='student', lazy=True)
 
@@ -63,33 +80,41 @@ class Course(Base):
     description = Column(String(500))
     period = Column(Float, default=0.0)
     content = Column(String(500), nullable=False)
+
     classrooms = relationship('Classroom', backref='course', lazy=True)
 
 
 class Level(Base):
     tuition = Column(Float, default=0.0)
+
     classrooms = relationship('Classroom', backref='level', lazy=True)
 
 
-class GradeCategory(Base):
+class GradeCategory(Base):  # main model
     weight = Column(Float, default=0.0)
+
     scores = relationship('Score', backref='grade_category', lazy=True)
 
 
 class Certification(Base):
     band_score = Column(Float, default=0.0)
     provided_date = Column(DateTime, nullable=False)
-    employee_id = Column(Integer, ForeignKey('employee.id'), nullable=False)
 
-class Classroom(db.Model):
+    employee_id = Column(Integer, ForeignKey('employee_info.id'), nullable=False)
+
+
+class Classroom(db.Model):  # main model
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
-    start_time = Column(DateTime, nullable=False)
+    start_time = Column(DateTime)
     maximum_stu = Column(Integer, default=25)
-    employee_id = Column(Integer, ForeignKey('employee.id'), nullable=False)
+
+    employee_id = Column(Integer, ForeignKey('employee_info.id'))
     course_id = Column(Integer, ForeignKey('course.id'), nullable=False)
     level_id = Column(Integer, ForeignKey('level.id'), nullable=False)
+
     sessions = relationship('Session', backref='classroom', lazy=True)
     studs = relationship('Registration', back_populates='classroom')
+
 
 class Registration(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
@@ -97,10 +122,12 @@ class Registration(db.Model):
     transact_time = Column(DateTime, default=datetime.now)
     actual_tuition = Column(Float, default=0.0)
     status = Column(Enum(StatusTuition), default=StatusTuition.UNPAID)
-    student_id = Column(Integer, ForeignKey('student.id'), nullable=False)
+
+    student_id = Column(Integer, ForeignKey('student_info.id'), nullable=False)
     class_id = Column(Integer, ForeignKey('classroom.id'), nullable=False)
+
     classroom = relationship('Classroom', back_populates='studs')
-    student = relationship('Student', back_populates='classes')
+    student = relationship('StudentInfo', back_populates='classes')
 
 
 class Transaction(db.Model):  # main model
@@ -110,31 +137,41 @@ class Transaction(db.Model):  # main model
     method = Column(Enum(MethodEnum), default=MethodEnum.BANKING)
     date = Column(DateTime, default=datetime.now)
     status = Column(Enum(StatusPayment), default=StatusPayment.PENDING)
-    employee_id = Column(Integer, ForeignKey('employee.id'))
+
+    employee_id = Column(Integer, ForeignKey('employee_info.id'))
     regis_id = Column(Integer, ForeignKey('registration.id'), nullable=False)
-    employee = relationship('Employee', backref='transactions', lazy=True)
+
     registration = relationship('Registration', backref='transactions', lazy=True)
+
 
 class Session(db.Model):  # main model
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     session_date = Column(DateTime)
     session_content = Column(String(500), nullable=False)
     shift = Column(Integer, default=0)
+
     class_id = Column(Integer, ForeignKey('classroom.id'), nullable=False)
+
     students = relationship('Present', back_populates='session', lazy=True)
+
 
 class Present(db.Model):  # relationship
     is_present = Column(Boolean, default=True)
+
     session_id = Column(Integer, ForeignKey('session.id'), nullable=False, primary_key=True)
-    student_id = Column(Integer, ForeignKey('student.id'), nullable=False, primary_key=True)
+    student_id = Column(Integer, ForeignKey('student_info.id'), nullable=False, primary_key=True)
+
     session = relationship('Session', back_populates='students', lazy=True)
-    student = relationship('Student', back_populates='sessions', lazy=True)
+    student = relationship('StudentInfo', back_populates='sessions', lazy=True)
+
 
 class Score(db.Model):  # main model
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     value = Column(Float, default=0.0)
+
     regis_id = Column(Integer, ForeignKey('registration.id'), nullable=False)
     grade_cate_id = Column(Integer, ForeignKey('grade_category.id'), nullable=False)
+
     registration = relationship('Registration', backref='scores', lazy=True)
 
 
@@ -145,32 +182,40 @@ def to_date(date_str):
     except ValueError:
         return None
 
+
 def seed_data():
     print("Bat dau import du lieu...")
-    # 1. Employee
+    # 1. Account
     try:
-        with open("data/employee.json", encoding="utf-8") as f:
+        with open("data/user_account.json", encoding="utf-8") as f:
             data = json.load(f)
             for p in data:
                 if 'joined_date' in p: p['joined_date'] = to_date(p['joined_date'])
                 if 'role' in p: p['role'] = UserRole[p['role'].upper()]
-                # Kiểm tra tồn tại trước khi add để tránh duplicate
-                if not Employee.query.filter_by(id=p.get('id')).first():
-                    db.session.add(Employee(**p))
+                if not UserAccount.query.filter_by(id=p.get('id')).first():
+                    db.session.add(UserAccount(**p))
     except FileNotFoundError:
-        print("Khong tim thay file data/employee.json, bo qua.")
+        print("Khong tim thay file data/user_account.json")
 
     # 2. Student
     try:
-        with open("data/student.json", encoding="utf-8") as f:
+        with open("data/student_info.json", encoding="utf-8") as f:
             data = json.load(f)
             for p in data:
-                if 'joined_date' in p: p['joined_date'] = to_date(p['joined_date'])
-                if 'role' in p: p['role'] = UserRole[p['role'].upper()]
-                if not Student.query.filter_by(id=p.get('id')).first():
-                    db.session.add(Student(**p))
+                if not StudentInfo.query.filter_by(id=p.get('id')).first():
+                    db.session.add(StudentInfo(**p))
     except FileNotFoundError:
-        pass
+        print("Loi trong khi import file data/student_info.json")
+
+    # 2. Employee
+    try:
+        with open("data/employee_info.json", encoding="utf-8") as f:
+            data = json.load(f)
+            for p in data:
+                if not EmployeeInfo.query.filter_by(id=p.get('id')).first():
+                    db.session.add(EmployeeInfo(**p))
+    except FileNotFoundError:
+        print("Loi trong khi import file data/employee_info.json")
 
     # 3. Course
     try:
@@ -181,7 +226,7 @@ def seed_data():
                 if not Course.query.filter_by(id=p.get('id')).first():
                     db.session.add(Course(**p))
     except FileNotFoundError:
-        pass
+        print("Loi trong khi import file data/course.json")
 
     # 4. Level
     try:
@@ -192,7 +237,7 @@ def seed_data():
                 if not Level.query.filter_by(id=p.get('id')).first():
                     db.session.add(Level(**p))
     except FileNotFoundError:
-        pass
+        print("Loi trong khi import file data/level.json")
 
     # 5. Grade Category
     try:
@@ -203,7 +248,7 @@ def seed_data():
                 if not GradeCategory.query.filter_by(id=p.get('id')).first():
                     db.session.add(GradeCategory(**p))
     except FileNotFoundError:
-        pass
+        print("Loi trong khi import file data/grade_category.json")
 
     db.session.commit()
     print("Da import xong dot 1 (User, Course, Level, GradeCategory)")
@@ -218,7 +263,7 @@ def seed_data():
                 if not Certification.query.filter_by(id=p.get('id')).first():
                     db.session.add(Certification(**p))
     except FileNotFoundError:
-        pass
+        print("Loi trong khi import file data/certificate.json")
 
     # 7. Classroom
     try:
@@ -229,7 +274,7 @@ def seed_data():
                 if not Classroom.query.filter_by(id=p.get('id')).first():
                     db.session.add(Classroom(**p))
     except FileNotFoundError:
-        pass
+        print("Loi trong khi import file data/class_room.json")
 
     db.session.commit()
     print("Da import xong dot 2 (Certification, Classroom)")
@@ -244,7 +289,7 @@ def seed_data():
                 if not Registration.query.filter_by(id=p.get('id')).first():
                     db.session.add(Registration(**p))
     except FileNotFoundError:
-        pass
+        print("Loi trong khi import file data/registration.json")
 
     # 9. Session
     try:
@@ -255,7 +300,7 @@ def seed_data():
                 if not Session.query.filter_by(id=p.get('id')).first():
                     db.session.add(Session(**p))
     except FileNotFoundError:
-        pass
+        print("Loi trong khi import file data/session.json")
 
     db.session.commit()
     print("Da import xong dot 3 (Registration, Session)")
@@ -271,7 +316,7 @@ def seed_data():
                 if not Transaction.query.filter_by(id=p.get('id')).first():
                     db.session.add(Transaction(**p))
     except FileNotFoundError:
-        pass
+        print("loi trong khi import file data/transaction.json")
 
     # 11. Present
     try:
@@ -283,7 +328,7 @@ def seed_data():
                 if not exists:
                     db.session.add(Present(**p))
     except FileNotFoundError:
-        pass
+        print("Loi trong khi import file data/present.json")
 
     # 12. Score
     try:
@@ -293,10 +338,11 @@ def seed_data():
                 if not Score.query.filter_by(id=p.get('id')).first():
                     db.session.add(Score(**p))
     except FileNotFoundError:
-        pass
+        print("loi trong khi import file data/score.json")
 
     db.session.commit()
     print("HOAN TAT: Da import toan bo du lieu thanh cong.")
+
 
 if __name__ == '__main__':
     with app.app_context():
