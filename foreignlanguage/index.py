@@ -6,7 +6,6 @@ from foreignlanguage import app, dao, login, db, mail, admin
 from flask_login import login_user, logout_user
 from decorators import anonymous_required
 from foreignlanguage.dao import check_email
-from foreignlanguage.models import Student
 
 
 @app.route("/")
@@ -25,7 +24,7 @@ def signin():
         password = request.form.get("password")
         remmember = request.form.get("rememberMe") == "true"
 
-        user = dao.auth_user(username, password, UserRo)
+        user = dao.auth_user(username, password)
 
         if user:
             login_user(user, remember=remmember)
@@ -80,7 +79,7 @@ def forgot_password():
     if request.method.__eq__("POST"):
         if step == 1:
             email = request.form.get("email")
-            user = Student.query.filter_by(email=email).first()
+            user = dao.get_user_by_email(email=email)
             if user:
                 otp = str(random.randint(100000, 999999))
                 session['otp'] = otp
@@ -107,10 +106,9 @@ def forgot_password():
 
             if new_password.__eq__(confirm):
                 email = session.get("email")
-                user = Student.query.filter_by(email=email).first()
+                user = dao.get_user_by_email(email=email)
                 if user:
-                    Student.password = hashlib.md5(new_password.encode("utf-8")).hexdigest()
-                    db.session.commit()
+                    dao.update_user_password(new_password, user.id)
 
                     session.pop('otp', None)
                     session.pop('email', None)

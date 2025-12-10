@@ -4,15 +4,22 @@ from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
 from flask_login import current_user, login_user, logout_user
-from sqlalchemy import func, or_, extract
-
 from foreignlanguage import app, db, login
 from foreignlanguage.models import (
     StudentInfo, Course, Classroom, EmployeeInfo,
-    Registration, Transaction, Score, UserRole, Level,
+    Registration, Transaction, UserRole, Level,
     StatusTuition, StatusPayment, MethodEnum
 )
 import dao
+
+######### Khoi tim hieu su dung lai ham nay cho khoi lap code nha ###########
+class AuthenticationView(ModelView): # ham xac thuc de tai su dung
+    def __init__(self, model, session, role=None, *args, **kwargs): #ghi de phuong thuc khoi tao + truyen role cho thay doi linh hoat
+        self.required_role = role
+        super().__init__(model, session, *args, **kwargs)
+
+    def is_accessible(self) -> bool:
+        return current_user.is_authenticated and current_user.role==self.required_role
 
 
 # 1. CÁC CLASS CƠ CHẾ PHÂN QUYỀN
@@ -52,7 +59,7 @@ class MyLogoutView(BaseView):
         return current_user.is_authenticated
 
 ################Phần chức năng ADMIN####################
-#Báo cáo Quỳnh sẽ làm ở đây!
+# BÁO CÁO DASHBOARD
 class StatsView(AdminBaseView):
     # Chỉ Admin mới xem được báo cáo
     def is_accessible(self):
@@ -67,7 +74,7 @@ class RegulationView(AdminBaseView):
     @expose('/', methods=['GET', 'POST'])
     def index(self):
         # 1. Lấy TẤT CẢ cấp độ (Không cần lọc theo khóa học nữa)
-        levels = Level.query.all()
+        levels = dao.load_levels()
 
         # 2. Xử lý Lưu (POST)
         if request.method == 'POST':
@@ -125,7 +132,7 @@ class CreateInvoiceView(CashierView):
                     created_date = datetime.now()
 
                 # 2. Lấy thông tin Registration từ DB để tính toán
-                regis = Registration.query.get(regis_id)
+                regis = dao.get_registration_by_id(regis_id)
 
                 if regis:
                     # Tính số nợ HIỆN TẠI (trước khi đóng khoản này)
@@ -158,7 +165,7 @@ class CreateInvoiceView(CashierView):
                         regis_id=regis.id,
                         employee_id=current_user.id
                     )
-                    db.session.add(new_trans)
+                    db.session.add(new_trans) ##### QUA DAO.PY VIET HAM INSERT DATA
 
                     # --- BƯỚC 2: CẬP NHẬT TRẠNG THÁI TỔNG (Registration) ---
                     # Cộng dồn số tiền vừa đóng vào tổng đã đóng
@@ -214,13 +221,13 @@ class TransactionAdminView(CashierModelView):
     column_default_sort = ('date', True)
 
     # 3. TÌM KIẾM & BỘ LỌC
-    column_searchable_list = ['id', 'content', 'registration.student.name', 'registration.student.phone_num']
-    column_filters = ['status', 'method', 'date', 'money', 'registration.student.name']
+    column_searchable_list = ['id', 'content', 'registration.student.account.name', 'registration.student.account.phone_num']
+    column_filters = ['status', 'method', 'date', 'money', 'registration.student.account.name']
 
     # 4. FORMAT DỮ LIỆU
     def _student_formatter(view, context, model, name):
         if model.registration and model.registration.student:
-            return f"{model.registration.student.name} ({model.registration.student.phone_num})"
+            return f"{model.registration.student.account.name} ({model.registration.student.account.phone_num})"
         return "N/A"
 
     def _course_formatter(view, context, model, name):
