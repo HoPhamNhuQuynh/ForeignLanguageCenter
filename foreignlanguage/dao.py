@@ -1,6 +1,7 @@
 from sqlalchemy import or_
 
-from foreignlanguage.models import UserAccount, Course, Transaction, Registration, StatusTuition, Level
+from foreignlanguage.models import UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo, \
+    Classroom, EmployeeInfo
 from foreignlanguage import app, db
 import hashlib
 
@@ -59,6 +60,24 @@ def get_unpaid_registrations(kw=None):
         ))
 
     return query.all()
+
+def get_student_by_course(course_id):
+    return (db.session.query(Registration)
+            .join(StudentInfo, Registration.student_id == StudentInfo.id)
+            .join(UserAccount, StudentInfo.u_id == UserAccount.id)
+            .filter(Registration.class_id == course_id).all())
+
+def get_course_by_teacher(user_id):
+    return (db.session.query(Classroom)
+            .join(EmployeeInfo, EmployeeInfo.id == Classroom.employee_id)
+            .filter(EmployeeInfo.u_id == user_id).all())
+
+def get_scores_by_course(course_id):
+    return (db.session.query(Registration)
+        .join(StudentInfo, Registration.student_id == StudentInfo.id)
+        .join(UserAccount, StudentInfo.u_id == UserAccount.id)
+        .filter(Registration.class_id == course_id).all())
+
 
 if __name__=="__main__":
     with app.app_context():

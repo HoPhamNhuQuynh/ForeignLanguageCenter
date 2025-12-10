@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import redirect, request, flash, url_for
+from flask import redirect, request, flash, url_for, render_template
 from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
@@ -45,6 +45,10 @@ class CashierModelView(ModelView):
     """Dùng cho các bảng Cashier quản lý"""
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role == UserRole.CASHIER
+
+class TeacherView(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role == UserRole.TEACHER
 
 # 2. CÁC VIEW CHỨC NĂNG
 
@@ -277,6 +281,17 @@ class TransactionAdminView(CashierModelView):
             # (Flask-Admin sẽ tự động commit cùng lúc với việc xóa Transaction)
             db.session.add(model.registration)
 
+############Chức năng của teacher##################
+class TeacherHomeView(TeacherView):
+    @expose('/')
+    def index(self):
+        course = dao.get_course_by_teacher(current_user.id)
+
+        student = []
+        if course:
+            student = dao.get_student_by_course(course[0].id)
+
+        return render_template('admin/teacher.html', course=course, student=student,)
 
 ############## XỬ LÝ LOGIN #####################
 
@@ -323,6 +338,9 @@ admin.add_view(RegulationView(name='Quy định', endpoint='regulation'))
 # --- Menu cho CASHIER ---
 admin.add_view(CreateInvoiceView(name='Lập hóa đơn', endpoint='invoice'))
 admin.add_view(TransactionAdminView(Transaction, db.session, name='Quản lý giao dịch', endpoint='transaction'))
+
+# --- Menu cho TEACHER ---
+admin.add_view(TeacherHomeView(name="Giáo viên", endpoint="teacher"))
 
 # --- Menu chung ---
 admin.add_view(MyLogoutView(name='Đăng xuất'))
