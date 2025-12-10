@@ -35,9 +35,6 @@ def get_user_by_username(username):
 def get_user_by_email(email):
     return UserAccount.query.filter(UserAccount.email == email).first()
 
-# def load_user_roles():
-#     return [role for role in UserRole if role != UserRole.ADMIN]
-
 def load_courses():
     return Course.query.all()
 

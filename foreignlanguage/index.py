@@ -166,20 +166,7 @@ def common_attributes():
     'courses': dao.load_courses()
     }
 
-@app.route("/dashboard")
-def dashboard():
-    #     test chart.js
-    dates = dao.stats_revenue_by_month()
-    over_time_revenue = []
-    date_labels = []
-    for amount, date in dates:
-        over_time_revenue.append(amount)
-        date_labels.append(date)
 
-
-    return render_template("dashboard.html"
-                           , over_time_revenue=over_time_revenue
-                           , date_labels=date_labels)
 
 
 if __name__ == "__main__":

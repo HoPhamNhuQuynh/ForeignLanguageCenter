@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import redirect, request, flash, url_for
+from flask import redirect, request, flash, url_for, render_template
 from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
@@ -67,7 +67,17 @@ class StatsView(AdminBaseView):
 
     @expose('/')
     def index(self):
-        pass
+            dates = dao.stats_revenue_by_month()
+            over_time_revenue = []
+            date_labels = []
+            for amount, date in dates:
+                over_time_revenue.append(amount)
+                date_labels.append(date)
+
+            return self.render('admin/stats.html'
+                           , over_time_revenue=over_time_revenue
+                           , date_labels=date_labels)
+
 
 # --- View Quy định học phí ---
 class RegulationView(AdminBaseView):
