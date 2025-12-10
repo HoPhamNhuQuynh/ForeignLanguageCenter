@@ -34,7 +34,7 @@
                 <a href="{{ url_for('stats.index') }}" class="btn btn-warning text-white btn-lg px-4 mx-2 rounded-pill shadow-sm">
                     <i class="fa fa-bar-chart mr-2"></i> Xem báo cáo
                 </a>
-                <a href="{{ url_for('employee.index_view') }}" class="btn btn-outline-dark btn-lg px-4 mx-2 rounded-pill">
+                <a href="{{ url_for('employeeinfo.index_view') }}" class="btn btn-outline-dark btn-lg px-4 mx-2 rounded-pill">
                     <i class="fa fa-users mr-2"></i> Quản lý nhân sự
                 </a>
             {% elif current_user.role.name == 'CASHIER' %}

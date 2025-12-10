@@ -1,7 +1,7 @@
 import random
 from flask_mail import Message
-from flask import render_template, request, redirect, session
-from foreignlanguage import app, dao, login, db, mail
+from flask import render_template, request, redirect, session, url_for
+from foreignlanguage import app, dao, login, db, mail, admin
 from flask_login import login_user, logout_user
 from decorators import anonymous_required
 from openpyxl import Workbook
@@ -203,6 +203,10 @@ def save_scores():
     wb.save(file_path)
 
     return send_file(file_path, as_attachment=True)
+
+@app.route("/")
+def home():
+    return redirect(url_for('admin.index'))
 
 
 if __name__ == "__main__":
