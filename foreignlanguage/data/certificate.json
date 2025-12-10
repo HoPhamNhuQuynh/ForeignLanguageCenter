@@ -79,14 +79,5 @@
     "employee_id": 7,
     "joined_date": "2022-11-12 10:00:00",
     "active": 1
-  },
-  {
-    "id": 10,
-    "name": "IELTS General Training",
-    "band_score": 7.5,
-    "provided_date": "2021-02-14 00:00:00",
-    "employee_id": 10,
-    "joined_date": "2021-10-20 08:00:00",
-    "active": 1
   }
 ]

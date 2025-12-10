@@ -32,6 +32,7 @@ def load_courses():
 def stats_revenue_by_month():
     return (db.session.query(db.func.sum(Transaction.money), db.func.date_format(Transaction.date, '%m')).
      group_by(db.func.date_format(Transaction.date, '%m'))).order_by(db.func.date_format(Transaction.date, '%m')).all()
+
 def get_unpaid_registrations(kw=None):
     # 1. Lọc các trạng thái chưa hoàn thành
     query = Registration.query.filter(Registration.status != StatusTuition.PAID)
