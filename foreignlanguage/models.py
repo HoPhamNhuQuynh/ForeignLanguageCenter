@@ -62,6 +62,7 @@ class EmployeeInfo(db.Model):  # main model
 
     u_id = Column(Integer, ForeignKey("user_account.id"), nullable=False, unique=True)
 
+    account = relationship('UserAccount', backref='emp_info', lazy=True)
     certifications = relationship('Certification', backref='employee', lazy=True)
     classrooms = relationship('Classroom', backref='employee', lazy=True)
 
@@ -72,6 +73,7 @@ class StudentInfo(db.Model):
 
     u_id = Column(Integer, ForeignKey("user_account.id"), nullable=False, unique=True)
 
+    account = relationship('UserAccount', backref='student_info', lazy=True)
     sessions = relationship('Present', back_populates='student', lazy=True)
     classes = relationship('Registration', back_populates='student', lazy=True)
 
