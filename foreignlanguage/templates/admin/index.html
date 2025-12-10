@@ -2,63 +2,45 @@
 
 {% block body %}
 
-<!-- Nếu đã login thì hiện Welcome (hoặc logic AdminIndexView sẽ redirect đi chỗ khác) -->
+<h3 class="text-info text-center mt-3">CHÀO MỪNG ĐẾN VỚI TRANG QUẢN TRỊ ANQUINKO</h3>
+
 {% if current_user.is_authenticated %}
-    <div class="container mt-5 text-center">
-        <h2>Xin chào, {{ current_user.name }}!</h2>
-        <p class="lead">Bạn đang truy cập hệ thống quản trị ANQUINKO.</p>
-        <a href="{{ url_for('admin.logout_view.index') }}" class="btn btn-danger">Đăng xuất</a>
+    <div class="text-center mt-4">
+        <h4>Chào {{ current_user.name }}!</h4>
+        <p>Bạn đã đăng nhập thành công.</p>
+        <a href="{{ url_for('mylogoutview.index') }}" class="btn btn-danger">Đăng xuất</a>
     </div>
 
 {% else %}
-<!-- Nếu CHƯA login thì hiện Form -->
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card shadow-lg border-0" style="width: 450px; border-radius: 15px;">
-        <div class="card-body p-5">
-            <h2 class="text-center mb-4 font-weight-bold text-dark">ĐĂNG NHẬP</h2>
+    <div class="container" style="max-width: 600px;"> {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} mt-3">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-            <!-- Hiển thị thông báo lỗi nếu có -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
+        <form method="POST" action="{{ url_for('admin.index') }}">
 
-            <form method="POST" action="{{ url_for('admin.index') }}">
-                <div class="form-group mb-3">
-                    <label for="username" class="form-label font-weight-bold">Tên đăng nhập</label>
-                    <!-- name="username" khớp với request.form.get('username') -->
-                    <input type="text" class="form-control form-control-lg bg-light"
-                           name="username" id="username"
-                           placeholder="Nhập username (vd: bao.nguyen)" required>
-                </div>
-
-                <div class="form-group mb-4">
-                    <label for="password" class="form-label font-weight-bold">Mật khẩu</label>
-                    <!-- name="password" khớp với request.form.get('password') -->
-                    <input type="password" class="form-control form-control-lg bg-light"
-                           name="password" id="password"
-                           placeholder="Nhập mật khẩu" required>
-                </div>
-
-                <button type="submit" class="btn btn-dark btn-block btn-lg font-weight-bold rounded-pill">
-                    Đăng nhập hệ thống
-                </button>
-            </form>
-
-            <div class="text-center mt-3">
-                <a href="/" class="text-muted small">Quay về trang chủ website</a>
+            <div class="form-group mb-3 mt-3">
+                <label for="username">Tên đăng nhập</label>
+                <input type="text" class="form-control" id="username"
+                       placeholder="Nhập username" name="username" required>
             </div>
-        </div>
+
+            <div class="form-group mt-3 mb-3">
+                <label for="password">Mật khẩu</label>
+                <input type="password" class="form-control" id="password"
+                       placeholder="Nhập mật khẩu" name="password" required>
+            </div>
+
+            <div class="form-group mt-3 mb-3">
+                <button class="btn btn-primary" type="submit">ĐĂNG NHẬP</button>
+                <a href="/" class="btn btn-link">Về trang chủ</a>
+            </div>
+
+        </form>
     </div>
-</div>
 {% endif %}
 
 {% endblock %}
