@@ -1,10 +1,148 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends 'admin/master.html' %}
 
-</body>
-</html>
+{% block head %}
+
+    {{ super() }}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+{% endblock%}
+
+{% block body %}
+
+    <h1 class="text-center text-success"> TRUNG TAM THONG KE </h1>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card card-style mb-2">
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative;">
+                        <canvas id="revenue_vs_date"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-style mb-2">
+                <div class="card-body">
+                    <div class="chart-container d-flex justify-content-center" style="position: relative; ">
+                        <canvas id="revenue_pie" class="w-75 h-75"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-style mb-2">
+                <div class="card-body ">
+                    <div class="chart-container" style="position: relative;">
+                        <canvas id="revenue_bar" class="w-100 h-100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block tail %}
+    {{ super() }}
+    <script>
+        let labels={{date_labels | tojson }};
+        let amounts={{over_time_revenue | tojson }};
+
+        console.log("Labels:", labels);
+        console.log("Amounts:", amounts);
+
+        new Chart(document.getElementById("revenue_vs_date"), {
+                    type: "line",
+                    data:
+                    {
+                        labels: labels,
+                        datasets: [{
+                            label: "Stats revenue by month",
+
+                            data: amounts,
+                            fill: false,
+                            borderColor: 'rgba(54, 162, 235, 0.6)',
+                            lineTension: 0.1
+                        }]
+                    },
+                    options: {}
+                });
+
+        let income_chart = new Chart(revenue_pie, {
+                type: 'pie',
+                data: {
+                labels: labels,
+                    datasets: [{
+                        label: "Revenue pie",
+                        data: amounts,
+                        backgroundColor: ['#5DA5DA ', '#FAA43A', '#60BD68',
+                            '#B276B2', '#E16851', '#FB8267'],
+
+                        borderWidth: 1,
+                        hoverBorderColor: "black",
+                        hoverBorderWidth: 2,
+                        hoverBackgroundColor: 'rgba(154, 245, 140)',
+                        pointHoverRadius: 5
+                    }],
+                },
+                options: {
+                        title: {
+                            display: true,
+                                text: "Income Vs Expenses",
+                                    fontSize: 20,
+                        },
+                        legend: {
+                            position: "right",
+                                labels: {
+                                fontColor: "gray"
+                            },
+                            display: true,
+                        },
+
+                        elements: {
+                            hitRadius: 3,
+                        }
+                }
+            })
+
+        let revenue_bar_chart = new Chart(revenue_bar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Revenue bar",
+                        data: amounts,
+                backgroundColor: ['#5DA5DA ', '#FAA43A', '#60BD68',
+                    '#B276B2', '#E16851', '#FB8267'],
+                borderWidth: 1,
+                hoverBorderColor: "black",
+                hoverBorderWidth: 2,
+                hoverBackgroundColor: 'rgba(154, 245, 140)',
+                pointHoverRadius: 5
+            }],
+                },
+            options: {
+                    title: {
+                        display: true,
+                            text: "Income Categories",
+                                fontSize: 20,
+                },
+                    legend: {
+                        position: "right",
+                            labels: {
+                            fontColor: "gray"
+                        },
+                        display: true,
+                },
+
+                    elements: {
+                        hitRadius: 3,
+                }
+                }
+            })
+    </script>
+{% endblock %}

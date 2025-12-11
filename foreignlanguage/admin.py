@@ -67,8 +67,16 @@ class MyLogoutView(BaseView):
 class StatsView(AdminBaseView):
     @expose('/')
     def index(self):
-        # Code thống kê...
-        return self.render('admin/stats.html')
+        dates = dao.stats_revenue_by_month()
+        over_time_revenue = []
+        date_labels = []
+        for amount, date in dates:
+            over_time_revenue.append(amount)
+            date_labels.append(date)
+
+        return self.render('admin/stats.html'
+                           , over_time_revenue=over_time_revenue
+                           , date_labels=date_labels)
 
 # --- View Quy định học phí ---
 class RegulationView(AdminBaseView):
