@@ -12,27 +12,24 @@ from foreignlanguage.models import (
 )
 import dao
 
-class AuthenticationView(ModelView): # ham xac thuc de tai su dung
+class AuthenticationView(ModelView):
     def __init__(self, model, session, role=None, *args, **kwargs):
         self.required_role = role
         super().__init__(model, session, *args, **kwargs)
-
     def is_accessible(self) -> bool:
         return current_user.is_authenticated and current_user.role==self.required_role
 
 class AuthenticationBaseView(BaseView):
     def __init__(self, role=None, *args, **kwargs):
         self.required_role = role
-        # BaseView không nhận model và session, chỉ truyền các tham số còn lại
         super().__init__(*args, **kwargs)
-
     def is_accessible(self) -> bool:
         return current_user.is_authenticated and current_user.role == self.required_role
 
+########### Khôi lỡ làm kiểu kế thừa roi ##############
 # --- Dành cho ADMIN ---
 class AdminView(AuthenticationView):
     def __init__(self, *args, **kwargs):
-        # Tự động set role=ADMIN khi khởi tạo
         super().__init__(*args, role=UserRole.ADMIN, **kwargs)
 
 class AdminBaseView(AuthenticationBaseView):
