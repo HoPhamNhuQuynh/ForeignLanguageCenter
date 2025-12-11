@@ -12,39 +12,43 @@ from foreignlanguage.models import (
 )
 import dao
 
-######### Khoi tim hieu su dung lai ham nay cho khoi lap code nha ###########
-class AuthenticationView(ModelView): # ham xac thuc de tai su dung
-    def __init__(self, model, session, role=None, *args, **kwargs): #ghi de phuong thuc khoi tao + truyen role cho thay doi linh hoat
+class AuthenticationView(ModelView):
+    def __init__(self, model, session, role=None, *args, **kwargs):
         self.required_role = role
         super().__init__(model, session, *args, **kwargs)
-
     def is_accessible(self) -> bool:
         return current_user.is_authenticated and current_user.role==self.required_role
 
+class AuthenticationBaseView(BaseView):
+    def __init__(self, role=None, *args, **kwargs):
+        self.required_role = role
+        super().__init__(*args, **kwargs)
+    def is_accessible(self) -> bool:
+        return current_user.is_authenticated and current_user.role == self.required_role
 
-# 1. CÁC CLASS CƠ CHẾ PHÂN QUYỀN
-class AdminView(ModelView):
-    """Dùng cho các bảng chỉ Admin mới thấy"""
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.role == UserRole.ADMIN
+########### Khôi lỡ làm kiểu kế thừa roi ##############
+# --- Dành cho ADMIN ---
+class AdminView(AuthenticationView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, role=UserRole.ADMIN, **kwargs)
 
+class AdminBaseView(AuthenticationBaseView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(role=UserRole.ADMIN, *args, **kwargs)
 
-class AdminBaseView(BaseView):
-    """Dùng cho các trang custom """
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.role == UserRole.ADMIN
+# --- Dành cho CASHIER (Thu ngân) ---
+class CashierModelView(AuthenticationView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, role=UserRole.CASHIER, **kwargs)
 
+class CashierView(AuthenticationBaseView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(role=UserRole.CASHIER, *args, **kwargs)
 
-class CashierView(BaseView):
-    """Dùng cho các trang custom của Cashier"""
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.role == UserRole.CASHIER
-
-
-class CashierModelView(ModelView):
-    """Dùng cho các bảng Cashier quản lý"""
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.role == UserRole.CASHIER
+# --- Dành cho TEACHER (Giáo viên) ---
+class TeacherView(AuthenticationBaseView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(role=UserRole.TEACHER, *args, **kwargs)
 
 # 2. CÁC VIEW CHỨC NĂNG
 
@@ -59,53 +63,39 @@ class MyLogoutView(BaseView):
         return current_user.is_authenticated
 
 ################Phần chức năng ADMIN####################
-# BÁO CÁO DASHBOARD
+# --- Báo cáo Dashboard (Admin) ---
 class StatsView(AdminBaseView):
-    # Chỉ Admin mới xem được báo cáo
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.role == UserRole.ADMIN
-
     @expose('/')
     def index(self):
-            dates = dao.stats_revenue_by_month()
-            over_time_revenue = []
-            date_labels = []
-            for amount, date in dates:
-                over_time_revenue.append(amount)
-                date_labels.append(date)
+        dates = dao.stats_revenue_by_month()
+        over_time_revenue = []
+        date_labels = []
+        for amount, date in dates:
+            over_time_revenue.append(amount)
+            date_labels.append(date)
 
-            return self.render('admin/stats.html'
+        return self.render('admin/stats.html'
                            , over_time_revenue=over_time_revenue
                            , date_labels=date_labels)
-
 
 # --- View Quy định học phí ---
 class RegulationView(AdminBaseView):
     @expose('/', methods=['GET', 'POST'])
     def index(self):
-        # 1. Lấy TẤT CẢ cấp độ (Không cần lọc theo khóa học nữa)
         levels = dao.load_levels()
-
-        # 2. Xử lý Lưu (POST)
         if request.method == 'POST':
             try:
-                # Duyệt qua từng level để cập nhật học phí
                 for level in levels:
-                    # Lấy giá trị từ ô input có name="tuition_ID"
                     new_tuition = request.form.get(f'tuition_{level.id}')
-
                     if new_tuition:
-                        level.tuition = float(new_tuition)
+                        # Gọi DAO để update (nhưng chưa commit)
+                        dao.update_tuition_fee(level.id, new_tuition)
 
-                # Commit thay đổi vào MySQL
-                db.session.commit()
+                # Commit 1 lần cuối cùng
+                dao.save_changes()
                 flash('Đã cập nhật học phí thành công!', 'success')
-
-                # Reload lại trang
                 return redirect(url_for('regulation.index'))
-
             except Exception as e:
-                db.session.rollback()
                 flash(f'Lỗi hệ thống: {str(e)}', 'danger')
 
         return self.render('admin/regulation.html', levels=levels)
@@ -116,132 +106,72 @@ class CreateInvoiceView(CashierView):
     @expose('/', methods=['GET', 'POST'])
     def index(self):
         search_kw = request.args.get('search')
-        # Lấy danh sách những người chưa đóng xong tiền (UNPAID hoặc PARTIAL)
         unpaid_regis = dao.get_unpaid_registrations(search_kw)
 
-        today_str = datetime.now().strftime('%Y-%m-%d')
         student_info = None
-
-        # Nếu có tìm kiếm, lấy thông tin học viên đầu tiên để hiển thị lên form
         if search_kw and unpaid_regis:
             student_info = unpaid_regis[0].student
 
         if request.method == 'POST':
             try:
-                # 1. Lấy dữ liệu từ Form
                 regis_id = request.form.get('regis_id')
-                amount = float(request.form.get('amount'))  # Số tiền đóng LẦN NÀY
+                amount = float(request.form.get('amount'))
                 method = request.form.get('method')
                 content = request.form.get('content')
                 date_input = request.form.get('created_date')
 
-                # Xử lý ngày tháng
-                if date_input:
-                    created_date = datetime.strptime(date_input, '%Y-%m-%d')
-                else:
-                    created_date = datetime.now()
+                created_date = datetime.strptime(date_input, '%Y-%m-%d') if date_input else datetime.now()
 
-                # 2. Lấy thông tin Registration từ DB để tính toán
+                # Kiểm tra nợ
                 regis = dao.get_registration_by_id(regis_id)
+                current_debt = regis.actual_tuition - regis.paid
 
-                if regis:
-                    # Tính số nợ HIỆN TẠI (trước khi đóng khoản này)
-                    # Công thức: Tổng học phí - Tổng đã đóng các lần trước
-                    current_debt = regis.actual_tuition - regis.paid
-
-                    # --- VALIDATION (Kiểm tra dữ liệu) ---
-                    if current_debt <= 0:
-                        flash('Học viên này đã hoàn tất học phí rồi, không thể thu thêm!', 'danger')
-                        return redirect(url_for('invoice.index'))
-
-                    # Cho phép sai số nhỏ (1000đ) do làm tròn số thực
-                    if amount > current_debt + 1000:
-                        flash(f'Lỗi: Số tiền đóng ({amount:,.0f}đ) lớn hơn số nợ còn lại ({current_debt:,.0f}đ)!',
-                              'danger')
-                        return redirect(url_for('invoice.index', search=search_kw))
-
-                    if amount <= 0:
-                        flash('Số tiền đóng phải lớn hơn 0!', 'danger')
-                        return redirect(url_for('invoice.index', search=search_kw))
-
-                    # --- BƯỚC 1: TẠO GIAO DỊCH MỚI (Lưu lịch sử) ---
-                    # Luôn là SUCCESS vì đây là thu tại quầy (Tiền trao cháo múc)
-                    new_trans = Transaction(
-                        money=amount,
-                        content=content if content else f"Thu học phí đợt: {created_date.strftime('%d/%m')}",
-                        method=MethodEnum[method] if method else MethodEnum.CASH,
-                        date=created_date,
-                        status=StatusPayment.SUCCESS,  # <-- Đặt SUCCESS luôn
-                        regis_id=regis.id,
-                        employee_id=current_user.id
+                if current_debt <= 0:
+                    flash('Học viên đã hoàn tất học phí!', 'danger')
+                elif amount > current_debt + 1000:
+                    flash(f'Số tiền đóng lớn hơn nợ ({current_debt:,.0f}đ)!', 'danger')
+                elif amount <= 0:
+                    flash('Số tiền đóng phải lớn hơn 0!', 'danger')
+                else:
+                    # GỌI DAO ĐỂ XỬ LÝ THANH TOÁN (Gọn gàng hơn rất nhiều)
+                    success, msg = dao.process_payment(
+                        regis_id, amount, content, method, created_date, current_user.id
                     )
-                    db.session.add(new_trans) ##### QUA DAO.PY VIET HAM INSERT DATA
+                    if success:
+                        flash(f'Thu thành công {amount:,.0f}đ. {msg}', 'success' if 'hoàn tất' in msg else 'warning')
 
-                    # --- BƯỚC 2: CẬP NHẬT TRẠNG THÁI TỔNG (Registration) ---
-                    # Cộng dồn số tiền vừa đóng vào tổng đã đóng
-                    regis.paid = regis.paid + amount
-
-                    # Tính lại nợ sau khi đóng xong khoản này
-                    remaining_debt = regis.actual_tuition - regis.paid
-
-                    # Cập nhật trạng thái dựa trên nợ còn lại
-                    if remaining_debt <= 1000:  # Coi như hết nợ (dùng <= 1000 để tránh lỗi số lẻ 0.0001)
-                        regis.status = StatusTuition.PAID
-                        flash(f'Thu thành công {amount:,.0f}đ. Học viên đã HOÀN TẤT học phí!', 'success')
-                    else:
-                        regis.status = StatusTuition.PARTIAL
-                        flash(f'Thu thành công {amount:,.0f}đ. Học viên còn nợ lại {remaining_debt:,.0f}đ.', 'warning')
-
-                    db.session.commit()
-                    return redirect(url_for('invoice.index'))
+                return redirect(url_for('invoice.index'))
 
             except Exception as e:
-                db.session.rollback()
                 flash(f'Lỗi hệ thống: {str(e)}', 'danger')
 
         return self.render('admin/invoice_create.html',
                            student=student_info,
                            registrations=unpaid_regis,
-                           today_str=today_str)
+                           today_str=datetime.now().strftime('%Y-%m-%d'))
 #Quản lý hóa đơn
 class TransactionAdminView(CashierModelView):
-    # 1. CẤU HÌNH QUYỀN HẠN
     can_create = False
     can_edit = False
     can_delete = True
     can_export = True
+    export_types = ['csv']
 
-    # 2. CẤU HÌNH HIỂN THỊ
     column_list = ('id', 'student_info', 'course_info', 'money', 'method', 'date', 'status', 'content')
-
-    # Cấu hình danh sách cột khi xuất file (Export)
-    export_types = ['csv']  # Chỉ định định dạng xuất (mặc định là CSV)
-
-    column_labels = dict(
-        id='Mã HĐ',
-        student_info='Học viên',
-        course_info='Khóa học',
-        money='Số tiền',
-        method='Hình thức',
-        date='Ngày nộp',
-        status='Trạng thái',
-        content='Nội dung'
-    )
-
+    column_labels = dict(id='Mã HĐ', student_info='Học viên', course_info='Khóa học', money='Số tiền',
+                         method='Hình thức', date='Ngày nộp', status='Trạng thái', content='Nội dung')
     column_default_sort = ('date', True)
-
-    # 3. TÌM KIẾM & BỘ LỌC
-    column_searchable_list = ['id', 'content', 'registration.student.account.name', 'registration.student.account.phone_num']
+    column_searchable_list = ['id', 'content', 'registration.student.account.name',
+                              'registration.student.account.phone_num']
     column_filters = ['status', 'method', 'date', 'money', 'registration.student.account.name']
 
-    # 4. FORMAT DỮ LIỆU
     def _student_formatter(view, context, model, name):
-        if model.registration and model.registration.student:
+        if model.registration and model.registration.student and model.registration.student.account:
             return f"{model.registration.student.account.name} ({model.registration.student.account.phone_num})"
         return "N/A"
 
     def _course_formatter(view, context, model, name):
-        if model.registration and model.registration.classroom:
+        if model.registration and model.registration.classroom and model.registration.classroom.course:
             return model.registration.classroom.course.name
         return "N/A"
 
@@ -249,44 +179,32 @@ class TransactionAdminView(CashierModelView):
         return "{:,.0f} đ".format(model.money)
 
     column_formatters = {
-        'student_info': _student_formatter,
-        'course_info': _course_formatter,
-        'money': _money_formatter
+        'student_info': _student_formatter, 'course_info': _course_formatter, 'money': _money_formatter
     }
+    column_formatters_export = column_formatters
 
-    column_formatters_export = {
-        'student_info': _student_formatter,
-        'course_info': _course_formatter,
-        'money': _money_formatter
-    }
+    # Gọi DAO
+    def get_query(self):
+        return dao.get_transaction_query_options(super().get_query())
+
+    def get_count_query(self):
+        return dao.get_transaction_query_options(super().get_count_query())
+
+    # Gọi DAO để revert dữ liệu khi xóa
     def on_model_delete(self, model):
-        if model.registration:
-            # Bước 1: Trừ số tiền đã đóng trong hồ sơ gốc (Registration)
-            # (Hoàn tác lại hành động đóng tiền)
-            model.registration.paid -= model.money
+        dao.revert_payment(model.registration, model.money)
 
-            # Đảm bảo không bị âm (Safety check)
-            if model.registration.paid < 0:
-                model.registration.paid = 0
+############Chức năng của teacher##################
+class TeacherHomeView(TeacherView):
+    @expose('/')
+    def index(self):
+        course = dao.get_course_by_teacher(current_user.id)
 
-            # Bước 2: Cập nhật lại trạng thái nợ
-            # Tính nợ sau khi xóa giao dịch
-            debt = model.registration.actual_tuition - model.registration.paid
+        student = []
+        if course:
+            student = dao.get_student_by_course(course[0].id)
 
-            if model.registration.paid == 0:
-                # Nếu đã trả lại hết tiền đóng -> Về trạng thái CHƯA ĐÓNG
-                model.registration.status = StatusTuition.UNPAID
-            elif debt <= 0:
-                # Vẫn còn thừa tiền (hiếm gặp) -> ĐÃ ĐÓNG
-                model.registration.status = StatusTuition.PAID
-            else:
-                # Vẫn còn đóng 1 ít nhưng chưa đủ -> TRẢ GÓP (PARTIAL)
-                model.registration.status = StatusTuition.PARTIAL
-
-            # Lưu thay đổi của Registration vào session
-            # (Flask-Admin sẽ tự động commit cùng lúc với việc xóa Transaction)
-            db.session.add(model.registration)
-
+        return render_template('admin/teacher.html', course=course, student=student,)
 
 ############## XỬ LÝ LOGIN #####################
 
@@ -306,12 +224,8 @@ class MyAdminIndexView(AdminIndexView):
             else:
                 flash('Sai tên đăng nhập hoặc mật khẩu!', 'danger')
 
-        # 2. NẾU ĐÃ ĐĂNG NHẬP -> HIỆN TRANG HOME CHUNG (home.html)
         if current_user.is_authenticated:
-            # Không redirect đi đâu cả, ai cũng vào trang Home này
             return self.render('admin/home.html')
-
-        # 3. Chưa đăng nhập -> Hiện Form Login
         return self.render('admin/index.html')
 
 @login.user_loader
@@ -333,6 +247,9 @@ admin.add_view(RegulationView(name='Quy định', endpoint='regulation'))
 # --- Menu cho CASHIER ---
 admin.add_view(CreateInvoiceView(name='Lập hóa đơn', endpoint='invoice'))
 admin.add_view(TransactionAdminView(Transaction, db.session, name='Quản lý giao dịch', endpoint='transaction'))
+
+# --- Menu cho TEACHER ---
+admin.add_view(TeacherHomeView(name="Giáo viên", endpoint="teacher"))
 
 # --- Menu chung ---
 admin.add_view(MyLogoutView(name='Đăng xuất'))
