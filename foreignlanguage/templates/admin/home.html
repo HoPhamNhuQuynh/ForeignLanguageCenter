@@ -20,6 +20,8 @@
                 QUẢN TRỊ VIÊN HỆ THỐNG
             {% elif current_user.role.name == 'CASHIER' %}
                 NHÂN VIÊN THU NGÂN
+            {% elif current_user.role.name == 'TEACHER' %}
+                GIÁO VIÊN
             {% else %}
                 {{ current_user.role.name }}
             {% endif %}
@@ -40,6 +42,13 @@
             {% elif current_user.role.name == 'CASHIER' %}
                 <a href="{{ url_for('invoice.index') }}" class="btn btn-warning text-white btn-lg px-4 mx-2 rounded-pill shadow-sm">
                     <i class="fa fa-file-text-o mr-2"></i> Lập hóa đơn ngay
+                </a>
+            {% elif current_user.role.name == 'TEACHER' %}
+                <a href="{{ url_for('rollcall.index') }}" class="btn btn-warning text-white btn-lg px-4 mx-2 rounded-pill shadow-sm">
+                    <i class="fa fa-calendar mr-2"></i> Điểm danh
+                </a>
+                <a href=# class="btn btn-warning text-white btn-lg px-4 mx-2 rounded-pill shadow-sm">
+                    <i class="fa fa-edit mr-2"></i> Nhập điểm
                 </a>
             {% endif %}
         </div>

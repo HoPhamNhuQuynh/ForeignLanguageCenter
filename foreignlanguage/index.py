@@ -181,29 +181,6 @@ def dashboard():
                            , over_time_revenue=over_time_revenue
                            , date_labels=date_labels)
 
-@app.route("/save-scores", methods=["POST"])
-def save_scores():
-    data = request.form
-
-    wb = Workbook()
-    ws = wb.active
-    ws.append(["STT", "Học viên", "Điểm CC", "GK", "CK", "DTB"])
-
-    index = 1
-    for reg in student:
-        cc = float(data.get(f"cc_{reg.id}", 0))
-        gk = float(data.get(f"gk_{reg.id}", 0))
-        ck = float(data.get(f"ck_{reg.id}", 0))
-        dtb = round((cc + gk + ck) / 3, 2)
-
-        ws.append([index, reg.student.account.name, cc, gk, ck, dtb])
-        index += 1
-
-    file_path = "scores.xlsx"
-    wb.save(file_path)
-
-    return send_file(file_path, as_attachment=True)
-
 @app.route("/")
 def home():
     return redirect(url_for('admin.index'))
