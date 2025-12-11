@@ -4,11 +4,13 @@ from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
 from flask_login import current_user, login_user, logout_user
+from flask_sqlalchemy.session import Session
+
 from foreignlanguage import app, db, login
 from foreignlanguage.models import (
     StudentInfo, Course, Classroom, EmployeeInfo,
     Registration, Transaction, UserRole, Level,
-    StatusTuition, StatusPayment, MethodEnum
+    StatusTuition, StatusPayment, MethodEnum, Present
 )
 import dao
 
@@ -195,16 +197,53 @@ class TransactionAdminView(CashierModelView):
         dao.revert_payment(model.registration, model.money)
 
 ############Chức năng của teacher##################
-class TeacherHomeView(TeacherView):
+class RollcallView(AdminBaseView):
     @expose('/')
     def index(self):
-        course = dao.get_course_by_teacher(current_user.id)
+        course = dao.load_courses()
+        sessions = Session.query.all()
+        students = StudentInfo.query.all()
 
-        student = []
-        if course:
-            student = dao.get_student_by_course(course[0].id)
+        if request.method == 'POST':
+            session_id = request.form.get('session_id')
+            if not session_id:
+                flash("Vui lòng chọn buổi học!", "warning")
+                return redirect(url_for('.index'))
 
-        return render_template('admin/teacher.html', course=course, student=student,)
+            session_obj = Session.query.get(int(session_id))
+            if not session_obj:
+                flash("Buổi học không tồn tại!", "danger")
+                return redirect(url_for('.index'))
+
+            # Duyệt tất cả các học viên
+            for student in students:
+                val = request.form.get(str(student.id))
+                if val is None:
+                    continue  # không chọn
+                is_present = True if val == '1' else False
+
+                # Kiểm tra bản ghi đã tồn tại chưa
+                present_record = Present.query.filter_by(session_id=session_obj.id, student_id=student.id).first()
+                if present_record:
+                    present_record.is_present = is_present
+                else:
+                    new_record = Present(session_id=session_obj.id, student_id=student.id, is_present=is_present)
+                    db.session.add(new_record)
+
+            db.session.commit()
+            flash("Đã lưu điểm danh thành công!", "success")
+            return redirect(url_for('.index'))
+
+        return self.render('admin/rollcall.html',
+                           course=course,
+                           sessions=sessions,
+                           student=students)
+
+class EnterscoreView(AdminBaseView):
+    @expose('/')
+    def index(self):
+        # Code thống kê...
+        return self.render('admin/enterscore.html')
 
 ############## XỬ LÝ LOGIN #####################
 
@@ -249,7 +288,8 @@ admin.add_view(CreateInvoiceView(name='Lập hóa đơn', endpoint='invoice'))
 admin.add_view(TransactionAdminView(Transaction, db.session, name='Quản lý giao dịch', endpoint='transaction'))
 
 # --- Menu cho TEACHER ---
-admin.add_view(TeacherHomeView(name="Giáo viên", endpoint="teacher"))
+admin.add_view(RollcallView(name="Điểm danh", endpoint="rollcall"))
+admin.add_view(EnterscoreView(name="Nhập điểm", endpoint="enterscore"))
 
 # --- Menu chung ---
 admin.add_view(MyLogoutView(name='Đăng xuất'))

@@ -63,6 +63,7 @@ def get_scores_by_course(course_id):
         .join(UserAccount, StudentInfo.u_id == UserAccount.id)
         .filter(Registration.class_id == course_id).all())
 
+
 ######### ADMIN ##############
 def stats_revenue_by_month():
     return (db.session.query(db.func.sum(Transaction.money), db.func.date_format(Transaction.date, '%m')).
