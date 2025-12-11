@@ -1,6 +1,6 @@
-from sqlalchemy import or_
+from sqlalchemy import or_, extract, func
 from sqlalchemy.orm import joinedload
-
+from datetime import datetime
 from foreignlanguage.models import UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo, \
     Classroom, EmployeeInfo, MethodEnum, StatusPayment
 from foreignlanguage import app, db
@@ -65,9 +65,44 @@ def get_scores_by_course(course_id):
 
 
 ######### ADMIN ##############
-def stats_revenue_by_month():
-    return (db.session.query(db.func.sum(Transaction.money), db.func.date_format(Transaction.date, '%m')).
-     group_by(db.func.date_format(Transaction.date, '%m'))).order_by(db.func.date_format(Transaction.date, '%m')).all()
+def stats_revenue_per_month_by_year(year=None):
+    year = year or datetime.now().year
+    query = ((db.session.query(
+                    func.sum(Transaction.money),
+                    extract('month', Transaction.date)
+                ).
+                filter(extract('year', Transaction.date) == year).
+                group_by(extract('month', Transaction.date))).
+                order_by(extract('month', Transaction.date)).
+                all())
+    return query
+
+def stats_rate_passed_per_course_by_year(year=None):
+    pass
+
+def stats_numbers_of_students_per_course_by_year(year=None):
+    year = year or datetime.now().year
+    query = (db.session.query(
+        func.count(Registration.student_id),
+        Course.name
+            ).
+             join(Classroom, Course.id == Classroom.course_id).
+             join(Registration, Registration.class_id == Classroom.id).
+             filter(extract('year', Classroom.start_time) == year).
+             group_by(Course.name).all())
+    return query
+
+def stats_top5_popular_courses_by_year(year=None):
+    pass
+
+def stats_top3_productive_teachers_by_year(year=None):
+    pass
+
+def stats_ratio_of_students_by_year(year=None):
+    pass
+
+def stats_level_distributions_by_year(year=None):
+    pass
 
 ######### CASHIER #############
 def get_unpaid_registrations(kw=None):
