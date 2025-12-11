@@ -88,5 +88,185 @@
     "regis_id": 5,
     "grade_cate_id": 3,
     "value": 9.5
+  },
+  {
+    "id": 16,
+    "regis_id": 6,
+    "grade_cate_id": 1,
+    "value": 8.0
+  },
+  {
+    "id": 17,
+    "regis_id": 6,
+    "grade_cate_id": 2,
+    "value": 8.5
+  },
+  {
+    "id": 18,
+    "regis_id": 6,
+    "grade_cate_id": 3,
+    "value": 8.0
+  },
+  {
+    "id": 19,
+    "regis_id": 8,
+    "grade_cate_id": 1,
+    "value": 7.5
+  },
+  {
+    "id": 20,
+    "regis_id": 8,
+    "grade_cate_id": 2,
+    "value": 7.0
+  },
+  {
+    "id": 21,
+    "regis_id": 8,
+    "grade_cate_id": 3,
+    "value": 7.0
+  },
+  {
+    "id": 22,
+    "regis_id": 9,
+    "grade_cate_id": 1,
+    "value": 9.0
+  },
+  {
+    "id": 23,
+    "regis_id": 9,
+    "grade_cate_id": 2,
+    "value": 9.5
+  },
+  {
+    "id": 24,
+    "regis_id": 9,
+    "grade_cate_id": 3,
+    "value": 9.0
+  },
+  {
+    "id": 25,
+    "regis_id": 11,
+    "grade_cate_id": 1,
+    "value": 8.5
+  },
+  {
+    "id": 26,
+    "regis_id": 11,
+    "grade_cate_id": 2,
+    "value": 8.0
+  },
+  {
+    "id": 27,
+    "regis_id": 11,
+    "grade_cate_id": 3,
+    "value": 8.5
+  },
+  {
+    "id": 28,
+    "regis_id": 12,
+    "grade_cate_id": 1,
+    "value": 7.0
+  },
+  {
+    "id": 29,
+    "regis_id": 12,
+    "grade_cate_id": 2,
+    "value": 6.5
+  },
+  {
+    "id": 30,
+    "regis_id": 12,
+    "grade_cate_id": 3,
+    "value": 7.0
+  },
+  {
+    "id": 31,
+    "regis_id": 13,
+    "grade_cate_id": 1,
+    "value": 9.5
+  },
+  {
+    "id": 32,
+    "regis_id": 13,
+    "grade_cate_id": 2,
+    "value": 9.0
+  },
+  {
+    "id": 33,
+    "regis_id": 13,
+    "grade_cate_id": 3,
+    "value": 9.5
+  },
+  {
+    "id": 34,
+    "regis_id": 16,
+    "grade_cate_id": 1,
+    "value": 8.0
+  },
+  {
+    "id": 35,
+    "regis_id": 16,
+    "grade_cate_id": 2,
+    "value": 8.5
+  },
+  {
+    "id": 36,
+    "regis_id": 16,
+    "grade_cate_id": 3,
+    "value": 8.0
+  },
+  {
+    "id": 37,
+    "regis_id": 17,
+    "grade_cate_id": 1,
+    "value": 6.0
+  },
+  {
+    "id": 38,
+    "regis_id": 17,
+    "grade_cate_id": 2,
+    "value": 5.5
+  },
+  {
+    "id": 39,
+    "regis_id": 17,
+    "grade_cate_id": 3,
+    "value": 6.0
+  },
+  {
+    "id": 40,
+    "regis_id": 19,
+    "grade_cate_id": 1,
+    "value": 9.0
+  },
+  {
+    "id": 41,
+    "regis_id": 19,
+    "grade_cate_id": 2,
+    "value": 9.0
+  },
+  {
+    "id": 42,
+    "regis_id": 19,
+    "grade_cate_id": 3,
+    "value": 9.5
+  },
+  {
+    "id": 43,
+    "regis_id": 20,
+    "grade_cate_id": 1,
+    "value": 8.5
+  },
+  {
+    "id": 44,
+    "regis_id": 20,
+    "grade_cate_id": 2,
+    "value": 8.0
+  },
+  {
+    "id": 45,
+    "regis_id": 20,
+    "grade_cate_id": 3,
+    "value": 8.5
   }
 ]

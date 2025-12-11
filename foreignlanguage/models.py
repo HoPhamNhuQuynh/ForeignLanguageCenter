@@ -18,6 +18,7 @@ class UserRole(ValueEnum):
 class MethodEnum(ValueEnum):
     CASH = 1
     BANKING = 2
+    QR_CODE = 3
 
 
 class StatusPayment(ValueEnum):
@@ -33,6 +34,10 @@ class StatusTuition(ValueEnum):
     PARTIAL = 3
     OVERDUE = 4
 
+class AcademicStatus(ValueEnum):
+    PENDING = 1
+    PASSED = 2
+    FAILED = 3
 
 class Base(db.Model):
     __abstract__ = True
@@ -115,7 +120,7 @@ class Classroom(db.Model):  # main model
     level_id = Column(Integer, ForeignKey('level.id'), nullable=False)
 
     sessions = relationship('Session', backref='classroom', lazy=True)
-    studs = relationship('Registration', back_populates='classroom')
+    studs = relationship('Registration', back_populates='classroom', lazy=True)
 
 
 class Registration(db.Model):
@@ -124,12 +129,14 @@ class Registration(db.Model):
     transact_time = Column(DateTime, default=datetime.now)
     actual_tuition = Column(Float, default=0.0)
     status = Column(Enum(StatusTuition), default=StatusTuition.UNPAID)
+    final_score = Column(Float, nullable=True)
+    academic_status = Column(Enum(AcademicStatus), default=AcademicStatus.PENDING)
 
     student_id = Column(Integer, ForeignKey('student_info.id'), nullable=False)
     class_id = Column(Integer, ForeignKey('classroom.id'), nullable=False)
 
-    classroom = relationship('Classroom', back_populates='studs')
-    student = relationship('StudentInfo', back_populates='classes')
+    classroom = relationship('Classroom', back_populates='studs', lazy=True)
+    student = relationship('StudentInfo', back_populates='classes', lazy=True)
 
 
 class Transaction(db.Model):  # main model

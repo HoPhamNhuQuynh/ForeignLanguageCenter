@@ -25,5 +25,68 @@
     "content": "Hệ thống ngữ pháp, từ vựng thương mại và mẹo giải đề Listening & Reading tối ưu điểm số.",
     "joined_date": "2023-01-01 08:00:00",
     "active": 1
+  },
+  {
+    "id": 4,
+    "name": "Tiếng Anh Mất Gốc",
+    "description": "Xây dựng nền tảng cho người mới bắt đầu",
+    "period": 4.0,
+    "content": "Hệ thống lại toàn bộ ngữ pháp cơ bản, 1000 từ vựng thông dụng và luyện phát âm cơ bản.",
+    "joined_date": "2023-02-15 09:00:00",
+    "active": 1
+  },
+  {
+    "id": 5,
+    "name": "Business English",
+    "description": "Tiếng Anh thương mại cho người đi làm",
+    "period": 3.5,
+    "content": "Viết email, kỹ năng đàm phán, thuyết trình dự án, từ vựng chuyên ngành kinh tế - văn phòng.",
+    "joined_date": "2023-03-10 14:00:00",
+    "active": 1
+  },
+  {
+    "id": 6,
+    "name": "Super Kids English",
+    "description": "Tiếng Anh thiếu nhi (6-10 tuổi)",
+    "period": 3.0,
+    "content": "Học qua trò chơi, bài hát, kể chuyện. Phát triển tư duy ngôn ngữ tự nhiên và sự tự tin.",
+    "joined_date": "2023-04-05 08:30:00",
+    "active": 1
+  },
+  {
+    "id": 7,
+    "name": "Luyện Thi VSTEP B1-B2",
+    "description": "Chứng chỉ năng lực ngoại ngữ 6 bậc",
+    "period": 2.5,
+    "content": "Làm quen định dạng đề thi VSTEP của Bộ GD&ĐT, chiến thuật làm bài 4 kỹ năng đạt chuẩn B1/B2.",
+    "joined_date": "2023-05-20 10:00:00",
+    "active": 1
+  },
+  {
+    "id": 8,
+    "name": "Chuẩn Hóa Phát Âm (IPA)",
+    "description": "Luyện phát âm chuẩn giọng Mỹ",
+    "period": 2.0,
+    "content": "44 âm trong bảng IPA, trọng âm, nối âm, ngữ điệu (intonation) để nói hay và tự nhiên hơn.",
+    "joined_date": "2023-06-01 18:00:00",
+    "active": 1
+  },
+  {
+    "id": 9,
+    "name": "Tiếng Anh Chuyên Ngành CNTT",
+    "description": "English for IT Professionals",
+    "period": 3.0,
+    "content": "Đọc hiểu tài liệu kỹ thuật, giao tiếp trong mô hình Agile/Scrum, viết báo cáo lỗi, email cho khách hàng.",
+    "joined_date": "2023-07-15 19:00:00",
+    "active": 1
+  },
+  {
+    "id": 10,
+    "name": "TOEFL iBT Master",
+    "description": "Chinh phục giấc mơ du học",
+    "period": 6.0,
+    "content": "Rèn luyện kỹ năng nghe giảng (academic listening), ghi chú, viết luận tích hợp và nói học thuật.",
+    "joined_date": "2023-08-01 08:00:00",
+    "active": 0
   }
-]
+  ]

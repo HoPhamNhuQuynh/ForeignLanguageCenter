@@ -2,71 +2,526 @@
   {
     "id": 1,
     "class_id": 1,
-    "session_date": "2024-03-10 18:00:00",
+    "session_date": "2024-01-18 18:00:00",
     "shift": 1,
-    "session_content": "Introduction: Greetings & Self-introduction"
+    "session_content": "Introduction: Greetings & Getting to know each other"
   },
   {
     "id": 2,
     "class_id": 1,
-    "session_date": "2024-03-12 18:00:00",
+    "session_date": "2024-01-20 18:00:00",
     "shift": 1,
-    "session_content": "Topic: Daily Routines & Habits"
+    "session_content": "Topic 1: Daily Routines & Habits"
   },
   {
     "id": 3,
     "class_id": 1,
-    "session_date": "2024-03-14 18:00:00",
+    "session_date": "2024-01-23 18:00:00",
     "shift": 1,
-    "session_content": "Topic: Hobbies & Interests"
+    "session_content": "Topic 2: Family & Friends description"
   },
   {
     "id": 4,
-    "class_id": 2,
-    "session_date": "2024-03-15 19:30:00",
-    "shift": 2,
-    "session_content": "Unit 1: Jobs and Workplaces"
+    "class_id": 1,
+    "session_date": "2024-01-25 18:00:00",
+    "shift": 1,
+    "session_content": "Topic 3: Shopping & Clothes"
   },
   {
     "id": 5,
-    "class_id": 2,
-    "session_date": "2024-03-18 19:30:00",
-    "shift": 2,
-    "session_content": "Unit 2: Travel and Transport"
+    "class_id": 1,
+    "session_date": "2024-01-27 18:00:00",
+    "shift": 1,
+    "session_content": "Speaking Practice: Role-play at a store"
   },
   {
     "id": 6,
-    "class_id": 3,
-    "session_date": "2024-04-01 18:00:00",
+    "class_id": 1,
+    "session_date": "2024-01-30 18:00:00",
     "shift": 1,
-    "session_content": "IELTS Overview & Speaking Part 1"
+    "session_content": "Topic 4: Food & Drink - Ordering at a restaurant"
   },
   {
     "id": 7,
-    "class_id": 3,
-    "session_date": "2024-04-03 18:00:00",
+    "class_id": 1,
+    "session_date": "2024-02-01 18:00:00",
     "shift": 1,
-    "session_content": "Listening Strategy: Note completion"
+    "session_content": "Topic 5: Hobbies & Free time activities"
   },
   {
     "id": 8,
-    "class_id": 3,
-    "session_date": "2024-04-05 18:00:00",
+    "class_id": 1,
+    "session_date": "2024-02-03 18:00:00",
     "shift": 1,
-    "session_content": "Reading Skill: Skimming & Scanning"
+    "session_content": "Mid-term Review & Speaking Check"
   },
   {
     "id": 9,
-    "class_id": 5,
-    "session_date": "2024-03-20 17:30:00",
+    "class_id": 1,
+    "session_date": "2024-02-06 18:00:00",
     "shift": 1,
-    "session_content": "TOEIC Orientation & Part 1 Introduction"
+    "session_content": "Topic 6: Travel & Holidays - Past tense"
   },
   {
     "id": 10,
-    "class_id": 5,
-    "session_date": "2024-03-22 17:30:00",
+    "class_id": 1,
+    "session_date": "2024-02-08 18:00:00",
     "shift": 1,
-    "session_content": "Grammar Focus: Tenses review"
+    "session_content": "Topic 7: Asking for & Giving Directions"
+  },
+  {
+    "id": 11,
+    "class_id": 1,
+    "session_date": "2024-02-13 18:00:00",
+    "shift": 1,
+    "session_content": "Topic 8: Jobs & Workplaces"
+  },
+  {
+    "id": 12,
+    "class_id": 1,
+    "session_date": "2024-02-15 18:00:00",
+    "shift": 1,
+    "session_content": "Topic 9: Health & Fitness"
+  },
+  {
+    "id": 13,
+    "class_id": 1,
+    "session_date": "2024-02-17 18:00:00",
+    "shift": 1,
+    "session_content": "Speaking Practice: Debate on simple topics"
+  },
+  {
+    "id": 14,
+    "class_id": 1,
+    "session_date": "2024-02-20 18:00:00",
+    "shift": 1,
+    "session_content": "Final Review: Vocabulary & Grammar"
+  },
+  {
+    "id": 15,
+    "class_id": 1,
+    "session_date": "2024-02-22 18:00:00",
+    "shift": 1,
+    "session_content": "Final Speaking Test & Party"
+  },
+  {
+    "id": 16,
+    "class_id": 2,
+    "session_date": "2024-09-09 19:30:00",
+    "shift": 2,
+    "session_content": "Orientation & Goal Setting for Intermediate Level"
+  },
+  {
+    "id": 17,
+    "class_id": 2,
+    "session_date": "2024-09-11 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 1: Advanced Career & Business Talk"
+  },
+  {
+    "id": 18,
+    "class_id": 2,
+    "session_date": "2024-09-13 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 2: Technology & Future Trends"
+  },
+  {
+    "id": 19,
+    "class_id": 2,
+    "session_date": "2024-09-16 19:30:00",
+    "shift": 2,
+    "session_content": "Speaking Skill: Expressing Opinions & Agreeing/Disagreeing"
+  },
+  {
+    "id": 20,
+    "class_id": 2,
+    "session_date": "2024-09-18 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 3: Environment & Global Issues"
+  },
+  {
+    "id": 21,
+    "class_id": 2,
+    "session_date": "2024-09-20 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 4: Media & Entertainment"
+  },
+  {
+    "id": 22,
+    "class_id": 2,
+    "session_date": "2024-09-23 19:30:00",
+    "shift": 2,
+    "session_content": "Presentation Skills: Structuring a speech"
+  },
+  {
+    "id": 23,
+    "class_id": 2,
+    "session_date": "2024-09-25 19:30:00",
+    "shift": 2,
+    "session_content": "Mid-term Assessment: Group Presentation"
+  },
+  {
+    "id": 24,
+    "class_id": 2,
+    "session_date": "2024-09-27 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 5: Culture & Traditions Comparison"
+  },
+  {
+    "id": 25,
+    "class_id": 2,
+    "session_date": "2024-09-30 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 6: Education & Lifelong Learning"
+  },
+  {
+    "id": 26,
+    "class_id": 2,
+    "session_date": "2024-10-02 19:30:00",
+    "shift": 2,
+    "session_content": "Listening Practice: TED Talks & News"
+  },
+  {
+    "id": 27,
+    "class_id": 2,
+    "session_date": "2024-10-04 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 7: Social Problems & Solutions"
+  },
+  {
+    "id": 28,
+    "class_id": 2,
+    "session_date": "2024-10-07 19:30:00",
+    "shift": 2,
+    "session_content": "Advanced Grammar: Conditionals & Wishes"
+  },
+  {
+    "id": 29,
+    "class_id": 2,
+    "session_date": "2024-10-09 19:30:00",
+    "shift": 2,
+    "session_content": "Review for Final Exam"
+  },
+  {
+    "id": 30,
+    "class_id": 2,
+    "session_date": "2024-10-11 19:30:00",
+    "shift": 2,
+    "session_content": "Final Evaluation: Interview with Foreign Teacher"
+  },
+  {
+    "id": 31,
+    "class_id": 3,
+    "session_date": "2024-09-30 17:30:00",
+    "shift": 1,
+    "session_content": "IELTS Overview & Marking Criteria"
+  },
+  {
+    "id": 32,
+    "class_id": 3,
+    "session_date": "2024-10-02 17:30:00",
+    "shift": 1,
+    "session_content": "Speaking Part 1: Topics & Strategy"
+  },
+  {
+    "id": 33,
+    "class_id": 3,
+    "session_date": "2024-10-04 17:30:00",
+    "shift": 1,
+    "session_content": "Reading: Skimming & Scanning Techniques"
+  },
+  {
+    "id": 34,
+    "class_id": 3,
+    "session_date": "2024-10-07 17:30:00",
+    "shift": 1,
+    "session_content": "Writing Task 1: Line Graphs"
+  },
+  {
+    "id": 35,
+    "class_id": 3,
+    "session_date": "2024-10-09 17:30:00",
+    "shift": 1,
+    "session_content": "Listening Section 1: Form Completion"
+  },
+  {
+    "id": 36,
+    "class_id": 3,
+    "session_date": "2024-10-11 17:30:00",
+    "shift": 1,
+    "session_content": "Speaking Part 2: Cue Card Strategy"
+  },
+  {
+    "id": 37,
+    "class_id": 3,
+    "session_date": "2024-10-14 17:30:00",
+    "shift": 1,
+    "session_content": "Reading: True/False/Not Given Tasks"
+  },
+  {
+    "id": 38,
+    "class_id": 3,
+    "session_date": "2024-10-16 17:30:00",
+    "shift": 1,
+    "session_content": "Writing Task 1: Bar Charts & Pie Charts"
+  },
+  {
+    "id": 39,
+    "class_id": 3,
+    "session_date": "2024-10-18 17:30:00",
+    "shift": 1,
+    "session_content": "Mid-course Mock Test (Mini)"
+  },
+  {
+    "id": 40,
+    "class_id": 3,
+    "session_date": "2024-10-21 17:30:00",
+    "shift": 1,
+    "session_content": "Listening Section 2: Map Labeling"
+  },
+  {
+    "id": 41,
+    "class_id": 3,
+    "session_date": "2024-10-23 17:30:00",
+    "shift": 1,
+    "session_content": "Speaking Part 3: Abstract Discussion"
+  },
+  {
+    "id": 42,
+    "class_id": 3,
+    "session_date": "2024-10-25 17:30:00",
+    "shift": 1,
+    "session_content": "Writing Task 2: Opinion Essays"
+  },
+  {
+    "id": 43,
+    "class_id": 3,
+    "session_date": "2024-10-28 17:30:00",
+    "shift": 1,
+    "session_content": "Reading: Matching Headings"
+  },
+  {
+    "id": 44,
+    "class_id": 3,
+    "session_date": "2024-10-30 17:30:00",
+    "shift": 1,
+    "session_content": "Listening Section 3 & 4: Multiple Choice"
+  },
+  {
+    "id": 45,
+    "class_id": 3,
+    "session_date": "2024-11-01 17:30:00",
+    "shift": 1,
+    "session_content": "Final Mock Test & Feedback"
+  },
+  {
+    "id": 46,
+    "class_id": 9,
+    "session_date": "2026-03-15 18:00:00",
+    "shift": 1,
+    "session_content": "Course Orientation & TOEIC Diagnostic Test"
+  },
+  {
+    "id": 47,
+    "class_id": 9,
+    "session_date": "2026-03-17 18:00:00",
+    "shift": 1,
+    "session_content": "Listening Part 1: Photographs - Analyzing visual clues"
+  },
+  {
+    "id": 48,
+    "class_id": 9,
+    "session_date": "2026-03-19 18:00:00",
+    "shift": 1,
+    "session_content": "Reading Part 5: Incomplete Sentences (Grammar Focus)"
+  },
+  {
+    "id": 49,
+    "class_id": 9,
+    "session_date": "2026-03-22 18:00:00",
+    "shift": 1,
+    "session_content": "Listening Part 2: Question-Response strategies"
+  },
+  {
+    "id": 50,
+    "class_id": 9,
+    "session_date": "2026-03-24 18:00:00",
+    "shift": 1,
+    "session_content": "Reading Part 6: Text Completion & Vocabulary building"
+  },
+  {
+    "id": 51,
+    "class_id": 9,
+    "session_date": "2026-03-26 18:00:00",
+    "shift": 1,
+    "session_content": "Listening Part 3: Conversations - Skimming questions"
+  },
+  {
+    "id": 52,
+    "class_id": 9,
+    "session_date": "2026-03-29 18:00:00",
+    "shift": 1,
+    "session_content": "Reading Part 7: Single Passages - Keyword technique"
+  },
+  {
+    "id": 53,
+    "class_id": 9,
+    "session_date": "2026-03-31 18:00:00",
+    "shift": 1,
+    "session_content": "Mid-term Review: Common TOEIC Traps"
+  },
+  {
+    "id": 54,
+    "class_id": 9,
+    "session_date": "2026-04-02 18:00:00",
+    "shift": 1,
+    "session_content": "Listening Part 4: Talks - Business contexts"
+  },
+  {
+    "id": 55,
+    "class_id": 9,
+    "session_date": "2026-04-05 18:00:00",
+    "shift": 1,
+    "session_content": "Reading Part 7: Double & Triple Passages"
+  },
+  {
+    "id": 56,
+    "class_id": 9,
+    "session_date": "2026-04-07 18:00:00",
+    "shift": 1,
+    "session_content": "Advanced Grammar: Relative Clauses & Conditionals"
+  },
+  {
+    "id": 57,
+    "class_id": 9,
+    "session_date": "2026-04-09 18:00:00",
+    "shift": 1,
+    "session_content": "Vocabulary: Business, Office, & Personnel"
+  },
+  {
+    "id": 58,
+    "class_id": 9,
+    "session_date": "2026-04-12 18:00:00",
+    "shift": 1,
+    "session_content": "Full Mock Test (Listening)"
+  },
+  {
+    "id": 59,
+    "class_id": 9,
+    "session_date": "2026-04-14 18:00:00",
+    "shift": 1,
+    "session_content": "Full Mock Test (Reading)"
+  },
+  {
+    "id": 60,
+    "class_id": 9,
+    "session_date": "2026-04-16 18:00:00",
+    "shift": 1,
+    "session_content": "Final Evaluation & Score Prediction"
+  },
+  {
+    "id": 61,
+    "class_id": 10,
+    "session_date": "2026-04-30 19:30:00",
+    "shift": 2,
+    "session_content": "Welcome Session: Introduction & Ice Breaking"
+  },
+  {
+    "id": 62,
+    "class_id": 10,
+    "session_date": "2026-05-02 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 1: Meeting New People & Personal Info"
+  },
+  {
+    "id": 63,
+    "class_id": 10,
+    "session_date": "2026-05-05 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 2: Work & Study - Talking about jobs"
+  },
+  {
+    "id": 64,
+    "class_id": 10,
+    "session_date": "2026-05-07 19:30:00",
+    "shift": 2,
+    "session_content": "Pronunciation Workshop: Vowels & Consonants"
+  },
+  {
+    "id": 65,
+    "class_id": 10,
+    "session_date": "2026-05-09 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 3: Daily Routines & Time management"
+  },
+  {
+    "id": 66,
+    "class_id": 10,
+    "session_date": "2026-05-12 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 4: Free Time - Hobbies & Interests"
+  },
+  {
+    "id": 67,
+    "class_id": 10,
+    "session_date": "2026-05-14 19:30:00",
+    "shift": 2,
+    "session_content": "Speaking Activity: Speed Dating Conversations"
+  },
+  {
+    "id": 68,
+    "class_id": 10,
+    "session_date": "2026-05-16 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 5: Food & Drink - Ordering meals"
+  },
+  {
+    "id": 69,
+    "class_id": 10,
+    "session_date": "2026-05-19 19:30:00",
+    "shift": 2,
+    "session_content": "Mid-term Speaking Check"
+  },
+  {
+    "id": 70,
+    "class_id": 10,
+    "session_date": "2026-05-21 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 6: Places in Town & Directions"
+  },
+  {
+    "id": 71,
+    "class_id": 10,
+    "session_date": "2026-05-23 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 7: Shopping - Clothing & Bargaining"
+  },
+  {
+    "id": 72,
+    "class_id": 10,
+    "session_date": "2026-05-26 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 8: Past Events - Describing holidays"
+  },
+  {
+    "id": 73,
+    "class_id": 10,
+    "session_date": "2026-05-28 19:30:00",
+    "shift": 2,
+    "session_content": "Listening Skill: Understanding native speed"
+  },
+  {
+    "id": 74,
+    "class_id": 10,
+    "session_date": "2026-05-30 19:30:00",
+    "shift": 2,
+    "session_content": "Review: Role-play situations"
+  },
+  {
+    "id": 75,
+    "class_id": 10,
+    "session_date": "2026-06-02 19:30:00",
+    "shift": 2,
+    "session_content": "Final Speaking Test & Certification"
   }
 ]

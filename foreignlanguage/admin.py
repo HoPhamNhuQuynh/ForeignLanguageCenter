@@ -67,16 +67,25 @@ class MyLogoutView(BaseView):
 class StatsView(AdminBaseView):
     @expose('/')
     def index(self):
-        dates = dao.stats_revenue_by_month()
+        revenue_data = dao.stats_revenue_per_month_by_year(2025)
         over_time_revenue = []
         date_labels = []
-        for amount, date in dates:
+        for amount, date in revenue_data:
             over_time_revenue.append(amount)
             date_labels.append(date)
 
+        student_data = dao.stats_numbers_of_students_per_course_by_year(2025)
+        course_label = []
+        numbers_of_students = []
+        for amount, course in student_data:
+            course_label.append(course)
+            numbers_of_students.append(amount)
+
         return self.render('admin/stats.html'
                            , over_time_revenue=over_time_revenue
-                           , date_labels=date_labels)
+                           , date_labels=date_labels
+                           , numbers_of_students=numbers_of_students
+                           , course_label=course_label)
 
 # --- View Quy định học phí ---
 class RegulationView(AdminBaseView):
