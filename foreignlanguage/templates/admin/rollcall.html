@@ -4,15 +4,16 @@
 <h4 class="fw-bold">Điểm danh</h4>
 <form method="POST">
     <div class="border p-3 rounded bg-orange-light">
-        <label class="fw-bold">Chọn khóa</label>
-        <select class="form-select mb-3" name="course_id">
+        <label class="fw-bold">Chọn lớp</label>
+        <select class="form-select mb-3" id="classSelect">
             <option value="">-- Vui lòng chọn --</option>
-            {% for c in course %}
+            {% for c in classes %}
             <option value="{{ c.id }}">
-                {{ c.name }}
+                {{ c.course.name }} - {{ c.level.name }}
             </option>
             {% endfor %}
         </select>
+
 
         <table class="table table-bordered text-center">
             <thead class="bg-orange">
@@ -20,16 +21,14 @@
                 <th>STT</th>
                 <th>Tên học viên</th>
                 <th>
-                    <select class="form-select" name="session_id">
-                        <option value="">-- Chọn buổi học --</option>
-                        {% for s in sessions %}
-                        <option value="{{ s.id }}">Buổi {{ loop.index }} - {{ s.session_content }}</option>
-                        {% endfor %}
-                    </select>
+                   <select class="form-select" name="session_id" id="sessionSelect">
+    <option value="">-- Chọn buổi học --</option>
+</select>
+
                 </th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="studentBody">
             {% for reg in student %}
             <tr>
                 <td>{{ loop.index }}</td>
@@ -49,4 +48,8 @@
     </div>
 </form>
 
+{% endblock %}
+
+{% block tail %}
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 {% endblock %}

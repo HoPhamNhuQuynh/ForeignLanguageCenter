@@ -63,6 +63,32 @@ def get_scores_by_course(course_id):
         .join(UserAccount, StudentInfo.u_id == UserAccount.id)
         .filter(Registration.class_id == course_id).all())
 
+def get_teacher_classes(user_id):
+    employee = EmployeeInfo.query.filter_by(u_id=user_id).first()
+    if not employee:
+        return []
+    return Classroom.query.filter_by(employee_id=employee.id).all()
+
+
+def get_rollcall_data(user_id, class_id):
+    employee = EmployeeInfo.query.filter_by(u_id=user_id).first()
+    if not employee:
+        return None, None
+
+    classroom = Classroom.query.filter_by(
+        id=class_id,
+        employee_id=employee.id
+    ).first()
+
+    if not classroom:
+        return None, None
+
+    sessions = Session.query.filter_by(class_id=class_id).all()
+
+    regs = Registration.query.filter_by(class_id=class_id).all()
+    students = [r.student for r in regs]
+
+    return sessions, students
 
 ######### ADMIN ##############
 def stats_revenue_per_month_by_year(year=None):
