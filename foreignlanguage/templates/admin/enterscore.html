@@ -4,46 +4,59 @@
 <h4 class="fw-bold">Nhập điểm</h4>
 
 <div class="border p-3 rounded bg-orange-light">
-    <label class="fw-bold">Chọn khóa</label>
-    <select class="form-select mb-3">
-        {% for c in course %}
-        <option value="{{ c.id }}">{{ c.name }}</option>
+    <label class="fw-bold">Chọn lớp</label>
+    <select class="form-select mb-3"
+            onchange="location='?class_id=' + this.value">
+        <option value="">-- Chọn lớp --</option>
+        {% for c in classes %}
+        <option value="{{ c.id }}" {% if c.id== selected_class %}selected{% endif %}>
+            {{ c.course.name }} - {{ c.level.name }}
+        </option>
         {% endfor %}
     </select>
+
 
     <table class="table table-bordered text-center">
         <thead class="bg-orange">
         <tr>
             <th>STT</th>
             <th>Tên học viên</th>
-            <th>Điểm chuyên cần</th>
-            <th>Điểm giữa kì</th>
-            <th>Điểm cuối kì</th>
-            <th>Điểm trung bình</th>
+            {% for c in categories %}
+            <th>{{ c.name }}</th>
+            {% endfor %}
+            <th>Điểm TB</th>
             <th>Kết quả</th>
             <th>Học lực</th>
         </tr>
         </thead>
+
+
         <tbody>
-        {% for reg in student %}
+        {% for item in students %}
         <tr>
             <td>{{ loop.index }}</td>
-            <td>{{ reg.student.account.name }}</td>
+            <td>{{ item.reg.student.account.name }}</td>
 
-            <td><input type="number" class="form-control" name="cc_{{ reg.id }}" value="{{ diem_cc }}">
-            </td>
-            <td><input type="number" class="form-control" name="gk_{{ reg.id }}" value="{{ diem_gk }}">
-            </td>
-            <td><input type="number" class="form-control" name="ck_{{ reg.id }}" value="{{ diem_ck }}">
-            </td>
+            {% set total = 0 %}
+            {% set weight_sum = 0 %}
 
-            {% set dtb = (diem_cc + diem_gk + diem_ck) / 3 %}
+            {% for c in categories %}
+            {% set val = item.scores[c.id] %}
+            {% if val is not none %}
+            {% set total = total + val * c.weight %}
+            {% set weight_sum = weight_sum + c.weight %}
+            {% endif %}
 
-            <td>{{ diem_cc }}</td>
-            <td>{{ diem_gk }}</td>
-            <td>{{ diem_ck }}</td>
+            <td>
+                <input type="number" class="form-control"
+                       name="score_{{ item.reg.id }}_{{ c.id }}"
+                       value="{{ val if val is not none else '' }}">
+            </td>
+            {% endfor %}
+
+            {% set dtb = total / weight_sum if weight_sum > 0 else 0 %}
+
             <td>{{ "%.2f"|format(dtb) }}</td>
-
             <td>{{ "Đậu" if dtb >= 5 else "Rớt" }}</td>
             <td>
                 {% if dtb >= 8 %} Giỏi
@@ -54,8 +67,8 @@
             </td>
         </tr>
         {% endfor %}
-
         </tbody>
+
     </table>
 
     <button type="submit" formaction="/save-scores"
