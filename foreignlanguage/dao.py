@@ -2,14 +2,17 @@ from sqlalchemy import or_, extract, func
 from sqlalchemy.orm import joinedload
 from datetime import datetime
 from foreignlanguage.models import UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo, \
-    Classroom, EmployeeInfo, MethodEnum, StatusPayment
+    Classroom, EmployeeInfo, MethodEnum, StatusPayment, Present, Session
 from foreignlanguage import app, db
 import hashlib
 
+
 # ==================== AUTH & USER ====================
-def auth_user(username,password):
+def auth_user(username, password):
     password = hashlib.md5(password.encode("utf-8")).hexdigest()
-    return UserAccount.query.filter(UserAccount.username.__eq__(username), UserAccount.password.__eq__(password)).first()
+    return UserAccount.query.filter(UserAccount.username.__eq__(username),
+                                    UserAccount.password.__eq__(password)).first()
+
 
 def add_user(username, password, email, address):
     password = hashlib.md5(password.encode("utf-8")).hexdigest()
@@ -17,33 +20,42 @@ def add_user(username, password, email, address):
     db.session.add(u)
     db.session.commit()
 
+
 def update_user_password(new_password, u_id):
     new_password = hashlib.md5(new_password.encode("utf-8")).hexdigest()
     u = get_user_by_id(u_id)
     u.password = new_password
     db.session.commit()
 
+
 def check_email(email):
     return UserAccount.query.filter(UserAccount.email.__eq__(email)).first()
+
 
 def get_user_by_id(uid):
     return UserAccount.query.get(uid)
 
+
 def get_user_by_username(username):
     return UserAccount.query.filter(UserAccount.username == username).first()
 
+
 def get_user_by_email(email):
     return UserAccount.query.filter(UserAccount.email == email).first()
+
 
 # ==================== COMMON LOADERS ====================
 def load_courses():
     return Course.query.all()
 
+
 def load_levels():
     return Level.query.all()
 
+
 def get_registration_by_id(r_id):
     return Registration.query.get(r_id)
+
 
 # ==================== TEACHER ====================
 def get_course_by_teacher(user_id):
@@ -51,17 +63,20 @@ def get_course_by_teacher(user_id):
             .join(EmployeeInfo, EmployeeInfo.id == Classroom.employee_id)
             .filter(EmployeeInfo.u_id == user_id).all())
 
+
 def get_student_by_course(course_id):
     return (db.session.query(Registration)
             .join(StudentInfo, Registration.student_id == StudentInfo.id)
             .join(UserAccount, StudentInfo.u_id == UserAccount.id)
             .filter(Registration.class_id == course_id).all())
 
+
 def get_scores_by_course(course_id):
     return (db.session.query(Registration)
-        .join(StudentInfo, Registration.student_id == StudentInfo.id)
-        .join(UserAccount, StudentInfo.u_id == UserAccount.id)
-        .filter(Registration.class_id == course_id).all())
+            .join(StudentInfo, Registration.student_id == StudentInfo.id)
+            .join(UserAccount, StudentInfo.u_id == UserAccount.id)
+            .filter(Registration.class_id == course_id).all())
+
 
 def get_teacher_classes(user_id):
     employee = EmployeeInfo.query.filter_by(u_id=user_id).first()
@@ -90,45 +105,63 @@ def get_rollcall_data(user_id, class_id):
 
     return sessions, students
 
+def save_attendance(session_id: int, student_status: dict):
+    for stu_id, status in student_status.items():
+        is_present = status == "1"
+        present = Present.query.filter_by(session_id=session_id, student_id=stu_id).first()
+        if present:
+            present.is_present = is_present
+        else:
+            db.session.add(Present(session_id=session_id, student_id=stu_id, is_present=is_present))
+    db.session.commit()
+
+
 ######### ADMIN ##############
 def stats_revenue_per_month_by_year(year=None):
     year = year or datetime.now().year
     query = ((db.session.query(
-                    func.sum(Transaction.money),
-                    extract('month', Transaction.date)
-                ).
-                filter(extract('year', Transaction.date) == year).
-                group_by(extract('month', Transaction.date))).
-                order_by(extract('month', Transaction.date)).
-                all())
+        func.sum(Transaction.money),
+        extract('month', Transaction.date)
+    ).
+              filter(extract('year', Transaction.date) == year).
+              group_by(extract('month', Transaction.date))).
+             order_by(extract('month', Transaction.date)).
+             all())
     return query
+
 
 def stats_rate_passed_per_course_by_year(year=None):
     pass
+
 
 def stats_numbers_of_students_per_course_by_year(year=None):
     year = year or datetime.now().year
     query = (db.session.query(
         func.count(Registration.student_id),
         Course.name
-            ).
+    ).
              join(Classroom, Course.id == Classroom.course_id).
              join(Registration, Registration.class_id == Classroom.id).
              filter(extract('year', Classroom.start_time) == year).
              group_by(Course.name).all())
     return query
 
+
 def stats_top5_popular_courses_by_year(year=None):
     pass
+
 
 def stats_top3_productive_teachers_by_year(year=None):
     pass
 
+
 def stats_ratio_of_students_by_year(year=None):
     pass
 
+
 def stats_level_distributions_by_year(year=None):
     pass
+
 
 ######### CASHIER #############
 def get_unpaid_registrations(kw=None):
@@ -142,6 +175,7 @@ def get_unpaid_registrations(kw=None):
         ))
     return query.all()
 
+
 def update_tuition_fee(level_id, new_fee):
     """Cập nhật học phí cho 1 level"""
     level = Level.query.get(level_id)
@@ -149,6 +183,7 @@ def update_tuition_fee(level_id, new_fee):
         level.tuition = float(new_fee)
         db.session.add(level)
         # Lưu ý: commit sẽ được gọi ở view hoặc gọi batch update
+
 
 def save_changes():
     """Hàm wrapper để commit db"""
@@ -217,13 +252,16 @@ def revert_payment(registration, money_to_revert):
 
     db.session.add(registration)
 
+
 def get_transaction_query_options(query):
     """Hàm tối ưu truy vấn Transaction để fix lỗi Export CSV"""
     return query.options(
         joinedload(Transaction.registration).joinedload(Registration.student).joinedload(StudentInfo.account),
         joinedload(Transaction.registration).joinedload(Registration.classroom).joinedload(Classroom.course)
     )
-if __name__=="__main__":
+
+
+if __name__ == "__main__":
     with app.app_context():
         print(auth_user("user", "123"))
-        #print(load_user_roles())
+        # print(load_user_roles())

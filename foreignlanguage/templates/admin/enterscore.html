@@ -3,18 +3,17 @@
 {% block body %}
 <h4 class="fw-bold">Nhập điểm</h4>
 
+<form method="post" action="{{ url_for('enterscore.save_scores') }}">
 <div class="border p-3 rounded bg-orange-light">
     <label class="fw-bold">Chọn lớp</label>
-    <select class="form-select mb-3"
-            onchange="location='?class_id=' + this.value">
+    <select class="form-select mb-3" onchange="location='?class_id=' + this.value">
         <option value="">-- Chọn lớp --</option>
         {% for c in classes %}
-        <option value="{{ c.id }}" {% if c.id== selected_class %}selected{% endif %}>
+        <option value="{{ c.id }}" {% if c.id == selected_class %}selected{% endif %}>
             {{ c.course.name }} - {{ c.level.name }}
         </option>
         {% endfor %}
     </select>
-
 
     <table class="table table-bordered text-center">
         <thead class="bg-orange">
@@ -30,51 +29,42 @@
         </tr>
         </thead>
 
-
         <tbody>
         {% for item in students %}
         <tr>
             <td>{{ loop.index }}</td>
             <td>{{ item.reg.student.account.name }}</td>
 
-            {% set total = 0 %}
-            {% set weight_sum = 0 %}
-
             {% for c in categories %}
             {% set val = item.scores[c.id] %}
-            {% if val is not none %}
-            {% set total = total + val * c.weight %}
-            {% set weight_sum = weight_sum + c.weight %}
-            {% endif %}
-
             <td>
-                <input type="number" class="form-control"
+                <input type="number" class="form-control score-input"
                        name="score_{{ item.reg.id }}_{{ c.id }}"
-                       value="{{ val if val is not none else '' }}">
+                       value="{{ val if val is not none else '' }}"
+                       data-regid="{{ item.reg.id }}"
+                       data-weight="{{ c.weight }}"
+                       min="0"
+                       onblur="updateDTB.call(this)">
             </td>
             {% endfor %}
 
-            {% set dtb = total / weight_sum if weight_sum > 0 else 0 %}
-
-            <td>{{ "%.2f"|format(dtb) }}</td>
-            <td>{{ "Đậu" if dtb >= 5 else "Rớt" }}</td>
-            <td>
-                {% if dtb >= 8 %} Giỏi
-                {% elif dtb >= 6.5 %} Khá
-                {% elif dtb >= 5 %} Trung bình
-                {% else %} Yếu
+            <td class="dtb">{{ "%.2f"|format(item.dtb) }}</td>
+            <td class="result">{{ "Đậu" if item.dtb >=5 else "Rớt" }}</td>
+            <td class="rank">
+                {% if item.dtb >= 8 %}Giỏi
+                {% elif item.dtb >=6.5 %}Khá
+                {% elif item.dtb >=5 %}Trung bình
+                {% else %}Yếu
                 {% endif %}
             </td>
         </tr>
         {% endfor %}
         </tbody>
-
     </table>
 
-    <button type="submit" formaction="/save-scores"
-            class="btn btn-orange px-4 rounded-3">
-        Xuất Excel
-    </button>
-
+    <button type="submit" class="btn btn-orange px-4 rounded-3">Lưu điểm</button>
 </div>
+</form
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
 {% endblock %}

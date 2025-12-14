@@ -64,3 +64,38 @@ document.getElementById('classSelect').addEventListener('change', function () {
             });
         });
 });
+
+function updateDTB() {
+    const row = this.closest('tr');
+    const inputs = row.querySelectorAll('.score-input');
+    let total = 0;
+    let weightSum = 0;
+
+    inputs.forEach(input => {
+        let val = parseFloat(input.value);
+        if (!isNaN(val) && val >= 0) {
+            total += val * parseFloat(input.dataset.weight);
+            weightSum += parseFloat(input.dataset.weight);
+        } else if (val < 0) {
+            input.value = 0; // Không cho âm
+        }
+    });
+
+    const dtb = weightSum > 0 ? (total / weightSum) : 0;
+    row.querySelector('.dtb').textContent = dtb.toFixed(2);
+    row.querySelector('.result').textContent = dtb >=5 ? "Đậu" : "Rớt";
+
+    let rank = '';
+    if (dtb >=8) rank = "Giỏi";
+    else if (dtb >=6.5) rank = "Khá";
+    else if (dtb >=5) rank = "Trung bình";
+    else rank = "Yếu";
+    row.querySelector('.rank').textContent = rank;
+}
+
+// Gắn blur cho tất cả input khi load trang
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.score-input').forEach(input => {
+        input.addEventListener('blur', updateDTB);
+    });
+});
