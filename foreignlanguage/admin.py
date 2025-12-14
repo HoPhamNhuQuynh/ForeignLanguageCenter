@@ -9,7 +9,7 @@ from flask_sqlalchemy.session import Session
 from foreignlanguage import app, db, login
 from foreignlanguage.models import (
     StudentInfo, Course, Classroom, EmployeeInfo,
-    Registration, Transaction, UserRole, Level,
+    Registration, Transaction, UserRole, Level, Score,
     StatusTuition, StatusPayment, MethodEnum, Present, Session, GradeCategory
 )
 import dao
@@ -208,24 +208,24 @@ class TransactionAdminView(CashierModelView):
 ############Chức năng của teacher##################
 class RollcallView(TeacherView):
 
-    @expose('/')
+    @expose('/', methods=['GET', 'POST'])
     def index(self):
-        employee = EmployeeInfo.query.filter_by(
-            u_id=current_user.id
-        ).first()
+        employee = EmployeeInfo.query.filter_by(u_id=current_user.id).first()
+        classes = Classroom.query.filter_by(employee_id=employee.id).all() if employee else []
 
-        classes = []
-        if employee:
-            classes = Classroom.query.filter_by(
-                employee_id=employee.id
-            ).all()
+        if request.method == 'POST':
+            session_id = request.form.get('session_id')
 
-        return self.render(
-            'admin/rollcall.html',
-            classes=classes,
-            sessions=[],
-            student=[]
-        )
+            if not session_id:  # hoặc session_id.strip() == ''
+                flash("Vui lòng chọn buổi học!", "warning")
+                return redirect(url_for('.index'))
+
+            student_status = {k: v for k, v in request.form.items() if k != 'session_id'}
+            dao.save_attendance(int(session_id), student_status)
+            flash("Đã lưu điểm danh thành công!", "success")
+            return redirect(url_for('.index'))
+
+        return self.render('admin/rollcall.html', classes=classes, sessions=[], student=[])
 
     @expose('/load-by-class')
     def load_by_class(self):
@@ -272,36 +272,27 @@ class RollcallView(TeacherView):
 
 class EnterscoreView(TeacherView):
 
-    @expose('/')
+    @expose('/', methods=['GET'])
     def index(self):
-        # Lấy giáo viên hiện tại
         employee = EmployeeInfo.query.filter_by(u_id=current_user.id).first()
-
         classes = Classroom.query.filter_by(employee_id=employee.id).all() if employee else []
 
-        # Lấy class_id từ query param ?class_id=
         class_id = request.args.get('class_id', type=int)
-
-        # Load danh sách loại điểm active
         categories = GradeCategory.query.filter_by(active=1).all()
-
         students = []
 
         if class_id:
             regs = Registration.query.filter_by(class_id=class_id).all()
-
             for r in regs:
                 score_map = {s.grade_cate_id: s.value for s in r.scores}
-
                 total = 0
                 weight_sum = 0
                 scores_dict = {}
 
-                # Tính DTB “tới đâu tính tới đó”
                 for c in categories:
                     val = score_map.get(c.id)
-                    scores_dict[c.id] = val  # lưu cho template
-                    if val is not None:       # chỉ tính nếu có điểm
+                    scores_dict[c.id] = val
+                    if val is not None:
                         total += val * c.weight
                         weight_sum += c.weight
 
@@ -316,10 +307,28 @@ class EnterscoreView(TeacherView):
         return self.render(
             'admin/enterscore.html',
             classes=classes,
-            students=students,
+            selected_class=class_id,
             categories=categories,
-            selected_class=class_id
+            students=students
         )
+
+    @expose('/save-scores', methods=['POST'])
+    def save_scores(self):
+        for key, value in request.form.items():
+            if key.startswith("score_"):
+                _, reg_id, cate_id = key.split("_")
+                reg_id, cate_id = int(reg_id), int(cate_id)
+                val = float(value) if value else None
+
+                score = Score.query.filter_by(regis_id=reg_id, grade_cate_id=cate_id).first()
+                if score:
+                    score.value = val
+                else:
+                    if val is not None:
+                        db.session.add(Score(regis_id=reg_id, grade_cate_id=cate_id, value=val))
+        db.session.commit()
+        flash("Đã lưu điểm thành công!", "success")
+        return redirect(request.referrer)
 ############## XỬ LÝ LOGIN #####################
 
 class MyAdminIndexView(AdminIndexView):
