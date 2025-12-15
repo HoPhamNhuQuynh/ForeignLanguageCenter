@@ -1,3 +1,6 @@
+    console.log("SCRIPT LOADED");
+
+
     function togglePass(inputId, icon) {
         const input = document.getElementById(inputId);
         const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -32,6 +35,7 @@
 });
 
 //-------TEACHER------------
+//rollcall
 document.getElementById('classSelect').addEventListener('change', function () {
     const classId = this.value;
     if (!classId) return;
@@ -65,6 +69,7 @@ document.getElementById('classSelect').addEventListener('change', function () {
         });
 });
 
+//enterscore
 function updateDTB() {
     const row = this.closest('tr');
     const inputs = row.querySelectorAll('.score-input');
@@ -99,3 +104,4 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('blur', updateDTB);
     });
 });
+
