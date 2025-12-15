@@ -3,6 +3,7 @@
 {% block body %}
 <h4 class="fw-bold">Điểm danh</h4>
 <form method="POST">
+    <input type="hidden" name="class_id" id="classIdInput">
     <div class="border p-3 rounded bg-orange-light">
         <label class="fw-bold">Chọn lớp</label>
         <select class="form-select mb-3" id="classSelect">
@@ -31,7 +32,7 @@
             {% for reg in student %}
             <tr>
                 <td>{{ loop.index }}</td>
-                <td>{{ reg.account.name }}</td>
+                <td>{{ reg.student.account.name }}</td>
                 <td>
                     <input type="radio" name="{{ reg.id }}" value="1"> Có mặt
                     <input type="radio" name="{{ reg.id }}" value="0" class="ms-3"> Vắng
@@ -41,15 +42,20 @@
 
             </tbody>
         </table>
-
         <div class="text-end">
-            <button class="btn btn-orange px-4 rounded-3">Lưu điểm danh</button>
+            <button id="saveBtn"
+                    class="btn btn-orange px-4 rounded-3 d-none">
+                Lưu điểm danh
+            </button>
+
         </div>
+
     </div>
 </form>
 
 {% endblock %}
 
 {% block tail %}
+{{ super() }}
 <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 {% endblock %}

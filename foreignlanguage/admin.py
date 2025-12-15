@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import redirect, request, flash, url_for, render_template, jsonify
+from flask import redirect, request, flash, url_for, jsonify
 from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
@@ -9,8 +9,8 @@ from flask_sqlalchemy.session import Session
 from foreignlanguage import app, db, login
 from foreignlanguage.models import (
     StudentInfo, Course, Classroom, EmployeeInfo,
-    Registration, Transaction, UserRole, Level, Score,
-    StatusTuition, StatusPayment, MethodEnum, Present, Session, GradeCategory
+    Registration, Transaction, UserRole, Score,
+    Session, GradeCategory
 )
 import dao
 
@@ -216,11 +216,26 @@ class RollcallView(TeacherView):
         if request.method == 'POST':
             session_id = request.form.get('session_id')
 
-            if not session_id:  # hoặc session_id.strip() == ''
+            if not session_id:
                 flash("Vui lòng chọn buổi học!", "warning")
-                return redirect(url_for('.index'))
 
-            student_status = {k: v for k, v in request.form.items() if k != 'session_id'}
+                class_id = request.form.get('class_id')
+
+                sessions = Session.query.filter_by(class_id=class_id).all()
+                regs = Registration.query.filter_by(class_id=class_id).all()
+
+                return self.render(
+                    'admin/rollcall.html',
+                    classes=classes,
+                    sessions=sessions,
+                    student=regs
+                )
+
+            student_status = {}
+
+            for k, v in request.form.items():
+                if k.isdigit():  # CHỈ NHẬN key là số
+                    student_status[int(k)] = int(v)
             dao.save_attendance(int(session_id), student_status)
             flash("Đã lưu điểm danh thành công!", "success")
             return redirect(url_for('.index'))
