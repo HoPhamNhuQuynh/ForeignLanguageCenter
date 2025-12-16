@@ -1,17 +1,18 @@
+import math
 from sqlalchemy import or_, extract, func
 from sqlalchemy.orm import joinedload
 from datetime import datetime
-from foreignlanguage.models import UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo, \
-    Classroom, EmployeeInfo, MethodEnum, StatusPayment, Present, Session
+from foreignlanguage.models import (UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo,
+                                    Classroom, EmployeeInfo, MethodEnum, StatusPayment, CourseLevel, Session, Present)
 from foreignlanguage import app, db
 import hashlib
+from flask_login import current_user
 
 
 # ==================== AUTH & USER ====================
 def auth_user(username, password):
     password = hashlib.md5(password.encode("utf-8")).hexdigest()
-    return UserAccount.query.filter(UserAccount.username.__eq__(username),
-                                    UserAccount.password.__eq__(password)).first()
+    return UserAccount.query.filter(UserAccount.username.__eq__(username.strip()), UserAccount.password.__eq__(password)).first()
 
 
 def add_user(username, password, email, address):
@@ -55,6 +56,65 @@ def load_levels():
 
 def get_registration_by_id(r_id):
     return Registration.query.get(r_id)
+
+def get_course_by_id(c_id):
+    return Course.query.get(c_id)
+
+def get_level_by_id(l_id):
+    return  Level.query.get(l_id)
+
+def get_classes_by_course_level(c_id, l_id):
+    query = db.session.query(
+        Classroom.id,
+        Classroom.start_time,
+        Classroom.maximum_stu,
+        func.count(Registration.student_id).label('current_count')
+    ).outerjoin(
+        Registration, Classroom.id == Registration.class_id
+    ).filter(
+        Classroom.course_id == c_id,
+        Classroom.level_id == l_id,
+        Classroom.start_time.__ge__(datetime.now())
+    ).group_by(
+        Classroom.id, Classroom.start_time, Classroom.maximum_stu
+    ).having(
+        func.count(Registration.student_id) < Classroom.maximum_stu
+    )
+    print(query)
+    return query.all()
+
+def get_payment_methods():
+    return [
+        {
+            "name": method.name,
+            "value": method.value
+        }
+        for method in MethodEnum
+        if method != MethodEnum.CASH
+    ]
+
+def get_class_by_id(class_id):
+    return Classroom.query.get(class_id)
+
+def get_tuition_by_classId(class_id):
+    return db.session.query(Classroom.course_level.tuition).filter(Classroom.class_id == class_id).first()
+
+
+def add_registration(name, phone_number, class_id, payment_method, payment_percent):
+    classroom = get_class_by_id(class_id)
+    if classroom:
+        u_id = current_user.id
+        exist = db.session.query(Registration.id).filter_by(Registration.class_id==class_id, Registration.student_id==u_id, Registration.active==True).first()
+        if not exist:
+            tuition = classroom.course_level.tuition
+            if payment_percent == "50":
+                status = StatusTuition.PARTIAL
+                paid = math.ceil(tuition/2)
+            else:
+                status = StatusTuition.PAID
+                paid = tuition
+            reg = Registration(student_id=u_id, class_id=class_id, actual_tuition=tuition, paid_payment=payment_percent, status=status, paid=paid)
+            db.session.add(reg)
 
 
 # ==================== TEACHER ====================
@@ -263,5 +323,6 @@ def get_transaction_query_options(query):
 
 if __name__ == "__main__":
     with app.app_context():
-        print(auth_user("user", "123"))
-        # print(load_user_roles())
+        # print(auth_user("user", "123"))
+        print(get_classes_by_course_level(2, 2))
+

@@ -1,0 +1,12 @@
+[
+  {"course_id": 1, "level_id": 1, "tuition": 1500000.0},
+  {"course_id": 1, "level_id": 2, "tuition": 2000000.0},
+  {"course_id": 1, "level_id": 3, "tuition": 2500000.0},
+  {"course_id": 2, "level_id": 1, "tuition": 1800000.0},
+  {"course_id": 2, "level_id": 2, "tuition": 2200000.0},
+  {"course_id": 3, "level_id": 1, "tuition": 3000000.0},
+  {"course_id": 3, "level_id": 2, "tuition": 4500000.0},
+  {"course_id": 3, "level_id": 3, "tuition": 6000000.0},
+  {"course_id": 4, "level_id": 1, "tuition": 2000000.0},
+  {"course_id": 4, "level_id": 2, "tuition": 4000000.0}
+]

@@ -1,8 +1,8 @@
 import random
 from flask_mail import Message
-from flask import render_template, request, redirect, session, url_for
+from flask import render_template, request, redirect, session, url_for, jsonify
 from foreignlanguage import app, dao, login, db, mail, admin
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 from decorators import anonymous_required
 from openpyxl import Workbook
 from flask import send_file
@@ -44,7 +44,6 @@ def signup():
         confirm = request.form.get("confirm_pass")
 
         if password.__eq__(confirm):
-            phone_num = request.form.get("phone_num")
             username = request.form.get("username")
             email = request.form.get("email")
             address = request.form.get("address")
@@ -123,9 +122,10 @@ def forgot_password():
 
     return render_template("forgot-pass.html", step=session.get("step", 1), err_msg=err_msg, success_msg=success_msg)
 
-@app.route("/course")
-def course():
-    return render_template("course.html")
+@app.route("/courses/<int:id>")
+def course(id):
+    c = dao.get_course_by_id(id)
+    return render_template("course.html", course=c)
 
 
 @app.route("/student")
@@ -147,9 +147,45 @@ def contact_us():
 def entry_test():
     return render_template("entry-test.html")
 
-@app.route("/register-course")
+@app.route("/register-course", methods=["GET", "POST"])
 def register_course():
-    return render_template("register-form.html")
+    # if not current_user.is_authenticated:
+    #     return redirect("/signin")
+    payment_methods = dao.get_payment_methods()
+    return render_template("register-form.html", payment_methods=payment_methods)
+
+@app.route("/api/tuition")
+def get_tuition():
+    class_id = request.args.get("class_id", type=int)
+    tuition= dao.get_tuition_by_classId(class_id=class_id)
+    return jsonify({
+        "tuition": tuition
+    })
+
+
+@app.route("/api/classes", methods=["GET"])
+def get_classes():
+    course_id = request.args.get("course_id", type=int)
+    level_id = request.args.get("level_id", type=int)
+
+    if not course_id or not level_id:
+        return jsonify([])
+
+    classes = dao.get_classes_by_course_level(course_id, level_id)
+    res = []
+    for c in classes:
+        res.append({
+            "id": c.id,
+            "start_time": c.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "maximum_stu": c.maximum_stu,
+            "current_count": c.current_count
+        })
+    return jsonify(res)
+
+@app.route("/api/registrations", methods=["POST"])
+def add_registration():
+    pass
+
 
 @app.route("/user-profile")
 def user_profile():
@@ -163,23 +199,9 @@ def load_user(user_id):
 @app.context_processor
 def common_attributes():
     return {
-    'courses': dao.load_courses()
+    'courses': dao.load_courses(),
+    'levels'  :dao.load_levels()
     }
-
-@app.route("/dashboard")
-def dashboard():
-    #     test chart.js
-    dates = dao.stats_revenue_by_month()
-    over_time_revenue = []
-    date_labels = []
-    for amount, date in dates:
-        over_time_revenue.append(amount)
-        date_labels.append(date)
-
-
-    return render_template("dashboard.html"
-                           , over_time_revenue=over_time_revenue
-                           , date_labels=date_labels)
 
 @app.route("/")
 def home():

@@ -22,12 +22,11 @@
                 <!-- Dropdown Khóa học -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown">
-
                         Khóa học
                     </a>
                     <ul class="dropdown-menu">
                         {% for c in courses %}
-                        <li><a class="dropdown-item" href="/course">{{c.name}}</a></li>
+                        <li><a class="dropdown-item" href="/courses/{{ c.id }}">{{c.name}}</a></li>
                         {% endfor %}
                     </ul>
                 </li>
@@ -50,7 +49,11 @@
                          class="rounded-circle me-2"
                          style="width: 32px; height: 32px; object-fit: cover;">
 
-                    <span class="fw-bold small">Chào {{ current_user.name }}!</span>
+                    <span class="fw-bold small">Chào {% if current_user.name %}
+                                                            {{ current_user.name }}
+                                                     {% else %}
+                                                            {{ current_user.username }}
+                                                     {% endif%} !</span>
                 </a>
 
                 <a class="btn btn-danger btn-sm fw-bold rounded-pill px-3 d-flex align-items-center"
