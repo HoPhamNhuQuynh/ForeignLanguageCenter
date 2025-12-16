@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import redirect, request, flash, url_for, render_template
+from flask import redirect, request, flash, url_for, jsonify
 from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
@@ -9,8 +9,8 @@ from flask_sqlalchemy.session import Session
 from foreignlanguage import app, db, login
 from foreignlanguage.models import (
     StudentInfo, Course, Classroom, EmployeeInfo,
-    Registration, Transaction, UserRole, Level,
-    StatusTuition, StatusPayment, MethodEnum, Present
+    Registration, Transaction, UserRole, Score,
+    Session, GradeCategory
 )
 import dao
 
@@ -206,54 +206,144 @@ class TransactionAdminView(CashierModelView):
         dao.revert_payment(model.registration, model.money)
 
 ############Chức năng của teacher##################
-class RollcallView(AdminBaseView):
-    @expose('/')
+class RollcallView(TeacherView):
+
+    @expose('/', methods=['GET', 'POST'])
     def index(self):
-        course = dao.load_courses()
-        sessions = Session.query.all()
-        students = StudentInfo.query.all()
+        employee = EmployeeInfo.query.filter_by(u_id=current_user.id).first()
+        classes = Classroom.query.filter_by(employee_id=employee.id).all() if employee else []
 
         if request.method == 'POST':
             session_id = request.form.get('session_id')
+
             if not session_id:
                 flash("Vui lòng chọn buổi học!", "warning")
-                return redirect(url_for('.index'))
 
-            session_obj = Session.query.get(int(session_id))
-            if not session_obj:
-                flash("Buổi học không tồn tại!", "danger")
-                return redirect(url_for('.index'))
+                class_id = request.form.get('class_id')
 
-            # Duyệt tất cả các học viên
-            for student in students:
-                val = request.form.get(str(student.id))
-                if val is None:
-                    continue  # không chọn
-                is_present = True if val == '1' else False
+                sessions = Session.query.filter_by(class_id=class_id).all()
+                regs = Registration.query.filter_by(class_id=class_id).all()
 
-                # Kiểm tra bản ghi đã tồn tại chưa
-                present_record = Present.query.filter_by(session_id=session_obj.id, student_id=student.id).first()
-                if present_record:
-                    present_record.is_present = is_present
-                else:
-                    new_record = Present(session_id=session_obj.id, student_id=student.id, is_present=is_present)
-                    db.session.add(new_record)
+                return self.render(
+                    'admin/rollcall.html',
+                    classes=classes,
+                    sessions=sessions,
+                    student=regs
+                )
 
-            db.session.commit()
+            student_status = {}
+
+            for k, v in request.form.items():
+                if k.isdigit():  # CHỈ NHẬN key là số
+                    student_status[int(k)] = int(v)
+            dao.save_attendance(int(session_id), student_status)
             flash("Đã lưu điểm danh thành công!", "success")
             return redirect(url_for('.index'))
 
-        return self.render('admin/rollcall.html',
-                           course=course,
-                           sessions=sessions,
-                           student=students)
+        return self.render('admin/rollcall.html', classes=classes, sessions=[], student=[])
 
-class EnterscoreView(AdminBaseView):
-    @expose('/')
+    @expose('/load-by-class')
+    def load_by_class(self):
+        class_id = request.args.get('class_id')
+        if not class_id:
+            return jsonify({'students': [], 'sessions': []})
+
+        employee = EmployeeInfo.query.filter_by(
+            u_id=current_user.id
+        ).first()
+
+        if not employee:
+            return jsonify({'students': [], 'sessions': []})
+
+        classroom = Classroom.query.filter_by(
+            id=class_id,
+            employee_id=employee.id
+        ).first()
+
+        if not classroom:
+            return jsonify({'students': [], 'sessions': []})
+
+        # Buổi học
+        sessions = Session.query.filter_by(class_id=class_id).all()
+
+        # Học viên trong lớp
+        regs = Registration.query.filter_by(class_id=class_id).all()
+        students = [r.student for r in regs]
+
+        return jsonify({
+            'sessions': [
+                {
+                    'id': s.id,
+                    'name': f'Buổi {i + 1} - {s.session_content}',
+                } for i, s in enumerate(sessions)
+            ],
+            'students': [
+                {
+                    'id': stu.id,
+                    'name': stu.account.name
+                } for stu in students
+            ]
+        })
+
+class EnterscoreView(TeacherView):
+
+    @expose('/', methods=['GET'])
     def index(self):
-        # Code thống kê...
-        return self.render('admin/enterscore.html')
+        employee = EmployeeInfo.query.filter_by(u_id=current_user.id).first()
+        classes = Classroom.query.filter_by(employee_id=employee.id).all() if employee else []
 
+        class_id = request.args.get('class_id', type=int)
+        categories = GradeCategory.query.filter_by(active=1).all()
+        students = []
+
+        if class_id:
+            regs = Registration.query.filter_by(class_id=class_id).all()
+            for r in regs:
+                score_map = {s.grade_cate_id: s.value for s in r.scores}
+                total = 0
+                weight_sum = 0
+                scores_dict = {}
+
+                for c in categories:
+                    val = score_map.get(c.id)
+                    scores_dict[c.id] = val
+                    if val is not None:
+                        total += val * c.weight
+                        weight_sum += c.weight
+
+                dtb = round(total / weight_sum, 2) if weight_sum > 0 else 0
+
+                students.append({
+                    'reg': r,
+                    'scores': scores_dict,
+                    'dtb': dtb
+                })
+
+        return self.render(
+            'admin/enterscore.html',
+            classes=classes,
+            selected_class=class_id,
+            categories=categories,
+            students=students
+        )
+
+    @expose('/save-scores', methods=['POST'])
+    def save_scores(self):
+        for key, value in request.form.items():
+            if key.startswith("score_"):
+                _, reg_id, cate_id = key.split("_")
+                reg_id, cate_id = int(reg_id), int(cate_id)
+                val = float(value) if value else None
+
+                score = Score.query.filter_by(regis_id=reg_id, grade_cate_id=cate_id).first()
+                if score:
+                    score.value = val
+                else:
+                    if val is not None:
+                        db.session.add(Score(regis_id=reg_id, grade_cate_id=cate_id, value=val))
+        db.session.commit()
+        flash("Đã lưu điểm thành công!", "success")
+        return redirect(request.referrer)
 ############## XỬ LÝ LOGIN #####################
 
 class MyAdminIndexView(AdminIndexView):
