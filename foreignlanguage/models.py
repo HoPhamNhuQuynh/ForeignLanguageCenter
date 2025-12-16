@@ -1,7 +1,7 @@
 import json
 
 from foreignlanguage import db, app
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Enum, values
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Enum, Text, ForeignKeyConstraint
 from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 from enum import Enum as ValueEnum
@@ -42,15 +42,15 @@ class AcademicStatus(ValueEnum):
 class Base(db.Model):
     __abstract__ = True
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
-    name = Column(String(50))
     joined_date = Column(DateTime, default=datetime.now)
     active = Column(Boolean, default=True)
 
     def __str__(self):
-        return self.name
+        return getattr(self, "name", f"{self.__class__.__name__}({self.id})")
 
 
 class UserAccount(Base, UserMixin):
+    name = Column(String(50))
     username = Column(String(30), nullable=False, unique=True)
     password = Column(String(50), nullable=False)
     email = Column(String(100), nullable=False)
@@ -61,8 +61,7 @@ class UserAccount(Base, UserMixin):
                     default="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg")
 
 
-class EmployeeInfo(db.Model):  # main model
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
+class EmployeeInfo(Base):
     base_salary = Column(Float, default=0.0)
 
     u_id = Column(Integer, ForeignKey("user_account.id"), nullable=False, unique=True)
@@ -72,8 +71,7 @@ class EmployeeInfo(db.Model):  # main model
     classrooms = relationship('Classroom', backref='employee', lazy=True)
 
 
-class StudentInfo(db.Model):
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
+class StudentInfo(Base):
     entry_score = Column(Float, default=0.0)
 
     u_id = Column(Integer, ForeignKey("user_account.id"), nullable=False, unique=True)
@@ -84,47 +82,65 @@ class StudentInfo(db.Model):
 
 
 class Course(Base):
-    description = Column(String(500))
+    name = Column(String(50))
+    description = Column(Text)
     period = Column(Float, default=0.0)
     content = Column(String(500), nullable=False)
 
-    classrooms = relationship('Classroom', backref='course', lazy=True)
+    levels = relationship('CourseLevel', back_populates='course', lazy=True)
 
 
 class Level(Base):
+    name = Column(String(50))
+    description = Column(Text)
+    courses = relationship('CourseLevel', back_populates='level', lazy=True)
+
+class CourseLevel(db.Model):
+    __tablename__ = 'course_level'
+    course_id = Column(Integer, ForeignKey("course.id"), nullable=False, primary_key=True)
+    level_id = Column(Integer, ForeignKey("level.id"), nullable=False, primary_key=True)
     tuition = Column(Float, default=0.0)
 
-    classrooms = relationship('Classroom', backref='level', lazy=True)
+    course = relationship('Course', back_populates='levels')
+    level = relationship('Level', back_populates='courses')
+    classrooms=relationship('Classroom', backref='course_level', lazy=True)
+
+class Classroom(Base):  # main model
+    start_time = Column(DateTime)
+    maximum_stu = Column(Integer, default=25)
+
+    employee_id = Column(Integer, ForeignKey('employee_info.id'))
+    course_id = Column(Integer, nullable=False)
+    level_id = Column(Integer, nullable=False)
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ['course_id', 'level_id'],
+            ['course_level.course_id', 'course_level.level_id']
+        ),
+    )
+
+    sessions = relationship('Session', backref='classroom', lazy=True)
+    studs = relationship('Registration', back_populates='classroom', lazy=True)
 
 
 class GradeCategory(Base):  # main model
+    name = Column(String(50))
     weight = Column(Float, default=0.0)
 
     scores = relationship('Score', backref='grade_category', lazy=True)
 
 
 class Certification(Base):
+    name = Column(String(50))
     band_score = Column(Float, default=0.0)
     provided_date = Column(DateTime, nullable=False)
 
     employee_id = Column(Integer, ForeignKey('employee_info.id'), nullable=False)
 
 
-class Classroom(db.Model):  # main model
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
-    start_time = Column(DateTime)
-    maximum_stu = Column(Integer, default=25)
-
-    employee_id = Column(Integer, ForeignKey('employee_info.id'))
-    course_id = Column(Integer, ForeignKey('course.id'), nullable=False)
-    level_id = Column(Integer, ForeignKey('level.id'), nullable=False)
-
-    sessions = relationship('Session', backref='classroom', lazy=True)
-    studs = relationship('Registration', back_populates='classroom', lazy=True)
 
 
-class Registration(db.Model):
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
+class Registration(Base):
     paid = Column(Float, default=0.0)
     transact_time = Column(DateTime, default=datetime.now)
     actual_tuition = Column(Float, default=0.0)
@@ -139,8 +155,7 @@ class Registration(db.Model):
     student = relationship('StudentInfo', back_populates='classes', lazy=True)
 
 
-class Transaction(db.Model):  # main model
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
+class Transaction(Base):
     money = Column(Float, nullable=False)
     content = Column(String(500))
     method = Column(Enum(MethodEnum), default=MethodEnum.BANKING)
@@ -153,8 +168,7 @@ class Transaction(db.Model):  # main model
     registration = relationship('Registration', backref='transactions', lazy=True)
 
 
-class Session(db.Model):  # main model
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
+class Session(Base):
     session_date = Column(DateTime)
     session_content = Column(String(500), nullable=False)
     shift = Column(Integer, default=0)
@@ -174,8 +188,7 @@ class Present(db.Model):  # relationship
     student = relationship('StudentInfo', back_populates='sessions', lazy=True)
 
 
-class Score(db.Model):  # main model
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
+class Score(Base):
     value = Column(Float, default=0.0)
 
     regis_id = Column(Integer, ForeignKey('registration.id'), nullable=False)
@@ -248,6 +261,17 @@ def seed_data():
     except FileNotFoundError:
         print("Loi trong khi import file data/level.json")
 
+    try:
+        with open("data/course_level.json", encoding="utf-8") as f:
+            data = json.load(f)
+            for p in data:
+                exists = CourseLevel.query.filter_by(course_id=p['course_id'], level_id=p['level_id']).first()
+                if not exists:
+                    db.session.add(CourseLevel(**p))
+    except FileNotFoundError:
+        print("Khong tim thay file data/course_level.json")
+
+
     # 5. Grade Category
     try:
         with open("data/grade_category.json", encoding="utf-8") as f:
@@ -260,7 +284,7 @@ def seed_data():
         print("Loi trong khi import file data/grade_category.json")
 
     db.session.commit()
-    print("Da import xong dot 1 (User, Course, Level, GradeCategory)")
+    print("Da import xong dot 1 (User, Course, Level, GradeCategory, CourseLevel)")
 
     # 6. Certification
     try:
