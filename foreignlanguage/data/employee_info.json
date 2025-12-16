@@ -1,52 +1,8 @@
 [
-  {
-    "id": 1,
-    "base_salary": 30000000.0,
-    "u_id": 11
-  },
-  {
-    "id": 2,
-    "base_salary": 15000000.0,
-    "u_id": 12
-  },
-  {
-    "id": 3,
-    "base_salary": 16500000.0,
-    "u_id": 13
-  },
-  {
-    "id": 4,
-    "base_salary": 8000000.0,
-    "u_id": 14
-  },
-  {
-    "id": 5,
-    "base_salary": 14500000.0,
-    "u_id": 15
-  },
-  {
-    "id": 6,
-    "base_salary": 7500000.0,
-    "u_id": 16
-  },
-  {
-    "id": 7,
-    "base_salary": 15500000.0,
-    "u_id": 17
-  },
-  {
-    "id": 8,
-    "base_salary": 8200000.0,
-    "u_id": 18
-  },
-  {
-    "id": 9,
-    "base_salary": 17000000.0,
-    "u_id": 19
-  },
-  {
-    "id": 10,
-    "base_salary": 28000000.0,
-    "u_id": 20
-  }
+  {"id": 1, "u_id": 2, "base_salary": 8000000.0},
+  {"id": 2, "u_id": 3, "base_salary": 9000000.0},
+  {"id": 3, "u_id": 4, "base_salary": 7500000.0},
+  {"id": 4, "u_id": 5, "base_salary": 6000000.0},
+  {"id": 5, "u_id": 6, "base_salary": 6000000.0},
+  {"id": 6, "u_id": 1, "base_salary": 10000000.0}
 ]

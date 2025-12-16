@@ -1,29 +1,6 @@
 [
-  {
-    "id": 1,
-    "name": "Tiếng Anh Giao Tiếp",
-    "description": "Cải thiện phản xạ nghe nói tự nhiên",
-    "period": 3.0,
-    "content": "Các chủ đề giao tiếp hàng ngày: công việc, mua sắm, du lịch, thuyết trình...",
-    "joined_date": "2023-01-01 08:00:00",
-    "active": 1
-  },
-  {
-    "id": 2,
-    "name": "IELTS Preparation",
-    "description": "Luyện thi IELTS toàn diện 4 kỹ năng",
-    "period": 6.0,
-    "content": "Chiến thuật làm bài Reading, Listening; tư duy Writing và Speaking chuyên sâu theo band điểm.",
-    "joined_date": "2023-01-01 08:00:00",
-    "active": 1
-  },
-  {
-    "id": 3,
-    "name": "TOEIC Intensive",
-    "description": "Luyện thi TOEIC cấp tốc",
-    "period": 4.5,
-    "content": "Hệ thống ngữ pháp, từ vựng thương mại và mẹo giải đề Listening & Reading tối ưu điểm số.",
-    "joined_date": "2023-01-01 08:00:00",
-    "active": 1
-  }
+  {"id": 1, "name": "Tiếng Anh Giao Tiếp", "description": "Tự tin giao tiếp phản xạ", "period": 36.0, "content": "Nghe, Nói", "active": true},
+  {"id": 2, "name": "Luyện thi TOEIC", "description": "Đầu ra 650+", "period": 48.0, "content": "Reading, Listening", "active": true},
+  {"id": 3, "name": "Luyện thi IELTS", "description": "Cam kết 6.5 Academic", "period": 72.0, "content": "4 Kỹ năng chuyên sâu", "active": true},
+  {"id": 4, "name": "Tiếng Anh Doanh Nghiệp", "description": "Dành cho người đi làm", "period": 40.0, "content": "Email, Thuyết trình", "active": true}
 ]

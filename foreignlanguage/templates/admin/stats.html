@@ -1,10 +1,168 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends 'admin/master.html' %}
 
-</body>
-</html>
+{% block head %}
+{{ super() }}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+{% endblock %}
+
+{% block body %}
+<style>
+    body {
+        background-color: #ffffff;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+        background-color: transparent;
+        margin-bottom: 2rem;
+    }
+
+    .stat-item {
+        padding: 15px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s;
+    }
+    .stat-item:hover {
+        background-color: #eaeaea;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        color: #8898aa;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #32325d;
+        line-height: 1.5;
+    }
+
+    canvas { padding: 5px; }
+</style>
+
+<div class="container-fluid px-3 py-3">
+
+    <h2 class="text-center mb-5" style="color: #32325d; font-weight: 800;">BÁO CÁO THỐNG KÊ TRUNG TÂM</h2>
+
+    <div class="row mb-3">
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-item d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label">Total Courses</div>
+                    <div class="stat-value">{{ stars_courses }}</div>
+                </div>
+                <div class="icon-shape bg-gradient-red text-white rounded-circle shadow">
+                    <i class="fas fa-book fa-2x text-primary" style="opacity: 0.3"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-item d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label">Active Classes</div>
+                    <div class="stat-value text-success">{{ stats_classes }}</div>
+                </div>
+                <i class="fas fa-chalkboard-teacher fa-2x text-success" style="opacity: 0.3"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-item d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label">Total Students</div>
+                    <div class="stat-value text-info">{{ stats_students }}</div>
+                </div>
+                <i class="fas fa-users fa-2x text-info" style="opacity: 0.3"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-item d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value text-warning">{{ stats_total_revenue }}</div>
+                </div>
+                <i class="fas fa-dollar-sign fa-2x text-warning" style="opacity: 0.3"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end align-items-center mb-3">
+
+        <label for="yearSelector" class="text-muted fw-bold me-2 mb-0" style="font-size: 1rem;">
+            Thống kê năm:
+        </label>
+
+        <select class="form-select form-select-sm w-auto bg-light border-0 shadow-none fw-bold text-secondary cursor-pointer" id="yearSelector">
+            <option value="2024">2024</option>
+            <option value="2025" selected>2025</option>
+            <option value="2026">2026</option>
+        </select>
+
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-7 me-5">
+            <div class="card h-100">
+                <div class="card-body p-0">
+                    <canvas id="chartRevenue"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body p-0">
+                    <canvas id="chartStudentDist"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body p-0">
+                    <canvas id="chartPassRate"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body p-0">
+                    <canvas id="chartTopCourses"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block tail %}
+{{ super() }}
+<script type="module">
+import { initCharts } from "/static/js/dashboard.js";
+
+const chartData = {
+    ratioPassedLabels: {{ ratio_passed_data.labels | tojson | default('[]') }},
+    ratioPassedData: {{ ratio_passed_data.data | tojson | default('[]') }},
+    revenueLabels: {{ revenue_data.labels | tojson | default('[]') }},
+    revenueData: {{ revenue_data.data | tojson | default('[]') }},
+    studentLabels: {{ student_data.labels | tojson | default('[]') }},
+    studentData: {{ student_data.data | tojson | default('[]') }},
+    topCourseLabels: {{ top_course_data.labels | tojson | default('[]') }},
+    topCourseData: {{ top_course_data.data | tojson | default('[]') }}
+};
+
+initCharts(chartData);
+</script>
+{% endblock %}

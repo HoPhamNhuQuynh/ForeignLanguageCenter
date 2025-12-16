@@ -8,9 +8,9 @@
         <div class="row">
             <div class="col-lg-8">
 
-                <h1 class="display-5 fw-bold mb-3">Khóa học Luyện thi TOEIC Toàn diện</h1>
+                <h1 class="display-5 fw-bold mb-3">Khóa học {{ course.name }}</h1>
                 <p class="lead text-light mb-4">
-                    Chinh phục mọi mục tiêu điểm số từ Beginner đến Advanced. Bao gồm ngữ pháp, từ vựng, luyện nghe và các bài thi thử sát thực tế.
+                    {{ course.description}}
                 </p>
 
                 <div class="d-flex flex-wrap gap-4 align-items-center text-sm">
@@ -45,20 +45,7 @@
         <div class="col-lg-8">
             <div class="border rounded p-4 mb-5 bg-white shadow-sm">
                 <h3 class="fw-bold mb-4">Bạn sẽ học được gì?</h3>
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <i class="fas fa-check text-success me-2"></i> Nắm vững 12 chủ điểm ngữ pháp TOEIC
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <i class="fas fa-check text-success me-2"></i> Kỹ năng nghe hiểu Part 1 - Part 4
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <i class="fas fa-check text-success me-2"></i> Cải thiện tốc độ làm bài Reading
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <i class="fas fa-check text-success me-2"></i> 10 bộ đề thi thử sát thực tế
-                    </div>
-                </div>
+                 <i class="fas fa-check text-success me-2"></i> {{ course.content }}
             </div>
 
             <div class="mb-5">
@@ -125,23 +112,24 @@
                 <div class="card-body p-4">
                     <div class="d-flex align-items-end mb-3">
                         <h2 class="fw-bold text-danger mb-0 me-3">1.500.000đ</h2>
-                        <span class="text-decoration-line-through text-muted fs-5">2.500.000đ</span>
-                        <span class="badge bg-danger ms-auto">-40%</span>
                     </div>
 
-
+                    <form method="get" action="{{ url_for('register_course') }}">
                     <div class="mb-3">
-                        <label class="form-label fw-bold small">Mục tiêu đầu ra:</label>
-                        <select class="form-select">
-                            <option>Beginner (450+)</option>
-                            <option>Intermediate (650+)</option>
-                            <option>Advanced (800+)</option>
+                        <input type="hidden" name="course_id" value="{{ course.id }}">
+                        <label for="levelSelect" class="form-label fw-bold small">Mục tiêu đầu ra:</label>
+                        <select name="level_id" id="levelSelect" class="form-select">
+                            <option selected disabled value="">-- Chọn mục tiêu --</option>
+                            {% for l in levels %}
+                            <option value="{{l.id}}">{{l.name}}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
-                    <a href="/register-course" class="btn btn-danger w-100 fw-bold py-3 fs-5 mb-3 shadow">
+                    <button type="submit" class="btn btn-danger w-100 fw-bold py-3 fs-5 mb-3 shadow">
                         ĐĂNG KÝ HỌC NGAY
-                    </a>
+                    </button>
+                    </form>
 
                     <p class="text-center text-muted small mb-4">Hoàn tiền trong 7 ngày nếu không hài lòng</p>
 

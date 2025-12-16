@@ -1,146 +1,21 @@
 [
-  {
-    "id": 1,
-    "student_id": 1,
-    "class_id": 2,
-    "actual_tuition": 4500000.0,
-    "paid": 4500000.0,
-    "status": "PAID",
-    "transact_time": "2024-03-01 09:30:00"
-  },
-  {
-    "id": 2,
-    "student_id": 2,
-    "class_id": 2,
-    "actual_tuition": 4500000.0,
-    "paid": 4500000.0,
-    "status": "PAID",
-    "transact_time": "2024-03-05 14:15:00"
-  },
-  {
-    "id": 3,
-    "student_id": 3,
-    "class_id": 1,
-    "actual_tuition": 2000000.0,
-    "paid": 2000000.0,
-    "status": "PAID",
-    "transact_time": "2024-03-08 10:00:00"
-  },
-  {
-    "id": 4,
-    "student_id": 4,
-    "class_id": 3,
-    "actual_tuition": 4500000.0,
-    "paid": 4500000.0,
-    "status": "PAID",
-    "transact_time": "2024-03-25 16:45:00"
-  },
-  {
-    "id": 5,
-    "student_id": 5,
-    "class_id": 4,
-    "actual_tuition": 7000000.0,
-    "paid": 7000000.0,
-    "status": "PAID",
-    "transact_time": "2024-03-28 08:30:00"
-  },
-  {
-    "id": 6,
-    "student_id": 7,
-    "class_id": 5,
-    "actual_tuition": 2000000.0,
-    "paid": 1000000.0,
-    "status": "PARTIAL",
-    "transact_time": "2024-03-10 11:00:00"
-  },
-  {
-    "id": 7,
-    "student_id": 8,
-    "class_id": 5,
-    "actual_tuition": 2000000.0,
-    "paid": 2000000.0,
-    "status": "PAID",
-    "transact_time": "2024-03-15 09:15:00"
-  },
-  {
-    "id": 8,
-    "student_id": 9,
-    "class_id": 7,
-    "actual_tuition": 7000000.0,
-    "paid": 7000000.0,
-    "status": "PAID",
-    "transact_time": "2024-04-20 15:30:00"
-  },
-  {
-    "id": 9,
-    "student_id": 10,
-    "class_id": 1,
-    "actual_tuition": 2000000.0,
-    "paid": 2000000.0,
-    "status": "PAID",
-    "transact_time": "2024-03-02 10:45:00"
-  },
-  {
-    "id": 10,
-    "student_id": 1,
-    "class_id": 7,
-    "actual_tuition": 7000000.0,
-    "paid": 7000000.0,
-    "status": "PAID",
-    "transact_time": "2024-04-25 14:00:00"
-  },
-  {
-    "id": 11,
-    "student_id": 6,
-    "class_id": 1,
-    "actual_tuition": 2000000.0,
-    "paid": 0.0,
-    "status": "UNPAID",
-    "transact_time": "2024-03-01 08:00:00"
-  },
-  {
-    "id": 12,
-    "student_id": 3,
-    "class_id": 4,
-    "actual_tuition": 4500000.0,
-    "paid": 0.0,
-    "status": "OVERDUE",
-    "transact_time": "2024-04-01 08:00:00"
-  },
-  {
-    "id": 13,
-    "student_id": 6,
-    "class_id": 9,
-    "actual_tuition": 7000000.0,
-    "paid": 0.0,
-    "status": "UNPAID",
-    "transact_time": "2024-05-10 10:15:00"
-  },
-  {
-    "id": 14,
-    "student_id": 8,
-    "class_id": 2,
-    "actual_tuition": 4500000.0,
-    "paid": 0.0,
-    "status": "UNPAID",
-    "transact_time": "2024-05-12 14:30:00"
-  },
-  {
-    "id": 15,
-    "student_id": 2,
-    "class_id": 10,
-    "actual_tuition": 6000000.0,
-    "paid": 2000000.0,
-    "status": "PARTIAL",
-    "transact_time": "2024-05-15 09:00:00"
-  },
-  {
-    "id": 16,
-    "student_id": 9,
-    "class_id": 1,
-    "actual_tuition": 2000000.0,
-    "paid": 2000000.0,
-    "status": "PAID",
-    "transact_time": "2024-05-16 16:45:00"
-  }
+  {"id": 1, "student_id": 1, "class_id": 1, "transact_time": "2025-05-20 08:00:00", "paid": 1500000.0, "actual_tuition": 1500000.0, "status": "PAID", "final_score": 8.5, "academic_status": "PASSED"},
+  {"id": 2, "student_id": 2, "class_id": 1, "transact_time": "2025-05-21 08:00:00", "paid": 1500000.0, "actual_tuition": 1500000.0, "status": "PAID", "final_score": 5.0, "academic_status": "PASSED"},
+  {"id": 3, "student_id": 3, "class_id": 2, "transact_time": "2025-05-22 08:00:00", "paid": 2000000.0, "actual_tuition": 2000000.0, "status": "PAID", "final_score": 4.0, "academic_status": "FAILED"},
+  {"id": 4, "student_id": 4, "class_id": 2, "transact_time": "2025-05-20 08:00:00", "paid": 2000000.0, "actual_tuition": 2000000.0, "status": "PAID", "final_score": 7.0, "academic_status": "PASSED"},
+  {"id": 5, "student_id": 5, "class_id": 3, "transact_time": "2025-05-21 08:00:00", "paid": 2500000.0, "actual_tuition": 2500000.0, "status": "PAID", "final_score": 7.5, "academic_status": "PASSED"},
+  {"id": 6, "student_id": 6, "class_id": 4, "transact_time": "2025-05-20 08:00:00", "paid": 1800000.0, "actual_tuition": 1800000.0, "status": "PAID", "final_score": 6.5, "academic_status": "PASSED"},
+  {"id": 7, "student_id": 7, "class_id": 5, "transact_time": "2025-05-20 08:00:00", "paid": 2200000.0, "actual_tuition": 2200000.0, "status": "PAID", "final_score": 8.0, "academic_status": "PASSED"},
+  {"id": 8, "student_id": 8, "class_id": 6, "transact_time": "2025-05-20 08:00:00", "paid": 3000000.0, "actual_tuition": 3000000.0, "status": "PAID", "final_score": 4.5, "academic_status": "FAILED"},
+  {"id": 9, "student_id": 9, "class_id": 7, "transact_time": "2025-05-21 08:00:00", "paid": 4500000.0, "actual_tuition": 4500000.0, "status": "PAID", "final_score": 5.5, "academic_status": "PASSED"},
+  {"id": 10, "student_id": 10, "class_id": 8, "transact_time": "2025-05-20 08:00:00", "paid": 6000000.0, "actual_tuition": 6000000.0, "status": "PAID", "final_score": 3.0, "academic_status": "FAILED"},
+  {"id": 11, "student_id": 11, "class_id": 8, "transact_time": "2025-05-21 08:00:00", "paid": 6000000.0, "actual_tuition": 6000000.0, "status": "PAID", "final_score": 4.0, "academic_status": "FAILED"},
+  {"id": 12, "student_id": 12, "class_id": 9, "transact_time": "2025-05-20 08:00:00", "paid": 2000000.0, "actual_tuition": 2000000.0, "status": "PAID", "final_score": 6.0, "academic_status": "PASSED"},
+
+  {"id": 13, "student_id": 16, "class_id": 10, "transact_time": "2025-12-20 08:00:00", "paid": 1500000.0, "actual_tuition": 1500000.0, "status": "PAID", "final_score": null, "academic_status": "PENDING"},
+  {"id": 14, "student_id": 17, "class_id": 12, "transact_time": "2025-12-21 08:00:00", "paid": 1000000.0, "actual_tuition": 2500000.0, "status": "PARTIAL", "final_score": null, "academic_status": "PENDING"},
+  {"id": 15, "student_id": 18, "class_id": 15, "transact_time": "2025-12-22 08:00:00", "paid": 0.0, "actual_tuition": 3000000.0, "status": "UNPAID", "final_score": null, "academic_status": "PENDING"},
+  {"id": 16, "student_id": 19, "class_id": 18, "transact_time": "2026-01-20 08:00:00", "paid": 1000000.0, "actual_tuition": 2000000.0, "status": "PARTIAL", "final_score": null, "academic_status": "PENDING"},
+  {"id": 17, "student_id": 20, "class_id": 20, "transact_time": "2026-02-28 08:00:00", "paid": 0.0, "actual_tuition": 2000000.0, "status": "UNPAID", "final_score": null, "academic_status": "PENDING"},
+  {"id": 18, "student_id": 21, "class_id": 22, "transact_time": "2026-01-05 08:00:00", "paid": 3000000.0, "actual_tuition": 3000000.0, "status": "PAID", "final_score": null, "academic_status": "PENDING"}
 ]

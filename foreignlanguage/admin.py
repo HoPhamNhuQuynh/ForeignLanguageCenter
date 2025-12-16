@@ -1,14 +1,16 @@
 from datetime import datetime
-from flask import redirect, request, flash, url_for, render_template
+from flask import redirect, request, flash, url_for, jsonify
 from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
 from flask_login import current_user, login_user, logout_user
+from flask_sqlalchemy.session import Session
+
 from foreignlanguage import app, db, login
 from foreignlanguage.models import (
     StudentInfo, Course, Classroom, EmployeeInfo,
-    Registration, Transaction, UserRole, Level,
-    StatusTuition, StatusPayment, MethodEnum
+    Registration, Transaction, UserRole, Score,
+    Session, GradeCategory
 )
 import dao
 
@@ -68,8 +70,26 @@ class MyLogoutView(BaseView):
 class StatsView(AdminBaseView):
     @expose('/')
     def index(self):
-        # Code thống kê...
-        return self.render('admin/stats.html')
+        stats_students = dao.count_students(2025)
+        stars_courses = dao.count_courses(2025)
+        stats_classes = dao.count_active_classes(2025)
+        stats_total_revenue = dao.count_total_revenue(2025)
+
+        revenue_data = dao.get_revenue_chart_data(2025)
+        student_data = dao.get_student_chart_data(2025)
+        ratio_passed_data = dao.get_ratio_passed_chart_data(2025)
+        top_course_data = dao.get_top3_courses_chart_data(2025)
+
+        return self.render('admin/stats.html'
+                           , stats_students=stats_students
+                           , stats_classes=stats_classes
+                           , stats_total_revenue=stats_total_revenue
+                           , stars_courses=stars_courses
+                           , revenue_data=revenue_data
+                           , student_data=student_data
+                           , ratio_passed_data=ratio_passed_data
+                           , top_course_data=top_course_data)
+
 
 # --- View Quy định học phí ---
 class RegulationView(AdminBaseView):
@@ -188,17 +208,144 @@ class TransactionAdminView(CashierModelView):
         dao.revert_payment(model.registration, model.money)
 
 ############Chức năng của teacher##################
-class TeacherHomeView(TeacherView):
-    @expose('/')
+class RollcallView(TeacherView):
+
+    @expose('/', methods=['GET', 'POST'])
     def index(self):
-        course = dao.get_course_by_teacher(current_user.id)
+        employee = EmployeeInfo.query.filter_by(u_id=current_user.id).first()
+        classes = Classroom.query.filter_by(employee_id=employee.id).all() if employee else []
 
-        student = []
-        if course:
-            student = dao.get_student_by_course(course[0].id)
+        if request.method == 'POST':
+            session_id = request.form.get('session_id')
 
-        return render_template('admin/teacher.html', course=course, student=student,)
+            if not session_id:
+                flash("Vui lòng chọn buổi học!", "warning")
 
+                class_id = request.form.get('class_id')
+
+                sessions = Session.query.filter_by(class_id=class_id).all()
+                regs = Registration.query.filter_by(class_id=class_id).all()
+
+                return self.render(
+                    'admin/rollcall.html',
+                    classes=classes,
+                    sessions=sessions,
+                    student=regs
+                )
+
+            student_status = {}
+
+            for k, v in request.form.items():
+                if k.isdigit():  # CHỈ NHẬN key là số
+                    student_status[int(k)] = int(v)
+            dao.save_attendance(int(session_id), student_status)
+            flash("Đã lưu điểm danh thành công!", "success")
+            return redirect(url_for('.index'))
+
+        return self.render('admin/rollcall.html', classes=classes, sessions=[], student=[])
+
+    @expose('/load-by-class')
+    def load_by_class(self):
+        class_id = request.args.get('class_id')
+        if not class_id:
+            return jsonify({'students': [], 'sessions': []})
+
+        employee = EmployeeInfo.query.filter_by(
+            u_id=current_user.id
+        ).first()
+
+        if not employee:
+            return jsonify({'students': [], 'sessions': []})
+
+        classroom = Classroom.query.filter_by(
+            id=class_id,
+            employee_id=employee.id
+        ).first()
+
+        if not classroom:
+            return jsonify({'students': [], 'sessions': []})
+
+        # Buổi học
+        sessions = Session.query.filter_by(class_id=class_id).all()
+
+        # Học viên trong lớp
+        regs = Registration.query.filter_by(class_id=class_id).all()
+        students = [r.student for r in regs]
+
+        return jsonify({
+            'sessions': [
+                {
+                    'id': s.id,
+                    'name': f'Buổi {i + 1} - {s.session_content}',
+                } for i, s in enumerate(sessions)
+            ],
+            'students': [
+                {
+                    'id': stu.id,
+                    'name': stu.account.name
+                } for stu in students
+            ]
+        })
+
+class EnterscoreView(TeacherView):
+
+    @expose('/', methods=['GET'])
+    def index(self):
+        employee = EmployeeInfo.query.filter_by(u_id=current_user.id).first()
+        classes = Classroom.query.filter_by(employee_id=employee.id).all() if employee else []
+
+        class_id = request.args.get('class_id', type=int)
+        categories = GradeCategory.query.filter_by(active=1).all()
+        students = []
+
+        if class_id:
+            regs = Registration.query.filter_by(class_id=class_id).all()
+            for r in regs:
+                score_map = {s.grade_cate_id: s.value for s in r.scores}
+                total = 0
+                weight_sum = 0
+                scores_dict = {}
+
+                for c in categories:
+                    val = score_map.get(c.id)
+                    scores_dict[c.id] = val
+                    if val is not None:
+                        total += val * c.weight
+                        weight_sum += c.weight
+
+                dtb = round(total / weight_sum, 2) if weight_sum > 0 else 0
+
+                students.append({
+                    'reg': r,
+                    'scores': scores_dict,
+                    'dtb': dtb
+                })
+
+        return self.render(
+            'admin/enterscore.html',
+            classes=classes,
+            selected_class=class_id,
+            categories=categories,
+            students=students
+        )
+
+    @expose('/save-scores', methods=['POST'])
+    def save_scores(self):
+        for key, value in request.form.items():
+            if key.startswith("score_"):
+                _, reg_id, cate_id = key.split("_")
+                reg_id, cate_id = int(reg_id), int(cate_id)
+                val = float(value) if value else None
+
+                score = Score.query.filter_by(regis_id=reg_id, grade_cate_id=cate_id).first()
+                if score:
+                    score.value = val
+                else:
+                    if val is not None:
+                        db.session.add(Score(regis_id=reg_id, grade_cate_id=cate_id, value=val))
+        db.session.commit()
+        flash("Đã lưu điểm thành công!", "success")
+        return redirect(request.referrer)
 ############## XỬ LÝ LOGIN #####################
 
 class MyAdminIndexView(AdminIndexView):
@@ -242,7 +389,8 @@ admin.add_view(CreateInvoiceView(name='Lập hóa đơn', endpoint='invoice'))
 admin.add_view(TransactionAdminView(Transaction, db.session, name='Quản lý giao dịch', endpoint='transaction'))
 
 # --- Menu cho TEACHER ---
-admin.add_view(TeacherHomeView(name="Giáo viên", endpoint="teacher"))
+admin.add_view(RollcallView(name="Điểm danh", endpoint="rollcall"))
+admin.add_view(EnterscoreView(name="Nhập điểm", endpoint="enterscore"))
 
 # --- Menu chung ---
 admin.add_view(MyLogoutView(name='Đăng xuất'))

@@ -1,0 +1,61 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<h4 class="fw-bold">Điểm danh</h4>
+<form method="POST">
+    <input type="hidden" name="class_id" id="classIdInput">
+    <div class="border p-3 rounded bg-orange-light">
+        <label class="fw-bold">Chọn lớp</label>
+        <select class="form-select mb-3" id="classSelect">
+            <option value="">-- Vui lòng chọn --</option>
+            {% for c in classes %}
+            <option value="{{ c.id }}">
+                {{ c.course.name }} - {{ c.level.name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <table class="table table-bordered text-center">
+            <thead class="bg-orange">
+            <tr>
+                <th>STT</th>
+                <th>Tên học viên</th>
+                <th>
+                    <select class="form-select" name="session_id" id="sessionSelect">
+                        <option value="">-- Chọn buổi học --</option>
+                    </select>
+
+                </th>
+            </tr>
+            </thead>
+            <tbody id="studentBody">
+            {% for reg in student %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ reg.student.account.name }}</td>
+                <td>
+                    <input type="radio" name="{{ reg.id }}" value="1"> Có mặt
+                    <input type="radio" name="{{ reg.id }}" value="0" class="ms-3"> Vắng
+                </td>
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+        <div class="text-end">
+            <button id="saveBtn"
+                    class="btn btn-orange px-4 rounded-3 d-none">
+                Lưu điểm danh
+            </button>
+
+        </div>
+
+    </div>
+</form>
+
+{% endblock %}
+
+{% block tail %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+{% endblock %}

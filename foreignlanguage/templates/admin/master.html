@@ -1,74 +1,76 @@
 {% extends 'admin/base.html' %}
 
 {% block head_css %}
-    {{ super() }}
-    <style>
-        :root {
-            --primary-orange: #FF6B4A;
-            --dark-orange: #e55a3b;
-        }
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-        /* 1. Header của Bảng dữ liệu */
-        .table thead th {
-            background-color: var(--primary-orange);
-            color: white;
-            border-bottom: 2px solid var(--dark-orange);
-            vertical-align: middle;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-        }
-        
-        /* Icon sắp xếp trong bảng */
-        .table thead th a {
-            color: white !important;
-            text-decoration: none;
-        }
+<style>
+    :root {
+        --primary-orange: #FF6B4A;
+        --dark-orange: #e55a3b;
+    }
 
-        /* 2. Nút bấm chính (Create, Save) */
-        .btn-primary {
-            background-color: var(--primary-orange);
-            border-color: var(--primary-orange);
-        }
-        .btn-primary:hover, .btn-primary:focus {
-            background-color: var(--dark-orange) !important;
-            border-color: var(--dark-orange) !important;
-        }
+    /* 1. Header của Bảng dữ liệu */
+    .table thead th {
+        background-color: var(--primary-orange);
+        color: white;
+        border-bottom: 2px solid var(--dark-orange);
+        vertical-align: middle;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
 
-        /* 3. Phân trang (Pagination) */
-        .page-item.active .page-link {
-            background-color: var(--primary-orange);
-            border-color: var(--primary-orange);
-        }
-        .page-link {
-            color: var(--primary-orange);
-        }
-        .page-link:hover {
-            color: var(--dark-orange);
-        }
+    /* Icon sắp xếp trong bảng */
+    .table thead th a {
+        color: white !important;
+        text-decoration: none;
+    }
 
-        /* 4. Tabs điều hướng (trên đầu trang List/Create) */
-        .nav-tabs .nav-link.active {
-            border-top: 3px solid var(--primary-orange);
-            color: var(--primary-orange);
-            font-weight: bold;
-        }
-        .nav-tabs .nav-link {
-            color: #555;
-        }
+    /* 2. Nút bấm chính (Create, Save) */
+    .btn-primary {
+        background-color: var(--primary-orange);
+        border-color: var(--primary-orange);
+    }
+    .btn-primary:hover, .btn-primary:focus {
+        background-color: var(--dark-orange) !important;
+        border-color: var(--dark-orange) !important;
+    }
 
-        /* 5. Logo thương hiệu góc trái */
-        .navbar-brand {
-            color: var(--primary-orange) !important;
-            font-weight: bold;
-        }
+    /* 3. Phân trang (Pagination) */
+    .page-item.active .page-link {
+        background-color: var(--primary-orange);
+        border-color: var(--primary-orange);
+    }
+    .page-link {
+        color: var(--primary-orange);
+    }
+    .page-link:hover {
+        color: var(--dark-orange);
+    }
 
-        /* 6. Dropdown menu actions */
-        .dropdown-menu .dropdown-item:active {
-            background-color: var(--primary-orange);
-        }
-    </style>
+    /* 4. Tabs điều hướng (trên đầu trang List/Create) */
+    .nav-tabs .nav-link.active {
+        border-top: 3px solid var(--primary-orange);
+        color: var(--primary-orange);
+        font-weight: bold;
+    }
+    .nav-tabs .nav-link {
+        color: #555;
+    }
+
+    /* 5. Logo thương hiệu góc trái */
+    .navbar-brand {
+        color: var(--primary-orange) !important;
+        font-weight: bold;
+    }
+
+    /* 6. Dropdown menu actions */
+    .dropdown-menu .dropdown-item:active {
+        background-color: var(--primary-orange);
+    }
+</style>
 {% endblock %}
 
 {% block body %}
-    {{ super() }}
+{{ super() }}
 {% endblock %}

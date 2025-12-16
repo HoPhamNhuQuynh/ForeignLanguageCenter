@@ -1,16 +1,20 @@
-from sqlalchemy import or_
+import math
+from sqlalchemy import or_, extract, func
 from sqlalchemy.orm import joinedload
-
-from foreignlanguage.models import UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo, \
-    Classroom, EmployeeInfo, MethodEnum, StatusPayment
+from datetime import datetime
+from foreignlanguage.models import (UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo,
+                                    Classroom, EmployeeInfo, MethodEnum, StatusPayment, CourseLevel, Session, Present,
+                                    UserRole, AcademicStatus)
 from foreignlanguage import app, db
 import hashlib
-from sqlalchemy.orm import joinedload
+from flask_login import current_user
+
 
 # ==================== AUTH & USER ====================
-def auth_user(username,password):
+def auth_user(username, password):
     password = hashlib.md5(password.encode("utf-8")).hexdigest()
-    return UserAccount.query.filter(UserAccount.username.__eq__(username), UserAccount.password.__eq__(password)).first()
+    return UserAccount.query.filter(UserAccount.username.__eq__(username.strip()), UserAccount.password.__eq__(password)).first()
+
 
 def add_user(username, password, email, address):
     password = hashlib.md5(password.encode("utf-8")).hexdigest()
@@ -18,33 +22,101 @@ def add_user(username, password, email, address):
     db.session.add(u)
     db.session.commit()
 
+
 def update_user_password(new_password, u_id):
     new_password = hashlib.md5(new_password.encode("utf-8")).hexdigest()
     u = get_user_by_id(u_id)
     u.password = new_password
     db.session.commit()
 
+
 def check_email(email):
     return UserAccount.query.filter(UserAccount.email.__eq__(email)).first()
+
 
 def get_user_by_id(uid):
     return UserAccount.query.get(uid)
 
+
 def get_user_by_username(username):
     return UserAccount.query.filter(UserAccount.username == username).first()
 
+
 def get_user_by_email(email):
     return UserAccount.query.filter(UserAccount.email == email).first()
+
 
 # ==================== COMMON LOADERS ====================
 def load_courses():
     return Course.query.all()
 
+
 def load_levels():
     return Level.query.all()
 
+
 def get_registration_by_id(r_id):
     return Registration.query.get(r_id)
+
+def get_course_by_id(c_id):
+    return Course.query.get(c_id)
+
+def get_level_by_id(l_id):
+    return  Level.query.get(l_id)
+
+def get_classes_by_course_level(c_id, l_id):
+    query = db.session.query(
+        Classroom.id,
+        Classroom.start_time,
+        Classroom.maximum_stu,
+        func.count(Registration.student_id).label('current_count')
+    ).outerjoin(
+        Registration, Classroom.id == Registration.class_id
+    ).filter(
+        Classroom.course_id == c_id,
+        Classroom.level_id == l_id,
+        Classroom.start_time.__ge__(datetime.now())
+    ).group_by(
+        Classroom.id, Classroom.start_time, Classroom.maximum_stu
+    ).having(
+        func.count(Registration.student_id) < Classroom.maximum_stu
+    )
+    print(query)
+    return query.all()
+
+def get_payment_methods():
+    return [
+        {
+            "name": method.name,
+            "value": method.value
+        }
+        for method in MethodEnum
+        if method != MethodEnum.CASH
+    ]
+
+def get_class_by_id(class_id):
+    return Classroom.query.get(class_id)
+
+def get_tuition_by_class_id(class_id):
+    return db.session.query(Classroom.course_level.tuition).filter(Classroom.class_id == class_id).first()
+
+
+def add_registration(name, phone_number, class_id, payment_method, payment_percent):
+    classroom = get_class_by_id(class_id)
+    if classroom:
+        u_id = current_user.id
+        exist = db.session.query(Registration.id).filter_by(Registration.class_id==class_id, Registration.student_id==u_id, Registration.active==True).first()
+        if not exist:
+            tuition = classroom.course_level.tuition
+            if payment_percent == "50":
+                status = StatusTuition.PARTIAL
+                paid = math.ceil(tuition/2)
+            else:
+                status = StatusTuition.PAID
+                paid = tuition
+            reg = Registration(student_id=u_id, class_id=class_id, actual_tuition=tuition, paid_payment=payment_percent, status=status, paid=paid)
+            db.session.add(reg)
+
 
 # ==================== TEACHER ====================
 def get_course_by_teacher(user_id):
@@ -52,22 +124,157 @@ def get_course_by_teacher(user_id):
             .join(EmployeeInfo, EmployeeInfo.id == Classroom.employee_id)
             .filter(EmployeeInfo.u_id == user_id).all())
 
+
 def get_student_by_course(course_id):
     return (db.session.query(Registration)
             .join(StudentInfo, Registration.student_id == StudentInfo.id)
             .join(UserAccount, StudentInfo.u_id == UserAccount.id)
             .filter(Registration.class_id == course_id).all())
 
+
 def get_scores_by_course(course_id):
     return (db.session.query(Registration)
-        .join(StudentInfo, Registration.student_id == StudentInfo.id)
-        .join(UserAccount, StudentInfo.u_id == UserAccount.id)
-        .filter(Registration.class_id == course_id).all())
+            .join(StudentInfo, Registration.student_id == StudentInfo.id)
+            .join(UserAccount, StudentInfo.u_id == UserAccount.id)
+            .filter(Registration.class_id == course_id).all())
+
+
+def get_teacher_classes(user_id):
+    employee = EmployeeInfo.query.filter_by(u_id=user_id).first()
+    if not employee:
+        return []
+    return Classroom.query.filter_by(employee_id=employee.id).all()
+
+
+def get_rollcall_data(user_id, class_id):
+    employee = EmployeeInfo.query.filter_by(u_id=user_id).first()
+    if not employee:
+        return None, None
+
+    classroom = Classroom.query.filter_by(
+        id=class_id,
+        employee_id=employee.id
+    ).first()
+
+    if not classroom:
+        return None, None
+
+    sessions = Session.query.filter_by(class_id=class_id).all()
+
+    regs = Registration.query.filter_by(class_id=class_id).all()
+    students = [r.student for r in regs]
+
+    return sessions, students
+
+def save_attendance(session_id: int, student_status: dict):
+    for stu_id, status in student_status.items():
+        is_present = status == "1"
+        present = Present.query.filter_by(session_id=session_id, student_id=stu_id).first()
+        if present:
+            present.is_present = is_present
+        else:
+            db.session.add(Present(session_id=session_id, student_id=stu_id, is_present=is_present))
+    db.session.commit()
+
 
 ######### ADMIN ##############
-def stats_revenue_by_month():
-    return (db.session.query(db.func.sum(Transaction.money), db.func.date_format(Transaction.date, '%m')).
-     group_by(db.func.date_format(Transaction.date, '%m'))).order_by(db.func.date_format(Transaction.date, '%m')).all()
+def stats_revenue_per_month_by_year(year=None):
+    year = year or datetime.now().year
+    query = ((db.session.query(
+        func.sum(Transaction.money),
+        extract('month', Transaction.date)
+    ).
+              filter(extract('year', Transaction.date) == year).
+              group_by(extract('month', Transaction.date))).
+             order_by(extract('month', Transaction.date)).
+             all())
+    return query
+
+def get_revenue_chart_data(year):
+    revenue_date = stats_revenue_per_month_by_year(year)
+    return {
+        "labels": [date for amount, date in revenue_date],
+        "data": [amount for amount, date in revenue_date]
+    }
+
+def stats_rate_passed_per_course_by_year(year=None):
+    year = year or datetime.now().year
+    query = db.session.query(func.count(Registration.id), Course.name).\
+        join(Classroom, Classroom.id == Registration.class_id).\
+        join(Course, Course.id == Classroom.course_id).\
+        filter(extract('year', Classroom.start_time) == year, Registration.academic_status == AcademicStatus.PASSED).\
+        group_by(Course.id)
+    return query.all()
+
+def get_ratio_passed_chart_data(year):
+    ratio_passed_data = stats_rate_passed_per_course_by_year(year)
+    total_achieved = sum(amount for amount, name in ratio_passed_data)
+    return {
+        "labels": [name for amount, name in ratio_passed_data],
+        "data": [amount / total_achieved * 100 for amount, name in ratio_passed_data]
+    }
+
+def stats_numbers_of_students_per_course_by_year(year=None):
+    year = year or datetime.now().year
+    query = (db.session.query(
+        func.count(Registration.student_id),
+        Course.name
+    ).
+             join(Classroom, Course.id == Classroom.course_id).
+             join(Registration, Registration.class_id == Classroom.id).
+             filter(extract('year', Classroom.start_time) == year).
+             group_by(Course.name).all())
+    return query
+
+def get_student_chart_data(year):
+    student_data = stats_numbers_of_students_per_course_by_year(year)
+    return {
+        "labels": [name for amount, name in student_data],
+        "data": [amount for amount, name in student_data]
+    }
+
+def count_courses(year=None):
+    year = year or datetime.now().year
+    return Course.query.filter(extract('year', Course.joined_date) == year).count()
+
+def count_students(year=None):
+    year = year or datetime.now().year
+    return db.session.query(func.count(UserAccount.id)).filter(UserAccount.role == UserRole.STUDENT, UserAccount.name != None, extract('year', UserAccount.joined_date) == year).count()
+
+def count_active_classes(year=None):
+    year = year or datetime.now().year
+    return Classroom.query.filter(Classroom.active == 1).filter(extract('year', Classroom.joined_date) == year).count()
+
+def count_total_revenue(year=None):
+    year = year or datetime.now().year
+    return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.date) == year).count()
+
+def stats_top3_popular_courses_by_year(year=None):
+    year = year or datetime.now().year
+    year = year or datetime.now().year
+    query = (
+        db.session.query(
+            Course.name,
+            func.count(Registration.id)  # số học viên đăng ký
+        )
+        .join(Classroom, Classroom.course_id == Course.id)
+        .join(Registration, Registration.class_id == Classroom.id)
+        .filter(extract('year', Classroom.start_time) == year)
+        .group_by(Course.id)
+        .order_by(func.count(Registration.id).desc())
+        .limit(3)
+        .all()
+    )
+    return query
+
+
+def get_top3_courses_chart_data(year):
+    data = stats_top3_popular_courses_by_year(year)
+    return {
+        "labels": [name for name, count in data],
+        "data": [count for name, count in data]
+    }
+
 
 ######### CASHIER #############
 def get_unpaid_registrations(kw=None):
@@ -81,6 +288,7 @@ def get_unpaid_registrations(kw=None):
         ))
     return query.all()
 
+
 def update_tuition_fee(level_id, new_fee):
     """Cập nhật học phí cho 1 level"""
     level = Level.query.get(level_id)
@@ -88,6 +296,7 @@ def update_tuition_fee(level_id, new_fee):
         level.tuition = float(new_fee)
         db.session.add(level)
         # Lưu ý: commit sẽ được gọi ở view hoặc gọi batch update
+
 
 def save_changes():
     """Hàm wrapper để commit db"""
@@ -156,6 +365,7 @@ def revert_payment(registration, money_to_revert):
 
     db.session.add(registration)
 
+
 def get_transaction_query_options(query):
     """Hàm tối ưu truy vấn Transaction để fix lỗi Export CSV"""
     return query.options(
@@ -163,16 +373,13 @@ def get_transaction_query_options(query):
         joinedload(Transaction.registration).joinedload(Registration.classroom).joinedload(Classroom.course)
     )
 
-def get_employee_list_query(query):
-    """
-    Hàm này nhận vào query gốc của Flask-Admin,
-    gắn thêm options joinedload để tối ưu hóa việc lấy dữ liệu Account.
-    """
-    return query.options(joinedload(EmployeeInfo.account))
-def get_student_list_query(query):
-    """Tương tự cho Student"""
-    return query.options(joinedload(StudentInfo.account))
-if __name__=="__main__":
+
+if __name__ == "__main__":
     with app.app_context():
-        print(auth_user("user", "123"))
-        #print(load_user_roles())
+        # print(auth_user("user", "123"))
+        print(get_classes_by_course_level(2, 2))
+        print(count_students(2025))
+        print(count_courses(2025))
+        print(count_active_classes(2025))
+        print(count_total_revenue(2025))
+        print(stats_rate_passed_per_course_by_year())

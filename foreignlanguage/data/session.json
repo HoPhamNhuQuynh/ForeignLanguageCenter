@@ -1,72 +1,25 @@
 [
-  {
-    "id": 1,
-    "class_id": 1,
-    "session_date": "2024-03-10 18:00:00",
-    "shift": 1,
-    "session_content": "Introduction: Greetings & Self-introduction"
-  },
-  {
-    "id": 2,
-    "class_id": 1,
-    "session_date": "2024-03-12 18:00:00",
-    "shift": 1,
-    "session_content": "Topic: Daily Routines & Habits"
-  },
-  {
-    "id": 3,
-    "class_id": 1,
-    "session_date": "2024-03-14 18:00:00",
-    "shift": 1,
-    "session_content": "Topic: Hobbies & Interests"
-  },
-  {
-    "id": 4,
-    "class_id": 2,
-    "session_date": "2024-03-15 19:30:00",
-    "shift": 2,
-    "session_content": "Unit 1: Jobs and Workplaces"
-  },
-  {
-    "id": 5,
-    "class_id": 2,
-    "session_date": "2024-03-18 19:30:00",
-    "shift": 2,
-    "session_content": "Unit 2: Travel and Transport"
-  },
-  {
-    "id": 6,
-    "class_id": 3,
-    "session_date": "2024-04-01 18:00:00",
-    "shift": 1,
-    "session_content": "IELTS Overview & Speaking Part 1"
-  },
-  {
-    "id": 7,
-    "class_id": 3,
-    "session_date": "2024-04-03 18:00:00",
-    "shift": 1,
-    "session_content": "Listening Strategy: Note completion"
-  },
-  {
-    "id": 8,
-    "class_id": 3,
-    "session_date": "2024-04-05 18:00:00",
-    "shift": 1,
-    "session_content": "Reading Skill: Skimming & Scanning"
-  },
-  {
-    "id": 9,
-    "class_id": 5,
-    "session_date": "2024-03-20 17:30:00",
-    "shift": 1,
-    "session_content": "TOEIC Orientation & Part 1 Introduction"
-  },
-  {
-    "id": 10,
-    "class_id": 5,
-    "session_date": "2024-03-22 17:30:00",
-    "shift": 1,
-    "session_content": "Grammar Focus: Tenses review"
-  }
+  {"id": 1, "class_id": 1, "session_date": "2025-06-03 18:00:00", "shift": 1, "session_content": "Unit 1: Introduction", "active": true},
+  {"id": 2, "class_id": 2, "session_date": "2025-06-04 18:00:00", "shift": 1, "session_content": "Unit 2: Greetings", "active": true},
+  {"id": 3, "class_id": 3, "session_date": "2025-06-05 18:00:00", "shift": 1, "session_content": "Unit 3: Family", "active": true},
+  {"id": 4, "class_id": 4, "session_date": "2025-06-06 19:30:00", "shift": 2, "session_content": "Unit 1: Business Talk", "active": true},
+  {"id": 5, "class_id": 5, "session_date": "2025-06-07 19:30:00", "shift": 2, "session_content": "Unit 2: Emails", "active": true},
+  {"id": 6, "class_id": 6, "session_date": "2025-06-08 19:30:00", "shift": 2, "session_content": "Unit 3: Meetings", "active": true},
+  {"id": 7, "class_id": 7, "session_date": "2025-06-09 17:30:00", "shift": 1, "session_content": "IELTS Reading Basic", "active": true},
+  {"id": 8, "class_id": 8, "session_date": "2025-06-10 17:30:00", "shift": 1, "session_content": "IELTS Listening Basic", "active": true},
+  {"id": 9, "class_id": 9, "session_date": "2025-06-11 17:30:00", "shift": 1, "session_content": "IELTS Speaking Part 1", "active": true},
+  {"id": 10, "class_id": 10, "session_date": "2026-02-03 18:00:00", "shift": 1, "session_content": "TOEIC Part 1", "active": true},
+  {"id": 11, "class_id": 11, "session_date": "2026-02-04 18:00:00", "shift": 1, "session_content": "TOEIC Part 2", "active": true},
+  {"id": 12, "class_id": 12, "session_date": "2026-02-05 19:30:00", "shift": 2, "session_content": "Advanced Grammar 1", "active": true},
+  {"id": 13, "class_id": 13, "session_date": "2026-02-06 19:30:00", "shift": 2, "session_content": "Advanced Vocabulary", "active": true},
+  {"id": 14, "class_id": 14, "session_date": "2026-02-07 18:00:00", "shift": 1, "session_content": "Kids English: Animals", "active": true},
+  {"id": 15, "class_id": 15, "session_date": "2026-02-08 18:00:00", "shift": 1, "session_content": "Kids English: Colors", "active": true},
+  {"id": 16, "class_id": 16, "session_date": "2026-02-09 19:30:00", "shift": 2, "session_content": "IELTS Writing Task 1", "active": true},
+  {"id": 17, "class_id": 17, "session_date": "2026-02-10 19:30:00", "shift": 2, "session_content": "IELTS Writing Task 2", "active": true},
+  {"id": 18, "class_id": 18, "session_date": "2026-02-11 17:30:00", "shift": 1, "session_content": "Review Level 2", "active": true},
+  {"id": 19, "class_id": 19, "session_date": "2026-02-27 17:30:00", "shift": 1, "session_content": "Mid-term Test", "active": true},
+  {"id": 20, "class_id": 20, "session_date": "2026-03-11 18:00:00", "shift": 1, "session_content": "Communication 1", "active": true},
+  {"id": 21, "class_id": 21, "session_date": "2026-03-11 18:00:00", "shift": 1, "session_content": "Communication 2", "active": true},
+  {"id": 22, "class_id": 22, "session_date": "2026-01-11 19:30:00", "shift": 2, "session_content": "Final Review", "active": true},
+  {"id": 23, "class_id": 23, "session_date": "2026-01-11 19:30:00", "shift": 2, "session_content": "Farewell Party", "active": true}
 ]
