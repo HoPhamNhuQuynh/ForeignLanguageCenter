@@ -89,6 +89,12 @@
         box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
     }
 
+    #btnRegister:disabled {
+      background-color: gray !important;
+      cursor: not-allowed;
+      opacity: 1;
+    }
+
 
     /* ========== quy dinh COLORS elements cua trang web =========== */
     .bg-orange {

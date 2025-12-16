@@ -69,17 +69,24 @@ class MyLogoutView(BaseView):
 class StatsView(AdminBaseView):
     @expose('/')
     def index(self):
-        stats_students = dao.count_students(2025)
-        stars_courses = dao.count_courses(2025)
-        stats_classes = dao.count_active_classes(2025)
-        stats_total_revenue = dao.count_total_revenue(2025)
+        year = request.args.get('year', type=int)
+        if not year:
+            year = datetime.now().year
 
-        revenue_data = dao.get_revenue_chart_data(2025)
-        student_data = dao.get_student_chart_data(2025)
-        ratio_passed_data = dao.get_ratio_passed_chart_data(2025)
-        top_course_data = dao.get_top3_courses_chart_data(2025)
+        years = list(range(2024, datetime.now().year + 1))
+
+        stats_students = dao.count_students(year)
+        stars_courses = dao.count_courses(year)
+        stats_classes = dao.count_active_classes(year)
+        stats_total_revenue = dao.count_total_revenue(year)
+
+        revenue_data = dao.get_revenue_chart_data(year)
+        student_data = dao.get_student_chart_data(year)
+        ratio_passed_data = dao.get_ratio_passed_chart_data(year)
+        top_course_data = dao.get_top3_courses_chart_data(year)
 
         return self.render('admin/stats.html'
+                           , years=years
                            , stats_students=stats_students
                            , stats_classes=stats_classes
                            , stats_total_revenue=stats_total_revenue
@@ -87,7 +94,8 @@ class StatsView(AdminBaseView):
                            , revenue_data=revenue_data
                            , student_data=student_data
                            , ratio_passed_data=ratio_passed_data
-                           , top_course_data=top_course_data)
+                           , top_course_data=top_course_data
+                           , year=year)
 
 
 # --- View Quy định học phí ---
@@ -265,7 +273,7 @@ class RollcallView(TeacherView):
             return jsonify({'students': [], 'sessions': []})
 
         # Buổi học
-        sessions = Session.query.filter_by(class_id=class_id).all()
+        sessions = Session.query.filter(class_id==class_id).all()
 
         # Học viên trong lớp
         regs = Registration.query.filter_by(class_id=class_id).all()
@@ -286,7 +294,7 @@ class RollcallView(TeacherView):
             ]
         })
 
-class EnterscoreView(TeacherView):
+class EnterScoreView(TeacherView):
 
     @expose('/', methods=['GET'])
     def index(self):
@@ -389,7 +397,7 @@ admin.add_view(TransactionAdminView(Transaction, db.session, name='Quản lý gi
 
 # --- Menu cho TEACHER ---
 admin.add_view(RollcallView(name="Điểm danh", endpoint="rollcall"))
-admin.add_view(EnterscoreView(name="Nhập điểm", endpoint="enterscore"))
+admin.add_view(EnterScoreView(name="Nhập điểm", endpoint="enterscore"))
 
 # --- Menu chung ---
 admin.add_view(MyLogoutView(name='Đăng xuất'))
