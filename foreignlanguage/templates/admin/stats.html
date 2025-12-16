@@ -57,7 +57,7 @@
             <div class="stat-item d-flex justify-content-between align-items-center">
                 <div>
                     <div class="stat-label">Total Courses</div>
-                    <div class="stat-value">12</div>
+                    <div class="stat-value">{{ stars_courses }}</div>
                 </div>
                 <div class="icon-shape bg-gradient-red text-white rounded-circle shadow">
                     <i class="fas fa-book fa-2x text-primary" style="opacity: 0.3"></i>
@@ -69,7 +69,7 @@
             <div class="stat-item d-flex justify-content-between align-items-center">
                 <div>
                     <div class="stat-label">Active Classes</div>
-                    <div class="stat-value text-success">8</div>
+                    <div class="stat-value text-success">{{ stats_classes }}</div>
                 </div>
                 <i class="fas fa-chalkboard-teacher fa-2x text-success" style="opacity: 0.3"></i>
             </div>
@@ -79,7 +79,7 @@
             <div class="stat-item d-flex justify-content-between align-items-center">
                 <div>
                     <div class="stat-label">Total Students</div>
-                    <div class="stat-value text-info">150</div>
+                    <div class="stat-value text-info">{{ stats_students }}</div>
                 </div>
                 <i class="fas fa-users fa-2x text-info" style="opacity: 0.3"></i>
             </div>
@@ -89,7 +89,7 @@
             <div class="stat-item d-flex justify-content-between align-items-center">
                 <div>
                     <div class="stat-label">Total Revenue</div>
-                    <div class="stat-value text-warning">$25,000</div>
+                    <div class="stat-value text-warning">{{ stats_total_revenue }}</div>
                 </div>
                 <i class="fas fa-dollar-sign fa-2x text-warning" style="opacity: 0.3"></i>
             </div>
@@ -110,22 +110,14 @@
 
     </div>
     <div class="row mb-3">
-        <div class="col-md-3">
-            <div class="card h-100">
-                <div class="card-body p-0">
-                    <canvas id="chartPassRate"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
+        <div class="col-md-7 me-5">
             <div class="card h-100">
                 <div class="card-body p-0">
                     <canvas id="chartRevenue"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card h-100">
                 <div class="card-body p-0">
                     <canvas id="chartStudentDist"></canvas>
@@ -138,36 +130,18 @@
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body p-0">
-                    <canvas id="chartTopCourses"></canvas>
+                    <canvas id="chartPassRate"></canvas>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body p-0">
-                    <canvas id="chartTopTeachers"></canvas>
+                    <canvas id="chartTopCourses"></canvas>
                 </div>
             </div>
         </div>
 
-    </div>
-
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card h-100">
-                <div class="card-body p-0">
-                    <canvas id="chartCapacity"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card h-100">
-                <div class="card-body p-0">
-                    <canvas id="chartLevelRadar"></canvas>
-                </div>
-            </div>
-        </div>
     </div>
 
 </div>
@@ -175,183 +149,20 @@
 
 {% block tail %}
 {{ super() }}
-<script>
+<script type="module">
+import { initCharts } from "/static/js/dashboard.js";
 
+const chartData = {
+    ratioPassedLabels: {{ ratio_passed_data.labels | tojson | default('[]') }},
+    ratioPassedData: {{ ratio_passed_data.data | tojson | default('[]') }},
+    revenueLabels: {{ revenue_data.labels | tojson | default('[]') }},
+    revenueData: {{ revenue_data.data | tojson | default('[]') }},
+    studentLabels: {{ student_data.labels | tojson | default('[]') }},
+    studentData: {{ student_data.data | tojson | default('[]') }},
+    topCourseLabels: {{ top_course_data.labels | tojson | default('[]') }},
+    topCourseData: {{ top_course_data.data | tojson | default('[]') }}
+};
 
-    Chart.defaults.font.family = "'Segoe UI', sans-serif";
-    Chart.defaults.color = '#8898aa';
-
-    function getChartTitle(text) {
-        return {
-            display: true,
-            text: text,
-            align: 'start',
-            color: '#334455',
-            font: { size: 16, weight: 'bold' },
-            padding: { bottom: 20 }
-        };
-    }
-
-    new Chart(document.getElementById("chartPassRate"), {
-        type: 'pie',
-        data: {
-            labels: ['Đạt (Pass)', 'Trượt (Fail)'],
-            datasets: [{
-                data: [75, 25],
-                backgroundColor: ['#2dce89', '#f5365c'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            plugins: {
-                title: getChartTitle('TỶ LỆ HỌC VIÊN ĐẠT'),
-                legend: { position: 'right' }
-            }
-        }
-    });
-
-    let line_labels = {{ date_labels | tojson | default('[]') }};
-    let revenue = {{ over_time_revenue | tojson | default('[]') }};
-    new Chart(document.getElementById("chartRevenue"), {
-        type: 'line',
-        data: {
-            labels: line_labels ,
-            datasets: [{
-                label: 'Doanh thu (VND)',
-                data: revenue,
-                borderColor: '#5e72e4',
-                backgroundColor: 'rgba(94, 114, 228, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            scales: { y: { grid: { borderDash: [2, 2] } } },
-            plugins: {
-                title: getChartTitle('DOANH THU THEO THÁNG'),
-                legend: { display: false }
-            }
-        }
-    });
-
-
-    new Chart(document.getElementById("chartTopCourses"), {
-        type: 'bar',
-        data: {
-            labels: ['IELTS Basic', 'TOEIC 500', 'Giao tiếp', 'IELTS Adv', 'Kid English'],
-            datasets: [{
-                label: 'Số đăng ký',
-                data: [120, 90, 80, 70, 50],
-                backgroundColor: '#11cdef',
-                borderRadius: 5
-            }]
-        },
-        options: {
-            plugins: {
-                title: getChartTitle('TOP 5 KHÓA HỌC HOT'),
-                legend: { display: false }
-            },
-            scales: { x: { grid: { display: false } } }
-        }
-    });
-
-    let doughnut_labels = {{ course_label | tojson | default('[]') }};
-    let number_of_students = {{ numbers_of_students | tojson | default('[]') }};
-    new Chart(document.getElementById("chartStudentDist"), {
-        type: 'doughnut',
-        data: {
-            labels: doughnut_labels,
-            datasets: [{
-                data: number_of_students,
-                backgroundColor: ['#5e72e4', '#2dce89', '#11cdef', '#f3a4b5'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            cutout: '50%',
-            plugins: {
-                title: getChartTitle('PHÂN BỔ HỌC VIÊN'),
-                legend: { position: 'bottom' }
-            }
-        }
-    });
-
-
-    new Chart(document.getElementById("chartCapacity"), {
-        type: 'bar',
-        data: {
-            labels: ['Lớp 101', 'Lớp 102', 'Lớp 103'],
-            datasets: [
-                {
-                    label: 'Hiện tại',
-                    data: [18, 25, 10],
-                    backgroundColor: '#5e72e4',
-                    borderRadius: 4
-                },
-                {
-                    label: 'Tối đa',
-                    data: [20, 30, 20],
-                    backgroundColor: '#e9ecef',
-                    borderRadius: 4
-                }
-            ]
-        },
-        options: {
-            plugins: {
-                title: getChartTitle('SĨ SỐ THỰC TẾ vs TỐI ĐA'),
-            },
-            scales: { x: { grid: { display: false } } }
-        }
-    });
-
-    new Chart(document.getElementById("chartTopTeachers"), {
-        type: 'bar',
-        data: {
-            labels: ['Cô Lan', 'Thầy Hùng', 'Cô Mai'],
-            datasets: [{
-                label: 'Rating',
-                data: [4.9, 4.8, 4.7],
-                backgroundColor: '#fb6340',
-                barThickness: 20,
-                borderRadius: 10
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            plugins: {
-                title: getChartTitle('TOP 3 GIÁO VIÊN'),
-                legend: { display: false }
-            },
-            scales: { x: { display: false }, y: { grid: { display: false } } }
-        }
-    });
-
-    // --- 7. RADAR: LEVEL BANDS ---
-    new Chart(document.getElementById("chartLevelRadar"), {
-        type: 'radar',
-        data: {
-            labels: ['Band 4.0', 'Band 5.0', 'Band 6.0', 'Band 7.0', 'Band 8.0'],
-            datasets: [{
-                label: 'Phân bổ',
-                data: [10, 30, 40, 15, 5],
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                pointBackgroundColor: 'rgba(255, 99, 132, 1)',
-            }]
-        },
-        options: {
-            plugins: {
-                title: getChartTitle('LEVEL DISTRIBUTION'),
-                legend: { display: false }
-            },
-            scales: {
-                r: {
-                    ticks: { display: false },
-                    grid: { color: '#e9ecef' }
-                }
-            }
-        }
-    });
-
+initCharts(chartData);
 </script>
 {% endblock %}

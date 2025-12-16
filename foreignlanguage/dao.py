@@ -3,7 +3,8 @@ from sqlalchemy import or_, extract, func
 from sqlalchemy.orm import joinedload
 from datetime import datetime
 from foreignlanguage.models import (UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo,
-                                    Classroom, EmployeeInfo, MethodEnum, StatusPayment, CourseLevel, Session, Present)
+                                    Classroom, EmployeeInfo, MethodEnum, StatusPayment, CourseLevel, Session, Present,
+                                    UserRole, AcademicStatus)
 from foreignlanguage import app, db
 import hashlib
 from flask_login import current_user
@@ -96,7 +97,7 @@ def get_payment_methods():
 def get_class_by_id(class_id):
     return Classroom.query.get(class_id)
 
-def get_tuition_by_classId(class_id):
+def get_tuition_by_class_id(class_id):
     return db.session.query(Classroom.course_level.tuition).filter(Classroom.class_id == class_id).first()
 
 
@@ -189,10 +190,29 @@ def stats_revenue_per_month_by_year(year=None):
              all())
     return query
 
+def get_revenue_chart_data(year):
+    revenue_date = stats_revenue_per_month_by_year(year)
+    return {
+        "labels": [date for amount, date in revenue_date],
+        "data": [amount for amount, date in revenue_date]
+    }
 
 def stats_rate_passed_per_course_by_year(year=None):
-    pass
+    year = year or datetime.now().year
+    query = db.session.query(func.count(Registration.id), Course.name).\
+        join(Classroom, Classroom.id == Registration.class_id).\
+        join(Course, Course.id == Classroom.course_id).\
+        filter(extract('year', Classroom.start_time) == year, Registration.academic_status == AcademicStatus.PASSED).\
+        group_by(Course.id)
+    return query.all()
 
+def get_ratio_passed_chart_data(year):
+    ratio_passed_data = stats_rate_passed_per_course_by_year(year)
+    total_achieved = sum(amount for amount, name in ratio_passed_data)
+    return {
+        "labels": [name for amount, name in ratio_passed_data],
+        "data": [amount / total_achieved * 100 for amount, name in ratio_passed_data]
+    }
 
 def stats_numbers_of_students_per_course_by_year(year=None):
     year = year or datetime.now().year
@@ -206,21 +226,54 @@ def stats_numbers_of_students_per_course_by_year(year=None):
              group_by(Course.name).all())
     return query
 
+def get_student_chart_data(year):
+    student_data = stats_numbers_of_students_per_course_by_year(year)
+    return {
+        "labels": [name for amount, name in student_data],
+        "data": [amount for amount, name in student_data]
+    }
 
-def stats_top5_popular_courses_by_year(year=None):
-    pass
+def count_courses(year=None):
+    year = year or datetime.now().year
+    return Course.query.filter(extract('year', Course.joined_date) == year).count()
+
+def count_students(year=None):
+    year = year or datetime.now().year
+    return db.session.query(func.count(UserAccount.id)).filter(UserAccount.role == UserRole.STUDENT, UserAccount.name != None, extract('year', UserAccount.joined_date) == year).count()
+
+def count_active_classes(year=None):
+    year = year or datetime.now().year
+    return Classroom.query.filter(Classroom.active == 1).filter(extract('year', Classroom.joined_date) == year).count()
+
+def count_total_revenue(year=None):
+    year = year or datetime.now().year
+    return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.date) == year).count()
+
+def stats_top3_popular_courses_by_year(year=None):
+    year = year or datetime.now().year
+    year = year or datetime.now().year
+    query = (
+        db.session.query(
+            Course.name,
+            func.count(Registration.id)  # số học viên đăng ký
+        )
+        .join(Classroom, Classroom.course_id == Course.id)
+        .join(Registration, Registration.class_id == Classroom.id)
+        .filter(extract('year', Classroom.start_time) == year)
+        .group_by(Course.id)
+        .order_by(func.count(Registration.id).desc())
+        .limit(3)
+        .all()
+    )
+    return query
 
 
-def stats_top3_productive_teachers_by_year(year=None):
-    pass
-
-
-def stats_ratio_of_students_by_year(year=None):
-    pass
-
-
-def stats_level_distributions_by_year(year=None):
-    pass
+def get_top3_courses_chart_data(year):
+    data = stats_top3_popular_courses_by_year(year)
+    return {
+        "labels": [name for name, count in data],
+        "data": [count for name, count in data]
+    }
 
 
 ######### CASHIER #############
@@ -325,4 +378,8 @@ if __name__ == "__main__":
     with app.app_context():
         # print(auth_user("user", "123"))
         print(get_classes_by_course_level(2, 2))
-
+        print(count_students(2025))
+        print(count_courses(2025))
+        print(count_active_classes(2025))
+        print(count_total_revenue(2025))
+        print(stats_rate_passed_per_course_by_year())

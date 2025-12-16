@@ -157,7 +157,7 @@ def register_course():
 @app.route("/api/tuition")
 def get_tuition():
     class_id = request.args.get("class_id", type=int)
-    tuition= dao.get_tuition_by_classId(class_id=class_id)
+    tuition= dao.get_tuition_by_class_id(class_id=class_id)
     return jsonify({
         "tuition": tuition
     })
