@@ -125,30 +125,34 @@
         });
     }
 
-    const classRadio = document.querySelectorAll('input[name="class_id"]');
-    classRadio.forEach(r=>{
-        r.addEventListener('change', function(){
-            if (this.checked)
-            {
-                document.getElementById('courseName').textContent = document.getElementById("courseSelect").options[courseSelect.selectedIndex].text;
-                document.getElementById('levelName').textContent = document.getElementById("levelSelect").options[levelSelect.selectedIndex].text;
-                document.getElementById('classId').textContent = r.value
+    document.getElementById("tableBodyClasses").addEventListener('change', function(e) {
+        if (e.target && e.target.type === 'radio'){
+            const r = e.target
+            const courseSelect = document.getElementById("courseSelect");
+            const levelSelect = document.getElementById("levelSelect");
 
-                const tr = r.closest("tr");
-                document.getElementById('startTime').textContent = tr.querySelector(".startTime").innerText;
+            document.getElementById('courseName').textContent = courseSelect.options[courseSelect.selectedIndex].text;
+            document.getElementById('levelName').textContent = levelSelect.options[levelSelect.selectedIndex].text;
+            document.getElementById('classId').textContent = r.value;
 
-                const method_label = document.querySelector('input[name="payment_method"]:checked').closest("label")
-                document.getElementById('methodPay').textContent = method_label.querySelector(".methodName").innerText;
+            // Lấy startTime từ tr chứa radio
+            const tr = r.closest("tr");
+            document.getElementById('startTime').textContent = tr.querySelector(".startTime").innerText;
 
-                const percent_label = document.querySelector('input[name="payment_percent"]:checked').closest("label")
-                document.getElementById('percentPay').textContent = percent_label.querySelector(".percentName").innerText;
+            // Lấy phương thức thanh toán
+            const method_label = document.querySelector('input[name="payment_method"]:checked').closest("label");
+            document.getElementById('methodPay').textContent = method_label.querySelector(".methodName").innerText;
 
+            // Lấy phần trăm thanh toán
+            const percent_label = document.querySelector('input[name="payment_percent"]:checked').closest("label");
+            document.getElementById('percentPay').textContent = percent_label.querySelector(".percentName").innerText;
 
+            // Load hóa đơn
+            loadInvoice(r.value);
+        }
 
-                loadInvoice(r.value);
-            }
-        })
     });
+
 
     function loadInvoice(class_id){
         fetch(`api/tuition?${class_id}`, {
