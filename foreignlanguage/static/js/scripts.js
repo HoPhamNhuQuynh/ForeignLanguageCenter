@@ -1,9 +1,11 @@
-
+    // load trang
     document.addEventListener("DOMContentLoaded", function() {
-        const e = document.querySelector('input[name="payment_method"][value="2"]')
-        e.checked = true
         highlightMenu();
         initRegisterFromCourse();
+        document.querySelectorAll('.score-input').forEach(input => {
+            input.addEventListener('blur', updateDTB);
+        });
+        document.querySelector('input[name="payment_method"][value="2"]').checked = true
 
     });
     console.log("SCRIPT LOADED");
@@ -41,6 +43,7 @@
             });
     }
 
+    // truyen tham so tu course qua register-course
     function initRegisterFromCourse(){
         let c = document.getElementById("courseSelect")
         let l = document.getElementById("levelSelect")
@@ -57,6 +60,7 @@
         }
     }
 
+    // cap nhat duong dan moi khi thay doi selectbox
     function updateFromSelect(){
         const c = document.getElementById("courseSelect")
         const l = document.getElementById("levelSelect")
@@ -68,6 +72,7 @@
 
     }
 
+    // gan su kien
     document.getElementById("courseSelect").addEventListener('change', function() {
         loadClasses(this.value, document.getElementById('levelSelect').value);
         updateFromSelect();
@@ -79,39 +84,34 @@
     });
 
     function renderClassesTable(data){
-        let tableBodyClasses = document.getElementById("tableBodyClasses")
-        let tableClasses = document.getElementById("tableClasses")
-        let tableInform = document.getElementById("tableInform")
+        const tableBodyClasses = document.getElementById("tableBodyClasses");
+        const tableClasses = document.getElementById("tableClasses");
+        const tableInform = document.getElementById("tableInform");
 
         tableBodyClasses.innerHTML = "";
 
-            if (!data || data.length === 0) {
-                table.classList.add("d-none");
-                msg.classList.remove("d-none");
-                return;
-            }
+        if (!data || data.length === 0) {
+            tableClasses.classList.add("d-none");
+            tableInform.classList.remove("d-none");
+            return;
+        }
 
-            msg.classList.add("d-none");
-            table.classList.remove("d-none");
+        tableInform.classList.add("d-none");
+        tableClasses.classList.remove("d-none");
 
-            data.forEach(c=>{
-                let tr =document.createElement('tr');
-                tr.id = `class${c.id}`
-                tr.innerHTML = `
+        data.forEach(c => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
                 <td>
-                    <input
-                    type="radio"
-                    name="class_id"
-                    value="${c.id}">
+                    <input type="radio" name="class_id" value="${c.id}">
                 </td>
-                <td>${ c.id }</td>
-                <td class="startTime">${ c.start_time }</td>
-                <td>${ c.maximum_stub}</td>
-                <td>${ c.current_count }</td>`;
-
-                tableBodyClasses.appendChild(tr);
-            });
+                <td>${c.id}</td>
+                <td class="startTime">${c.start_time}</td>
+                <td>${c.current_count}/${c.maximum_stu}</td>`;
+            tableBodyClasses.appendChild(tr);
+        });
     }
+
 
     function loadClasses(c_id, l_id){
         if (!c_id || !l_id) return;
@@ -125,6 +125,7 @@
         });
     }
 
+    // bat su kien load hoa don khi chon radio lop hoc
     document.getElementById("tableBodyClasses").addEventListener('change', function(e) {
         if (e.target && e.target.type === 'radio'){
             const r = e.target
@@ -135,36 +136,67 @@
             document.getElementById('levelName').textContent = levelSelect.options[levelSelect.selectedIndex].text;
             document.getElementById('classId').textContent = r.value;
 
-            // Lấy startTime từ tr chứa radio
             const tr = r.closest("tr");
             document.getElementById('startTime').textContent = tr.querySelector(".startTime").innerText;
 
-            // Lấy phương thức thanh toán
             const method_label = document.querySelector('input[name="payment_method"]:checked').closest("label");
             document.getElementById('methodPay').textContent = method_label.querySelector(".methodName").innerText;
 
-            // Lấy phần trăm thanh toán
             const percent_label = document.querySelector('input[name="payment_percent"]:checked').closest("label");
             document.getElementById('percentPay').textContent = percent_label.querySelector(".percentName").innerText;
 
-            // Load hóa đơn
+            console.log(r.value)
             loadInvoice(r.value);
         }
 
     });
 
+    // cap nhat phuong thuc len hoa don
+    document.querySelector(".list-group").addEventListener("change", function (e) {
+        if (e.target && e.target.type === "radio") {
+            const label = e.target.closest("label");
+            const methodName = label.querySelector(".methodName").innerText;
+
+            document.getElementById("methodPay").textContent = methodName;
+        }
+    });
+
+    // cap nhap muc thanh toan len hoa don
+    document.querySelector(".list-percent").addEventListener("change", function (e) {
+        if (e.target && e.target.type === "radio" && e.target.name === "payment_percent") {
+            document.querySelectorAll(".payment-option")
+                .forEach(lb => lb.classList.remove("selected-option"));
+            const label = e.target.closest(".payment-option");
+            label.classList.add("selected-option");
+            const percent = e.target.value;
+
+            const percentName = label.querySelector(".percentName").innerText;
+            console.log(percent, percentName);
+
+            document.getElementById("percentPay").textContent = percentName;
+        }
+    });
 
     function loadInvoice(class_id){
-        fetch(`api/tuition?${class_id}`, {
-            method: 'GET',
+        fetch(`api/tuition?class_id=${class_id}`, {
+            method: 'get',
             headers: {
                 'Content-Type': 'application/json'
             }}).then(res=>res.json()).then(data=>{
-                document.getElementById('totalPrice').textContent = data.tuition.toLocaleString() + 'VND'
+                document.getElementById('totalPrice').textContent = data.tuition.toLocaleString() + ' VND'
             });
 
     }
 
+    const inputs = document.querySelectorAll('.required');
+    const submitBtn = document.getElementById('btnRegister');
+    function checkForm() {
+      const allFilled = Array.from(inputs).every(input => input.value.trim() !== '');
+      submitBtn.disabled = !allFilled;
+    }
+    inputs.forEach(input => input.addEventListener('input', checkForm));
+
+    // xu ly nut dang ky
     const btnRegister = document.getElementById("btnRegister")
     btnRegister.addEventListener('click', function() {
         const name = document.getElementById("name").value
@@ -187,7 +219,9 @@
                     "payment_method": payment_method,
                     "payment_percent": payment_percent
                 }),
-                headers: {"application/json"}
+                headers: {
+                    "Content-type": "application/json"
+                }
             }).then(res=>res.json()).then(data=>{
                 console.log(data)
             })
@@ -259,10 +293,4 @@
         row.querySelector('.rank').textContent = rank;
     }
 
-    // Gắn blur cho tất cả input khi load trang
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.score-input').forEach(input => {
-            input.addEventListener('blur', updateDTB);
-        });
-    });
 
