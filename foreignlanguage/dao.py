@@ -288,7 +288,6 @@ def get_unpaid_registrations(kw=None):
         ))
     return query.all()
 
-
 def update_tuition_fee(level_id, new_fee):
     """Cập nhật học phí cho 1 level"""
     level = Level.query.get(level_id)
@@ -297,11 +296,24 @@ def update_tuition_fee(level_id, new_fee):
         db.session.add(level)
         # Lưu ý: commit sẽ được gọi ở view hoặc gọi batch update
 
+def get_all_course_levels():
+    """Lấy danh sách cấu hình học phí kèm thông tin Khóa và Level"""
+    # Dùng joinedload để tối ưu query (nối bảng lấy tên)
+    return CourseLevel.query.options(
+        joinedload(CourseLevel.course),
+        joinedload(CourseLevel.level)
+    ).order_by(CourseLevel.course_id, CourseLevel.level_id).all()
+
+def update_course_level_tuition(course_id, level_id, new_fee):
+    """Cập nhật học phí dựa trên khóa chính tổ hợp (course_id, level_id)"""
+    # SQLAlchemy hỗ trợ lấy composite PK bằng cách truyền tuple
+    config = CourseLevel.query.get((course_id, level_id))
+    if config:
+        config.tuition = float(new_fee)
+        db.session.add(config)
 
 def save_changes():
-    """Hàm wrapper để commit db"""
     db.session.commit()
-
 
 def process_payment(regis_id, amount, content, method, created_date, employee_id):
     """
@@ -364,15 +376,6 @@ def revert_payment(registration, money_to_revert):
         registration.status = StatusTuition.PARTIAL
 
     db.session.add(registration)
-
-
-def get_transaction_query_options(query):
-    """Hàm tối ưu truy vấn Transaction để fix lỗi Export CSV"""
-    return query.options(
-        joinedload(Transaction.registration).joinedload(Registration.student).joinedload(StudentInfo.account),
-        joinedload(Transaction.registration).joinedload(Registration.classroom).joinedload(Classroom.course)
-    )
-
 
 if __name__ == "__main__":
     with app.app_context():

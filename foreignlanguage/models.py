@@ -1,5 +1,4 @@
 import json
-
 from foreignlanguage import db, app
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Enum, Text, ForeignKeyConstraint
 from sqlalchemy.orm import relationship, backref
