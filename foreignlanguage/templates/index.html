@@ -48,10 +48,13 @@
             <div class="floating-card bg-white p-3 rounded-3 shadow d-flex align-items-center gap-3">
                 <div class="d-flex align-items-center">
                     <div class="avatar-group">
-                        <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg" class="rounded-circle border border-2 border-white" width="40">
-                        <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg" class="rounded-circle border border-2 border-white" width="40" style="margin-left: -15px;">
+                        <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg"
+                             class="rounded-circle border border-2 border-white" width="40">
+                        <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg"
+                             class="rounded-circle border border-2 border-white" width="40" style="margin-left: -15px;">
                         <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center border border-2 border-white"
-                             style="width: 40px; height: 40px; margin-left: -15px; font-size: 12px;">+32</div>
+                             style="width: 40px; height: 40px; margin-left: -15px; font-size: 12px;">+32
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -73,7 +76,8 @@
                         <i class="fas fa-chalkboard-teacher fs-3"></i>
                     </div>
                     <h4 class="fw-bold mb-3">Giáo viên bản ngữ</h4>
-                    <p class="text-secondary mb-0">100% giáo viên có chứng chỉ TESOL/CELTA với nhiều năm kinh nghiệm giảng dạy quốc tế.</p>
+                    <p class="text-secondary mb-0">100% giáo viên có chứng chỉ TESOL/CELTA với nhiều năm kinh nghiệm
+                        giảng dạy quốc tế.</p>
                 </div>
             </div>
 
@@ -83,7 +87,8 @@
                         <i class="fas fa-laptop-code fs-3"></i>
                     </div>
                     <h4 class="fw-bold mb-3">Lộ trình tinh gọn</h4>
-                    <p class="text-secondary mb-0">Phương pháp học tập thông minh giúp tiết kiệm 30% thời gian nhưng tăng gấp đôi hiệu quả.</p>
+                    <p class="text-secondary mb-0">Phương pháp học tập thông minh giúp tiết kiệm 30% thời gian nhưng
+                        tăng gấp đôi hiệu quả.</p>
                 </div>
             </div>
 
@@ -93,7 +98,8 @@
                         <i class="fas fa-certificate fs-3"></i>
                     </div>
                     <h4 class="fw-bold mb-3">Cam kết đầu ra</h4>
-                    <p class="text-secondary mb-0">Hợp đồng đào tạo minh bạch. Học lại miễn phí nếu không đạt kết quả như cam kết ban đầu.</p>
+                    <p class="text-secondary mb-0">Hợp đồng đào tạo minh bạch. Học lại miễn phí nếu không đạt kết quả
+                        như cam kết ban đầu.</p>
                 </div>
             </div>
         </div>
@@ -109,25 +115,25 @@
         </div>
 
         <div class="row g-4">
-            {% for c in courses %}
+            {% for c in popular_courses %}
             <div class="col-md-6 col-lg-4">
                 <div class="card course-card border-0 shadow-sm h-100 rounded-3 overflow-hidden">
                     <div class="position-relative">
-                        <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545919/abroad.webp" class="card-img-top" alt="{{c.name}}">
+                        <img src="{{ c.image_url or 'https://res.cloudinary.com/desvczltb/image/upload/v1763545919/abroad.webp' }}"
+                             class="card-img-top" alt="{{ c.name }}">
                         <div class="course-badge bg-primary text-white position-absolute top-0 end-0 m-3 px-3 py-1 rounded-pill fw-bold">
-                            English
+                            {{ c.category or 'English' }}
                         </div>
                     </div>
                     <div class="card-body p-4">
-                        <div class="d-flex justify-content-between mb-3 text-muted small">
-                            <span><i class="far fa-clock me-1"></i> 3 tháng</span>
-                            <span><i class="far fa-user me-1"></i> 22 Học viên</span>
-                        </div>
-                        <h5 class="card-title fw-bold mb-3">{{c.name}}</h5>
-                        <p class="card-text text-secondary mb-4">Xây dựng nền tảng vững chắc, tự tin phát âm và giao tiếp các chủ đề thông dụng.</p>
+                        <h5 class="card-title fw-bold mb-3">{{ c.student_course }}</h5>
+                        <p class="card-text text-secondary mb-4">{{ c.description or '' }}</p>
                         <div class="d-flex align-items-center justify-content-between border-top pt-3">
-                            <h5 class="text-orange fw-bold mb-0">1.500.000đ</h5>
-                            <a href="#" class="btn btn-sm btn-outline-dark rounded-pill px-3">Chi tiết <i class="fas fa-arrow-right ms-1"></i></a>
+                            <h5 class="text-orange fw-bold mb-0">Thông tin khóa học  </h5>
+                            <a href="#"
+                               class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                                Chi tiết <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
                         </div>
                     </div>
                 </div>

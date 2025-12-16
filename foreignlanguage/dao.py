@@ -13,7 +13,8 @@ from flask_login import current_user
 # ==================== AUTH & USER ====================
 def auth_user(username, password):
     password = hashlib.md5(password.encode("utf-8")).hexdigest()
-    return UserAccount.query.filter(UserAccount.username.__eq__(username.strip()), UserAccount.password.__eq__(password)).first()
+    return UserAccount.query.filter(UserAccount.username.__eq__(username.strip()),
+                                    UserAccount.password.__eq__(password)).first()
 
 
 def add_user(username, password, email, address):
@@ -58,11 +59,35 @@ def load_levels():
 def get_registration_by_id(r_id):
     return Registration.query.get(r_id)
 
+
 def get_course_by_id(c_id):
     return Course.query.get(c_id)
 
+
 def get_level_by_id(l_id):
-    return  Level.query.get(l_id)
+    return Level.query.get(l_id)
+
+
+# ====================== STUDENT ==========================
+def add_registration(name, phone_number, class_id, payment_method, payment_percent):
+    classroom = get_class_by_id(class_id)
+    if classroom:
+        u_id = current_user.id
+        exist = db.session.query(Registration.id).filter_by(Registration.class_id == class_id,
+                                                            Registration.student_id == u_id,
+                                                            Registration.active == True).first()
+        if not exist:
+            tuition = classroom.course_level.tuition
+            if payment_percent == "50":
+                status = StatusTuition.PARTIAL
+                paid = math.ceil(tuition / 2)
+            else:
+                status = StatusTuition.PAID
+                paid = tuition
+            reg = Registration(student_id=u_id, class_id=class_id, actual_tuition=tuition, paid_payment=payment_percent,
+                               status=status, paid=paid)
+            db.session.add(reg)
+
 
 def get_classes_by_course_level(c_id, l_id):
     query = db.session.query(
@@ -81,8 +106,8 @@ def get_classes_by_course_level(c_id, l_id):
     ).having(
         func.count(Registration.student_id) < Classroom.maximum_stu
     )
-    print(query)
     return query.all()
+
 
 def get_payment_methods():
     return [
@@ -94,30 +119,19 @@ def get_payment_methods():
         if method != MethodEnum.CASH
     ]
 
+
 def get_class_by_id(class_id):
     return Classroom.query.get(class_id)
 
+
 def get_tuition_by_class_id(class_id):
-    return db.session.query(Classroom.course_level.tuition).filter(Classroom.class_id == class_id).first()
-
-
-def add_registration(name, phone_number, class_id, payment_method, payment_percent):
-    classroom = get_class_by_id(class_id)
-    if classroom:
-        u_id = current_user.id
-        exist = db.session.query(Registration.id).filter_by(Registration.class_id==class_id, Registration.student_id==u_id, Registration.active==True).first()
-        if not exist:
-            tuition = classroom.course_level.tuition
-            if payment_percent == "50":
-                status = StatusTuition.PARTIAL
-                paid = math.ceil(tuition/2)
-            else:
-                status = StatusTuition.PAID
-                paid = tuition
-            reg = Registration(student_id=u_id, class_id=class_id, actual_tuition=tuition, paid_payment=payment_percent, status=status, paid=paid)
-            db.session.add(reg)
-
-
+    row = (
+        db.session.query(CourseLevel.tuition)
+        .join(Classroom.course_level)
+        .filter(Classroom.id == class_id)
+        .first()
+    )
+    return float(row[0]) if row else 0
 # ==================== TEACHER ====================
 def get_course_by_teacher(user_id):
     return (db.session.query(Classroom)
@@ -166,6 +180,7 @@ def get_rollcall_data(user_id, class_id):
 
     return sessions, students
 
+
 def save_attendance(session_id: int, student_status: dict):
     for stu_id, status in student_status.items():
         is_present = status == "1"
@@ -179,7 +194,6 @@ def save_attendance(session_id: int, student_status: dict):
 
 ######### ADMIN ##############
 def stats_revenue_per_month_by_year(year=None):
-    year = year or datetime.now().year
     query = ((db.session.query(
         func.sum(Transaction.money),
         extract('month', Transaction.date)
@@ -190,32 +204,42 @@ def stats_revenue_per_month_by_year(year=None):
              all())
     return query
 
+
 def get_revenue_chart_data(year):
     revenue_date = stats_revenue_per_month_by_year(year)
+
+    if not revenue_date:
+        return {"labels": [], "data": []}
+
     return {
         "labels": [date for amount, date in revenue_date],
         "data": [amount for amount, date in revenue_date]
     }
 
+
 def stats_rate_passed_per_course_by_year(year=None):
-    year = year or datetime.now().year
-    query = db.session.query(func.count(Registration.id), Course.name).\
-        join(Classroom, Classroom.id == Registration.class_id).\
-        join(Course, Course.id == Classroom.course_id).\
-        filter(extract('year', Classroom.start_time) == year, Registration.academic_status == AcademicStatus.PASSED).\
+    query = db.session.query(func.count(Registration.id), Course.name). \
+        join(Classroom, Classroom.id == Registration.class_id). \
+        join(Course, Course.id == Classroom.course_id). \
+        filter(extract('year', Classroom.start_time) == year, Registration.academic_status == AcademicStatus.PASSED). \
         group_by(Course.id)
     return query.all()
+
 
 def get_ratio_passed_chart_data(year):
     ratio_passed_data = stats_rate_passed_per_course_by_year(year)
     total_achieved = sum(amount for amount, name in ratio_passed_data)
+
+    if not ratio_passed_data:
+        return {"labels": [], "data": []}
+
     return {
         "labels": [name for amount, name in ratio_passed_data],
         "data": [amount / total_achieved * 100 for amount, name in ratio_passed_data]
     }
 
+
 def stats_numbers_of_students_per_course_by_year(year=None):
-    year = year or datetime.now().year
     query = (db.session.query(
         func.count(Registration.student_id),
         Course.name
@@ -226,32 +250,38 @@ def stats_numbers_of_students_per_course_by_year(year=None):
              group_by(Course.name).all())
     return query
 
+
 def get_student_chart_data(year):
     student_data = stats_numbers_of_students_per_course_by_year(year)
+
+    if not student_data:
+        return {"labels": [], "data": []}
+
     return {
         "labels": [name for amount, name in student_data],
         "data": [amount for amount, name in student_data]
     }
 
+
 def count_courses(year=None):
-    year = year or datetime.now().year
     return Course.query.filter(extract('year', Course.joined_date) == year).count()
 
+
 def count_students(year=None):
-    year = year or datetime.now().year
-    return db.session.query(func.count(UserAccount.id)).filter(UserAccount.role == UserRole.STUDENT, UserAccount.name != None, extract('year', UserAccount.joined_date) == year).count()
+    return db.session.query(func.count(UserAccount.id)).filter(UserAccount.role == UserRole.STUDENT,
+                                                               UserAccount.name != None,
+                                                               extract('year', UserAccount.joined_date) == year).count()
+
 
 def count_active_classes(year=None):
-    year = year or datetime.now().year
     return Classroom.query.filter(Classroom.active == 1).filter(extract('year', Classroom.joined_date) == year).count()
 
+
 def count_total_revenue(year=None):
-    year = year or datetime.now().year
     return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.date) == year).count()
 
+
 def stats_top3_popular_courses_by_year(year=None):
-    year = year or datetime.now().year
-    year = year or datetime.now().year
     query = (
         db.session.query(
             Course.name,
@@ -269,10 +299,14 @@ def stats_top3_popular_courses_by_year(year=None):
 
 
 def get_top3_courses_chart_data(year):
-    data = stats_top3_popular_courses_by_year(year)
+    top3_data = stats_top3_popular_courses_by_year(year)
+
+    if not top3_data:
+        return {"labels": [], "data": []}
+
     return {
-        "labels": [name for name, count in data],
-        "data": [count for name, count in data]
+        "labels": [name for name, count in top3_data],
+        "data": [count for name, count in top3_data]
     }
 
 
@@ -378,8 +412,9 @@ if __name__ == "__main__":
     with app.app_context():
         # print(auth_user("user", "123"))
         print(get_classes_by_course_level(2, 2))
-        print(count_students(2025))
-        print(count_courses(2025))
-        print(count_active_classes(2025))
-        print(count_total_revenue(2025))
-        print(stats_rate_passed_per_course_by_year())
+        # print(count_students(2025))
+        # print(count_courses(2025))
+        # print(count_active_classes(2025))
+        # print(count_total_revenue(2025))
+        # print(stats_rate_passed_per_course_by_year())
+        print(get_tuition_by_class_id(22))
