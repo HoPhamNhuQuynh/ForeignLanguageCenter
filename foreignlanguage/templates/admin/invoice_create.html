@@ -2,262 +2,165 @@
 
 {% block body %}
 <style>
-    :root {
-        --primary-orange: #ff9800;
-        --light-orange: #fff3e0;
-        --dark-orange: #f57c00;
-    }
+    /* 1. MÀU SẮC THƯƠNG HIỆU (Giữ nguyên) */
+    :root { --primary-orange: #FF6B4A; --dark-orange: #e55a3b; }
 
-    .card-list {
-        border-top: 4px solid var(--primary-orange);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
+    /* 2. CÁC CLASS TÙY CHỈNH TỐI THIỂU */
+    .bg-orange { background-color: var(--primary-orange) !important; color: white; }
+    .text-orange { color: var(--primary-orange) !important; }
+    .btn-orange { background-color: var(--primary-orange); color: white; border: none; }
+    .btn-orange:hover { background-color: var(--dark-orange); color: white; }
 
-    .card-invoice {
-        background: #fff;
-        border: 1px solid #ddd;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* Tạo hiệu ứng tờ hóa đơn nổi */
-        position: sticky;
-        top: 20px; /* Cố định form khi cuộn */
-    }
+    /* Highlight dòng được chọn */
+    .row-active { background-color: #ffe0b2 !important; border-left: 5px solid var(--dark-orange); }
 
-    .card-invoice-header {
-        background: var(--primary-orange);
-        color: white;
-        padding: 15px;
-        text-align: center;
-        text-transform: uppercase;
-        font-weight: bold;
-        letter-spacing: 1px;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: var(--light-orange);
-        cursor: pointer;
-    }
-
-    /* Class active khi chọn 1 dòng */
-    .row-active {
-        background-color: #ffe0b2 !important; /* Cam đậm hơn */
-        border-left: 5px solid var(--dark-orange);
-    }
-
-    .form-control-custom {
-        border-radius: 0;
-        border: none;
-        border-bottom: 2px solid #ccc;
-        background: transparent;
-        padding-left: 0;
-    }
-
-    .form-control-custom:focus {
-        box-shadow: none;
-        border-color: var(--primary-orange);
-    }
-
-    .form-control-custom[readonly] {
-        background-color: transparent;
-        color: #555;
-        font-weight: 600;
-    }
-
-    .money-highlight {
-        font-size: 1.25rem;
-        color: #d32f2f; /* Màu đỏ cho tiền nợ */
-        font-weight: bold;
+    /* Input hiển thị tiền to rõ */
+    .amount-display {
+        font-size: 1.5rem; font-weight: 800; color: #d32f2f;
+        background-color: #f8f9fa; border: none; border-bottom: 2px solid #dee2e6;
     }
 </style>
 
-<div class="container-fluid pt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="text-uppercase font-weight-bold" style="color: #333;">Lập Phiếu Thu</h3>
-            <p class="text-muted mb-0"><i class="fa fa-user-circle"></i> Thu ngân: {{ current_user.name }}</p>
-        </div>
-        <div>
-            <a href="{{ url_for('invoice.index') }}" class="btn btn-outline-secondary btn-sm" title="Làm mới">
-                <i class="fa fa-refresh"></i> Tải lại trang
-            </a>
-        </div>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="text-uppercase fw-bold text-dark">Lập Phiếu Thu</h4>
+        <button onclick="window.location.reload()" class="btn btn-outline-secondary btn-sm">
+            <i class="fa fa-refresh"></i> Tải lại
+        </button>
     </div>
 
-    <div class="row">
-        <div class="col-lg-5 col-md-12 mb-4">
-
-            <div class="card shadow-sm border-0 mb-3">
-                <div class="card-body p-3">
-                    <form method="GET" action="{{ url_for('invoice.index') }}">
-                        <div class="input-group">
-                            <input type="text" name="search" class="form-control border-right-0"
-                                   placeholder="🔍 Tìm SĐT, Tên hoặc Mã ĐK..."
-                                   value="{{ request.args.get('search', '') }}">
-                            <div class="input-group-append">
-                                <button class="btn btn-warning text-white" type="submit">Tìm kiếm</button>
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white fw-bold border-bottom">
+                    <i class="fa fa-list text-orange me-2"></i>Danh sách nợ học phí
+                </div>
+                <div class="card-body p-0">
+                    <div class="p-3 border-bottom">
+                        <form method="GET">
+                            <div class="input-group">
+                                <input type="text" name="search" class="form-control" placeholder="Tìm tên, SĐT..." value="{{ request.args.get('search', '') }}">
+                                <button class="btn btn-orange" type="submit"><i class="fa fa-search"></i></button>
                             </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+                        </form>
+                    </div>
 
-            <div class="card card-list border-0">
-                <div class="card-header bg-white font-weight-bold">
-                    <i class="fa fa-list-ul text-warning mr-2"></i> Danh sách chờ thanh toán
-                </div>
-                <div class="card-body p-0 table-responsive" style="max-height: 600px; overflow-y: auto;">
-                    <table class="table table-hover mb-0" id="debtTable">
-                        <thead class="thead-light">
-                        <tr>
-                            <th>Thông tin học viên</th>
-                            <th class="text-right">Còn nợ</th>
-                            <th class="text-center" width="60px">#</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for r in registrations %}
-                        {% set debt = r.actual_tuition - r.paid %}
-                        <tr class="student-row"
-                            id="row-{{ r.id }}"
-                            onclick="selectRow(this, '{{ r.id }}', '{{ r.student.name }}', '{{ r.classroom.course.name }}', {{ debt }})">
-
-                            <td class="align-middle">
-                                <span class="font-weight-bold text-dark">{{ r.student.name }}</span><br>
-                                <small class="text-muted"><i class="fa fa-phone"></i> {{ r.student.phone_num }}</small><br>
-                                <span class="badge badge-info mt-1">{{ r.classroom.course.name }}</span>
-                            </td>
-
-                            <td class="align-middle text-right">
-                                <span class="text-danger font-weight-bold">{{ "{:,.0f}".format(debt) }}</span>
-                                <small>₫</small>
-                            </td>
-
-                            <td class="align-middle text-center">
-                                <button class="btn btn-sm btn-outline-warning rounded-circle">
-                                    <i class="fa fa-chevron-right"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="3" class="text-center py-4 text-muted">
-                                <i class="fa fa-search fa-2x mb-2"></i><br>
-                                Không tìm thấy dữ liệu phù hợp
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer bg-white text-muted small">
-                    Hiển thị {{ registrations|length }} kết quả
+                    <div class="table-responsive" style="max-height: 500px;">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Học viên</th>
+                                    <th class="text-end pe-3">Nợ (VNĐ)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for r in registrations %}
+                            {% set debt = r.actual_tuition - r.paid %}
+                            <tr class="student-row" style="cursor: pointer;"
+                                onclick="selectRow(this, '{{ r.id }}', '{{ r.student.name }}', '{{ r.classroom.course.name }}', {{ r.actual_tuition }}, {{ debt }})">
+                                <td class="ps-3">
+                                    <div class="fw-bold">{{ r.student.name }}</div>
+                                    <small class="text-muted">{{ r.classroom.course.name }}</small>
+                                </td>
+                                <td class="text-end pe-3 text-danger fw-bold">
+                                    {{ "{:,.0f}".format(debt) }}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="2" class="text-center p-3 text-muted">Không tìm thấy dữ liệu</td></tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-7 col-md-12">
-            <div class="card card-invoice">
-                <div class="card-invoice-header">
-                    <i class="fa fa-file-text-o mr-2"></i> Thông tin phiếu thu
+        <div class="col-lg-7">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-orange text-center py-3">
+                    <h5 class="mb-0 fw-bold text-uppercase">Thông tin thanh toán</h5>
                 </div>
-
                 <div class="card-body p-4">
                     {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                    {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show mb-4">
-                        {{ message }}
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    </div>
-                    {% endfor %}
-                    {% endif %}
+                        {% if messages %}
+                            {% for cat, msg in messages %}
+                                <div class="alert alert-{{ cat }} py-2 small">{{ msg }}</div>
+                            {% endfor %}
+                        {% endif %}
                     {% endwith %}
 
                     <form method="POST" id="invoiceForm">
                         <input type="hidden" name="regis_id" id="inp_regis_id" required>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6 mb-3">
-                                <label class="text-muted small text-uppercase">Học viên</label>
-                                <input type="text" class="form-control form-control-custom" id="inp_name"
-                                       placeholder="-- Chưa chọn --" readonly>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">Học viên</label>
+                                <input type="text" class="form-control bg-light" id="inp_name" readonly>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="text-muted small text-uppercase">Khóa học đăng ký</label>
-                                <input type="text" class="form-control form-control-custom" id="inp_course"
-                                       placeholder="--" readonly>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">Khóa học</label>
+                                <input type="text" class="form-control bg-light" id="inp_course" readonly>
                             </div>
                         </div>
 
-                        <div class="row mb-4">
-                            <div class="col-md-8 mb-3">
-                                <label class="font-weight-bold">Nội dung thu</label>
-                                <input type="text"
-                                       name="content"
-                                       id="inp_content"
-                                       class="form-control form-control-custom text-dark"
-                                       placeholder="Ví dụ: Thu học phí..."
-                                       required>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold">Nội dung</label>
+                                <input type="text" name="content" id="inp_content" class="form-control" required placeholder="Nội dung thu...">
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="font-weight-bold">Ngày nộp</label>
-                                <input type="date"
-                                       name="created_date"
-                                       class="form-control form-control-custom text-dark"
-                                       value="{{ today_str }}"
-                                       required>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Ngày lập</label>
+                                <input type="date" name="created_date" class="form-control bg-light"
+                                       value="{{ today_str }}" readonly style="pointer-events: none;">
                             </div>
                         </div>
 
-                        <hr class="my-4">
+                        <hr class="text-muted opacity-25">
 
-                        <div class="row">
-                            <div class="col-12 mb-3">
-                                <label class="font-weight-bold text-dark h5">Số tiền thanh toán (VNĐ)</label>
-                                <div class="input-group input-group-lg">
-                                    <input type="number" name="amount"
-                                           class="form-control border-warning text-primary font-weight-bold"
-                                           id="inp_amount"
-                                           placeholder="0"
-                                           required min="1000">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text bg-warning text-white font-weight-bold">₫</span>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <small class="form-text text-danger">
-                                        * Tối đa cần đóng: <span id="lbl_debt_limit" class="font-weight-bold">0</span> ₫
-                                    </small>
-                                    <small class="text-muted font-italic">
-                                        (Nhập ít hơn để thanh toán từng phần)
-                                    </small>
-                                </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold h6">Mức thanh toán</label>
+
+                            <div class="form-check border rounded p-3 mb-2 bg-light">
+                                <input class="form-check-input mt-1" type="radio" name="payment_opt" id="opt_full" onchange="updateAmount(this.value)" disabled>
+                                <label class="form-check-label w-100 fw-bold ps-2" for="opt_full">
+                                    Thanh toán hết (Hoàn tất)
+                                    <span class="float-end text-success" id="lbl_full_amount">0 ₫</span>
+                                </label>
                             </div>
 
-                            <div class="col-12 mb-4">
-                                <label class="font-weight-bold">Hình thức thanh toán</label>
-                                <div class="d-flex mt-2">
-                                    <div class="custom-control custom-radio mr-4">
-                                        <input type="radio" id="methodCash" name="method" value="CASH"
-                                               class="custom-control-input" checked>
-                                        <label class="custom-control-label" for="methodCash"><i
-                                                class="fa fa-money text-success"></i> Tiền mặt</label>
-                                    </div>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="methodBank" name="method" value="BANKING"
-                                               class="custom-control-input">
-                                        <label class="custom-control-label" for="methodBank"><i
-                                                class="fa fa-university text-primary"></i> Chuyển khoản
-                                            (Banking)</label>
-                                    </div>
+                            <div class="form-check border rounded p-3 bg-light">
+                                <input class="form-check-input mt-1" type="radio" name="payment_opt" id="opt_half" onchange="updateAmount(this.value)" disabled>
+                                <label class="form-check-label w-100 fw-bold ps-2" for="opt_half">
+                                    Thanh toán 50% (Trả góp)
+                                    <span class="float-end text-warning" id="lbl_half_amount">0 ₫</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Số tiền thực thu</label>
+                            <input type="text" class="form-control amount-display text-end" id="display_amount_text" value="0 ₫" readonly>
+                            <input type="hidden" name="amount" id="inp_amount_hidden">
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="method" id="mCash" value="CASH" checked>
+                                    <label class="form-check-label" for="mCash"><i class="fa fa-money text-success"></i> Tiền mặt</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="method" id="mBank" value="BANKING">
+                                    <label class="form-check-label" for="mBank"><i class="fa fa-university text-primary"></i> Chuyển khoản</label>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end mt-3 pt-3 border-top">
-                            <button type="button" onclick="resetForm()" class="btn btn-light mr-2">Hủy bỏ</button>
-                            <button type="submit"
-                                    class="btn btn-warning btn-lg font-weight-bold text-white px-5 shadow-sm"
-                                    id="btnSubmit" disabled>
-                                <i class="fa fa-print"></i> LẬP PHIẾU
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" onclick="resetForm()" class="btn btn-light px-4">Hủy</button>
+                            <button type="submit" id="btnSubmit" class="btn btn-orange px-5 fw-bold shadow-sm" disabled>
+                                <i class="fa fa-check-circle me-2"></i>XÁC NHẬN
                             </button>
                         </div>
                     </form>
@@ -268,52 +171,64 @@
 </div>
 
 <script>
-    // Hàm reset form
+    const fmt = new Intl.NumberFormat('vi-VN');
+
     function resetForm() {
         document.getElementById('invoiceForm').reset();
         document.getElementById('btnSubmit').disabled = true;
-        document.getElementById('btnSubmit').classList.remove('btn-warning');
-        document.getElementById('btnSubmit').classList.add('btn-secondary');
-
-        // Xóa class active ở bảng bên trái
         document.querySelectorAll('.student-row').forEach(r => r.classList.remove('row-active'));
 
-        // Reset hiển thị số tiền
-        document.getElementById('lbl_debt_limit').innerText = "0";
-        document.getElementById('inp_amount').removeAttribute('max');
+        // Reset hiển thị
+        document.getElementById('display_amount_text').value = "0 ₫";
+        document.getElementById('inp_amount_hidden').value = "";
+        document.getElementById('lbl_full_amount').innerText = "0 ₫";
+        document.getElementById('lbl_half_amount').innerText = "0 ₫";
+
+        // Disable radio
+        document.getElementById('opt_full').disabled = true;
+        document.getElementById('opt_half').disabled = true;
     }
 
-    // Hàm chọn dòng học viên
-    function selectRow(row, id, name, course, debt) {
-        // 1. Highlight dòng được chọn
+    function updateAmount(value) {
+        document.getElementById('inp_amount_hidden').value = value;
+        document.getElementById('display_amount_text').value = fmt.format(value) + " ₫";
+    }
+
+    function selectRow(row, id, name, course, actualTuition, debt) {
+        // Highlight
         document.querySelectorAll('.student-row').forEach(r => r.classList.remove('row-active'));
         row.classList.add('row-active');
 
-        // 2. Điền thông tin cơ bản
+        // Điền Form
         document.getElementById('inp_regis_id').value = id;
         document.getElementById('inp_name').value = name;
         document.getElementById('inp_course').value = course;
-
-        // 3. Tự động điền nội dung: "Thu học phí: [Tên khóa]"
         document.getElementById('inp_content').value = "Thu học phí: " + course;
 
-        // 4. Xử lý logic tiền nợ
-        let inputAmount = document.getElementById('inp_amount');
+        // Logic tính toán 50%
+        let halfTuition = actualTuition / 2;
 
-        // Điền sẵn toàn bộ số nợ vào ô nhập tiền (để tiện thanh toán full)
-        inputAmount.value = debt;
+        // Setup Full Option
+        let optFull = document.getElementById('opt_full');
+        optFull.disabled = false;
+        optFull.value = debt;
+        optFull.checked = true;
+        document.getElementById('lbl_full_amount').innerText = fmt.format(debt) + " ₫";
 
-        // Đặt thuộc tính max = debt để không cho nhập lố (Validation HTML5)
-        inputAmount.setAttribute("max", debt);
+        // Setup Half Option
+        let optHalf = document.getElementById('opt_half');
+        // Chỉ cho đóng 50% nếu nợ > 50% + sai số (tức là chưa đóng lần nào)
+        if (debt > halfTuition + 1000) {
+            optHalf.disabled = false;
+            optHalf.value = halfTuition;
+            document.getElementById('lbl_half_amount').innerText = fmt.format(halfTuition) + " ₫";
+        } else {
+            optHalf.disabled = true;
+            document.getElementById('lbl_half_amount').innerText = "(Đã đóng đợt 1)";
+        }
 
-        // Hiển thị text nhắc nhở
-        document.getElementById('lbl_debt_limit').innerText = new Intl.NumberFormat('vi-VN').format(debt);
-
-        // 5. Kích hoạt nút Submit
-        let btn = document.getElementById('btnSubmit');
-        btn.disabled = false;
-        btn.classList.remove('btn-secondary');
-        btn.classList.add('btn-warning');
+        updateAmount(debt);
+        document.getElementById('btnSubmit').disabled = false;
     }
 </script>
 {% endblock %}

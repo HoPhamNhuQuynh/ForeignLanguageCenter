@@ -5,6 +5,7 @@ from foreignlanguage.models import UserAccount, Course, Transaction, Registratio
     Classroom, EmployeeInfo, MethodEnum, StatusPayment
 from foreignlanguage import app, db
 import hashlib
+from sqlalchemy.orm import joinedload
 
 # ==================== AUTH & USER ====================
 def auth_user(username,password):
@@ -161,6 +162,16 @@ def get_transaction_query_options(query):
         joinedload(Transaction.registration).joinedload(Registration.student).joinedload(StudentInfo.account),
         joinedload(Transaction.registration).joinedload(Registration.classroom).joinedload(Classroom.course)
     )
+
+def get_employee_list_query(query):
+    """
+    Hàm này nhận vào query gốc của Flask-Admin,
+    gắn thêm options joinedload để tối ưu hóa việc lấy dữ liệu Account.
+    """
+    return query.options(joinedload(EmployeeInfo.account))
+def get_student_list_query(query):
+    """Tương tự cho Student"""
+    return query.options(joinedload(StudentInfo.account))
 if __name__=="__main__":
     with app.app_context():
         print(auth_user("user", "123"))

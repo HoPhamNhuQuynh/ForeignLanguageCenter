@@ -12,6 +12,7 @@ from foreignlanguage.models import (
 )
 import dao
 
+
 class AuthenticationView(ModelView):
     def __init__(self, model, session, role=None, *args, **kwargs):
         self.required_role = role
