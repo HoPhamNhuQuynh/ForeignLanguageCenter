@@ -5,6 +5,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
 from flask_login import current_user, login_user, logout_user
 from flask_sqlalchemy.session import Session
+from markupsafe import Markup
 
 from foreignlanguage import app, db, login
 from foreignlanguage.models import (
@@ -19,15 +20,19 @@ class AuthenticationView(ModelView):
     def __init__(self, model, session, role=None, *args, **kwargs):
         self.required_role = role
         super().__init__(model, session, *args, **kwargs)
+
     def is_accessible(self) -> bool:
-        return current_user.is_authenticated and current_user.role==self.required_role
+        return current_user.is_authenticated and current_user.role == self.required_role
+
 
 class AuthenticationBaseView(BaseView):
     def __init__(self, role=None, *args, **kwargs):
         self.required_role = role
         super().__init__(*args, **kwargs)
+
     def is_accessible(self) -> bool:
         return current_user.is_authenticated and current_user.role == self.required_role
+
 
 ########### Khôi lỡ làm kiểu kế thừa roi ##############
 # --- Dành cho ADMIN ---
@@ -35,23 +40,28 @@ class AdminView(AuthenticationView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, role=UserRole.ADMIN, **kwargs)
 
+
 class AdminBaseView(AuthenticationBaseView):
     def __init__(self, *args, **kwargs):
         super().__init__(role=UserRole.ADMIN, *args, **kwargs)
+
 
 # --- Dành cho CASHIER (Thu ngân) ---
 class CashierModelView(AuthenticationView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, role=UserRole.CASHIER, **kwargs)
 
+
 class CashierView(AuthenticationBaseView):
     def __init__(self, *args, **kwargs):
         super().__init__(role=UserRole.CASHIER, *args, **kwargs)
+
 
 # --- Dành cho TEACHER (Giáo viên) ---
 class TeacherView(AuthenticationBaseView):
     def __init__(self, *args, **kwargs):
         super().__init__(role=UserRole.TEACHER, *args, **kwargs)
+
 
 # 2. CÁC VIEW CHỨC NĂNG
 
@@ -64,6 +74,7 @@ class MyLogoutView(BaseView):
 
     def is_accessible(self):
         return current_user.is_authenticated
+
 
 ################Phần chức năng ADMIN####################
 # --- Báo cáo Dashboard (Admin) ---
@@ -126,11 +137,23 @@ class RegulationView(AdminBaseView):
         return self.render('admin/regulation.html', course_levels=course_levels)
 
 
+class CourseAdminView(AdminView):
+    # 1. Danh sách các cột cần hiển thị
+    column_list = ('name', 'description', 'period', 'content', 'joined_date', 'active')
+
+    # 2. Gán nhãn tiếng Việt
+    column_labels = dict(
+        name='Tên khóa học',
+        description='Mô tả',
+        period='Thời lượng (tháng)',
+        content='Nội dung đào tạo',
+        joined_date='Ngày tạo',
+        active='Trạng thái'
+    )
+
 class ClassroomAdminView(AdminView):
-    # 1. Định nghĩa danh sách cột cần hiện
     column_list = ('id', 'course_info', 'start_time', 'maximum_stu', 'employee_name', 'joined_date', 'active')
 
-    # 2. Đặt tên cột hiển thị tiếng Việt
     column_labels = dict(
         id='Mã lớp',
         course_info='Khóa học - Cấp độ',
@@ -140,45 +163,45 @@ class ClassroomAdminView(AdminView):
         joined_date='Ngày tạo',
         active='Trạng thái'
     )
-
-    # 3. TÌM KIẾM
-    # Lưu ý: Nếu tìm kiếm theo 'course.name' bị lỗi, hãy xóa nó khỏi danh sách này.
-    # Do database dùng backref nên Flask-Admin đôi khi không tự nhận diện được đường dẫn join.
     column_searchable_list = ['id']
-
-    # 4. Sắp xếp
     column_sortable_list = ['id', 'start_time', 'maximum_stu', 'active']
 
-    # --- CÁC HÀM FORMATTER (Xử lý hiển thị) ---
-
     def _employee_formatter(view, context, model, name):
-        # Truy cập vào thuộc tính instance (model.employee) thì vẫn chạy bình thường
         if model.employee and model.employee.account:
             return model.employee.account.name
         return "Chưa phân công"
 
     def _course_level_formatter(view, context, model, name):
-        # Truy cập vào thuộc tính instance (model.course) vẫn chạy bình thường
-        course_name = model.course.name if model.course else "N/A"
-        level_name = model.level.name if model.level else "N/A"
+        course_name = model.course_level.course.name if model.course_level.course else "N/A"
+        level_name = model.course_level.level.name if model.course_level.level else "N/A"
         return f"{course_name} ({level_name})"
-
-    def _active_formatter(view, context, model, name):
-        return "Hoạt động" if model.active else "Đã khóa"
-
-    def _date_formatter(view, context, model, name):
-        if model.start_time:
-            return model.start_time.strftime('%d/%m/%Y')
-        return ""
 
     # Gán formatter vào các cột
     column_formatters = {
         'employee_name': _employee_formatter,
         'course_info': _course_level_formatter,
-        'active': _active_formatter,
-        'start_time': _date_formatter
     }
 
+class EmployeeAdminView(AdminView):
+    column_list = ('account.name', 'base_salary', 'account.joined_date', 'account.active')
+
+    # 2. Nhãn tiếng Việt
+    column_labels = dict(
+        base_salary='Lương cơ bản',
+        **{'account.name': 'Tên nhân viên',
+           'account.joined_date': 'Ngày vào làm',
+           'account.active': 'Trạng thái'}
+    )
+
+class StudentAdminView(AdminView):
+    column_list = ('account.name', 'entry_score', 'account.joined_date', 'account.active')
+
+    column_labels = dict(
+        entry_score='Điểm đầu vào',
+        **{'account.name': 'Họ tên học viên',
+           'account.joined_date': 'Ngày nhập học',
+           'account.active': 'Trạng thái'}
+    )
 
 ############Chức năng của cashier##################
 # LẬP HÓA ĐƠN
@@ -229,16 +252,18 @@ class CreateInvoiceView(CashierView):
                            student=student_info,
                            registrations=unpaid_regis,
                            today_str=datetime.now().strftime('%Y-%m-%d'))
-#Quản lý hóa đơn
+
+
+# Quản lý hóa đơn
 class TransactionAdminView(CashierModelView):
     can_create = False
     can_edit = False
     can_delete = True
-    can_export = True
 
-    column_list = ('id', 'student_info', 'course_info', 'money', 'method', 'date', 'status', 'content')
+    column_list = ('id', 'student_info', 'course_info', 'money', 'method', 'date', 'status', 'content', 'print_ticket')
     column_labels = dict(id='Mã HĐ', student_info='Học viên', course_info='Khóa học', money='Số tiền',
-                         method='Hình thức', date='Ngày nộp', status='Trạng thái', content='Nội dung')
+                         method='Hình thức', date='Ngày nộp', status='Trạng thái', content='Nội dung',
+                         print_ticket='Hành động')
     column_default_sort = ('date', True)
     column_searchable_list = ['id']
     column_filters = ['status', 'method', 'date', 'money', 'registration.student.account.name']
@@ -259,12 +284,40 @@ class TransactionAdminView(CashierModelView):
     column_formatters = {
         'student_info': _student_formatter, 'course_info': _course_formatter, 'money': _money_formatter
     }
-    column_formatters_export = column_formatters
 
     # Gọi DAO để revert dữ liệu khi xóa
     def on_model_delete(self, model):
         dao.revert_payment(model.registration, model.money)
 
+    def _print_formatter(view, context, model, name):
+        # Tạo URL trỏ đến hàm print_view bên dưới, truyền id của transaction
+        print_url = url_for('.print_view', id=model.id)
+
+        # Trả về HTML nút bấm (Mở tab mới bằng target="_blank")
+        return Markup(f'''
+            <a href="{print_url}" target="_blank" class="btn btn-info btn-sm" title="In hóa đơn">
+                <i class="fa fa-print"></i> In
+            </a>
+        ''')
+
+    column_formatters = {
+        'student_info': _student_formatter,
+        'course_info': _course_formatter,
+        'money': _money_formatter,
+        'print_ticket': _print_formatter  # Đăng ký formatter in
+    }
+
+    # 3. Tạo Route (Trang hiển thị phiếu in)
+    @expose('/print/<int:id>')
+    def print_view(self, id):
+        # Lấy thông tin giao dịch (Có thể gọi qua DAO hoặc query trực tiếp)
+        transaction = Transaction.query.get(id)
+
+        if not transaction:
+            return "Không tìm thấy giao dịch", 404
+
+        # Render template in hóa đơn (Sẽ tạo ở bước 2)
+        return self.render('admin/invoice_print.html', trans=transaction)
 
 
 ############Chức năng của teacher##################
@@ -326,7 +379,7 @@ class RollcallView(TeacherView):
             return jsonify({'students': [], 'sessions': []})
 
         # Buổi học
-        sessions = Session.query.filter(class_id==class_id).all()
+        sessions = Session.query.filter(class_id == class_id).all()
 
         # Học viên trong lớp
         regs = Registration.query.filter_by(class_id=class_id).all()
@@ -346,6 +399,7 @@ class RollcallView(TeacherView):
                 } for stu in students
             ]
         })
+
 
 class EnterScoreView(TeacherView):
 
@@ -406,6 +460,8 @@ class EnterScoreView(TeacherView):
         db.session.commit()
         flash("Đã lưu điểm thành công!", "success")
         return redirect(request.referrer)
+
+
 ############## XỬ LÝ LOGIN #####################
 
 class MyAdminIndexView(AdminIndexView):
@@ -428,9 +484,11 @@ class MyAdminIndexView(AdminIndexView):
             return self.render('admin/home.html')
         return self.render('admin/index.html')
 
+
 @login.user_loader
 def load_user(user_id):
     return dao.get_user_by_id(user_id)
+
 
 # 4. KHỞI TẠO ADMIN & ADD VIEW
 
@@ -438,10 +496,10 @@ admin = Admin(app=app, name='ANQUINKO', theme=Bootstrap4Theme(), index_view=MyAd
 
 # --- Menu cho ADMIN ---
 admin.add_view(StatsView(name='Thống kê báo cáo', endpoint='stats'))
-admin.add_view(AdminView(Course, db.session, name='Khóa học', category='Đào tạo'))
+admin.add_view(CourseAdminView(Course, db.session, name='Khóa học', category='Đào tạo'))
 admin.add_view(ClassroomAdminView(Classroom, db.session, name='Lớp học', category='Đào tạo'))
-admin.add_view(AdminView(EmployeeInfo, db.session, name='Nhân viên', category='Người dùng'))
-admin.add_view(AdminView(StudentInfo, db.session, name='Học viên', category='Người dùng'))
+admin.add_view(EmployeeAdminView(EmployeeInfo, db.session, name='Nhân viên', category='Người dùng'))
+admin.add_view(StudentAdminView(StudentInfo, db.session, name='Học viên', category='Người dùng'))
 admin.add_view(RegulationView(name='Quy định', endpoint='regulation'))
 
 # --- Menu cho CASHIER ---

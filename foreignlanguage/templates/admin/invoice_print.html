@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hóa đơn #{{ trans.id }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <style>
+        body { background: #f5f5f5; }
+        .invoice-box {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Cấu hình khi IN */
+        @media print {
+            .no-print { display: none !important; }
+            .invoice-box { border: none; box-shadow: none; margin: 0; }
+            body { background: white; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="invoice-box">
+    <div class="row mb-4 border-bottom pb-3">
+        <div class="col-8">
+            <h2 class="text-uppercase text-warning font-weight-bold">Phiếu Thu Học Phí</h2>
+            <p class="mb-0"><strong>Trung tâm Ngoại ngữ Anquinko</strong></p>
+            <small>Địa chỉ: 123 Đường ABC, Quận XYZ, TP.HCM</small>
+        </div>
+        <div class="col-4 text-right">
+            <h4 class="text-muted">#{{ trans.id }}</h4>
+            <small>Ngày: {{ trans.date.strftime('%d/%m/%Y %H:%M') }}</small>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-sm-6">
+            <h6 class="mb-3 font-weight-bold">Người nộp:</h6>
+            <div>
+                <strong>{{ trans.registration.student.account.name }}</strong>
+            </div>
+            <div>SĐT: {{ trans.registration.student.account.phone_num }}</div>
+            <div>Email: {{ trans.registration.student.account.email }}</div>
+        </div>
+        <div class="col-sm-6 text-right">
+            <h6 class="mb-3 font-weight-bold">Thông tin khóa học:</h6>
+            <div>
+                <strong>{{ trans.registration.classroom.course_level.course.name }}</strong>
+            </div>
+            <div>Lớp: {{ trans.registration.classroom.id }}</div>
+            <div>Giáo viên: {{ trans.registration.classroom.employee.account.name }}</div>
+        </div>
+    </div>
+
+    <table class="table table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>Nội dung</th>
+                <th class="text-center">Hình thức</th>
+                <th class="text-right">Số tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ trans.content }}</td>
+                <td class="text-center">
+                    {% if trans.method.name == 'CASH' %}Tiền mặt
+                    {% else %}Chuyển khoản{% endif %}
+                </td>
+                <td class="text-right font-weight-bold">
+                    {{ "{:,.0f}".format(trans.money) }} ₫
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="row mt-5">
+        <div class="col-6 text-center">
+            <p><strong>Người nộp tiền</strong></p>
+            <small>(Ký, họ tên)</small>
+        </div>
+        <div class="col-6 text-center">
+            <p><strong>Người thu tiền</strong></p>
+            <p>{{ trans.employee.account.name }}</p> </div>
+    </div>
+
+    <div class="text-center mt-5 no-print">
+        <button onclick="window.print()" class="btn btn-primary btn-lg"><i class="fa fa-print"></i> In Hóa Đơn</button>
+        <button onclick="window.close()" class="btn btn-secondary btn-lg ml-2">Đóng</button>
+    </div>
+</div>
+
+</body>
+</html>

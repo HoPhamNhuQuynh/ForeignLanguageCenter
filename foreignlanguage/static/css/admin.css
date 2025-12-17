@@ -1,0 +1,71 @@
+/* All admin */
+:root {
+        --primary-orange: #FF6B4A;
+        --dark-orange: #e55a3b;
+}
+
+/* Màu cam đầu cho bảng */
+.table thead th {
+    background-color: var(--primary-orange);
+    color: white;
+    border-bottom: 2px solid var(--dark-orange);
+    vertical-align: middle;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+/* Chữ màu trắng đầu bảng nè */
+.table thead th a {
+    color: white !important;
+    text-decoration: none;
+}
+
+/*Header nav*/
+ /* Màu cam cho logo */
+.navbar-brand {
+     color: var(--primary-orange) !important;
+     font-weight: bold;
+}
+    /*Hover*/
+.navbar-dark .navbar-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: var(--primary-orange) !important;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+/* Tạo hóa đơn */
+    /*Bảng chọn st*/
+.student-row { cursor: pointer; transition: background-color 0.15s; }
+.student-row:hover { background-color: var(--light-orange); }
+.row-active {
+    background-color: #ffe0b2 !important;
+    border-left: 4px solid var(--dark-orange);
+}
+
+.option-card {
+    cursor: pointer;
+    border: 2px solid #dee2e6;
+    transition: all 0.2s ease-in-out;
+}
+    /* Khi radio bên trong được checked thì đổi màu */
+.option-card:has(input:checked) {
+    border-color: var(--primary-orange);
+    background-color: #fffbf7;
+}
+.option-card.disabled {
+    background-color: #e9ecef;
+    opacity: 0.7;
+    cursor: not-allowed;
+    border-color: #dee2e6;
+}
+
+    /* HIỂN THỊ TIỀN */
+.amount-display {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #d32f2f;
+    border: none;
+    border-bottom: 2px solid #dee2e6;
+}

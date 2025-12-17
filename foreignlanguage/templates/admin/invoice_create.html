@@ -1,57 +1,6 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-<style>
-    .bg-orange { background-color: var(--primary-orange) !important; color: white; }
-    .text-orange { color: var(--primary-orange) !important; }
-    .border-orange { border-color: var(--primary-orange) !important; }
-
-    .btn-orange {
-        background-color: var(--primary-orange);
-        color: white;
-        border: none;
-        transition: all 0.2s;
-    }
-
-    .btn-orange:hover { background-color: var(--dark-orange); color: white; transform: translateY(-1px); }
-
-    /* 3. BẢNG DỮ LIỆU */
-    .student-row { cursor: pointer; transition: background-color 0.15s; }
-    .student-row:hover { background-color: var(--light-orange); }
-    .row-active {
-        background-color: #ffe0b2 !important;
-        border-left: 4px solid var(--dark-orange);
-    }
-
-    /* 4. OPTION CARDS (MỨC THANH TOÁN) */
-    .option-card {
-        cursor: pointer;
-        border: 2px solid #dee2e6;
-        transition: all 0.2s ease-in-out;
-        height: 100%; /* Để 2 ô cao bằng nhau */
-    }
-    /* Khi radio bên trong được checked thì đổi màu viền cha */
-    .option-card:has(input:checked) {
-        border-color: var(--primary-orange);
-        background-color: #fffbf7;
-    }
-    .option-card.disabled {
-        background-color: #e9ecef;
-        opacity: 0.7;
-        cursor: not-allowed;
-        border-color: #dee2e6;
-    }
-
-    /* 5. HIỂN THỊ TIỀN */
-    .amount-display {
-        font-size: 1.75rem;
-        font-weight: 800;
-        color: #d32f2f;
-        background-color: #fff;
-        border: none;
-        border-bottom: 2px solid #dee2e6;
-    }
-</style>
 
 <div class="container-fluid py-4 bg-light" style="min-height: 100vh;">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -232,8 +181,4 @@
         </div>
     </div>
 </div>
-
-<script>
-
-</script>
 {% endblock %}

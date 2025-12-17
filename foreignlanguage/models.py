@@ -164,6 +164,7 @@ class Transaction(Base):
     employee_id = Column(Integer, ForeignKey('employee_info.id'))
     regis_id = Column(Integer, ForeignKey('registration.id'), nullable=False)
 
+    employee = relationship('EmployeeInfo', backref='transactions', lazy=True)
     registration = relationship('Registration', backref='transactions', lazy=True)
 
 
