@@ -5,7 +5,6 @@
   {"id": 4, "name": "Lê Văn GV3", "username": "gv3", "password": "202cb962ac59075b964b07152d234b70", "email": "gv3@ou.edu.vn", "role": "TEACHER", "active": true},
   {"id": 5, "name": "Phạm Thu Ngân 1", "username": "tn1", "password": "202cb962ac59075b964b07152d234b70", "email": "tn1@ou.edu.vn", "role": "CASHIER", "active": true},
   {"id": 6, "name": "Hoàng Thu Ngân 2", "username": "tn2", "password": "202cb962ac59075b964b07152d234b70", "email": "tn2@ou.edu.vn", "role": "CASHIER", "active": true},
-
   {"id": 7, "name": "Học Viên 01", "username": "hv1", "password": "202cb962ac59075b964b07152d234b70", "email": "hv1@mail.com", "role": "STUDENT", "active": true},
   {"id": 8, "name": "Học Viên 02", "username": "hv2", "password": "202cb962ac59075b964b07152d234b70", "email": "hv2@mail.com", "role": "STUDENT", "active": true},
   {"id": 9, "name": "Học Viên 03", "username": "hv3", "password": "202cb962ac59075b964b07152d234b70", "email": "hv3@mail.com", "role": "STUDENT", "active": true},

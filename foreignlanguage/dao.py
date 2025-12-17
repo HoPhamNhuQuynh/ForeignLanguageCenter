@@ -269,17 +269,15 @@ def count_courses(year=None):
 
 def count_students(year=None):
     return db.session.query(func.count(UserAccount.id)).filter(UserAccount.role == UserRole.STUDENT,
-                                                               UserAccount.name != None,
-                                                               extract('year', UserAccount.joined_date) == year).count()
-
+                                                               UserAccount.name.isnot(None),
+                                                               extract('year', UserAccount.joined_date) == year).scalar()
 
 def count_active_classes(year=None):
     return Classroom.query.filter(Classroom.active == 1).filter(extract('year', Classroom.joined_date) == year).count()
 
 
 def count_total_revenue(year=None):
-    return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.date) == year).count()
-
+    return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.date) == year, Transaction.status==StatusPayment.SUCCESS).scalar()
 
 def stats_top3_popular_courses_by_year(year=None):
     query = (
