@@ -8,7 +8,6 @@
   {"id": 7, "start_time": "2025-06-07 08:00:00", "maximum_stu": 25, "employee_id": 1, "course_id": 3, "level_id": 2, "active": true},
   {"id": 8, "start_time": "2025-06-08 18:00:00", "maximum_stu": 25, "employee_id": 2, "course_id": 3, "level_id": 3, "active": true},
   {"id": 9, "start_time": "2025-06-09 08:00:00", "maximum_stu": 25, "employee_id": 3, "course_id": 4, "level_id": 1, "active": true},
-
   {"id": 10, "start_time": "2026-02-01 08:00:00", "maximum_stu": 25, "employee_id": 1, "course_id": 1, "level_id": 1, "active": true},
   {"id": 11, "start_time": "2026-02-02 18:00:00", "maximum_stu": 25, "employee_id": 2, "course_id": 1, "level_id": 2, "active": true},
   {"id": 12, "start_time": "2026-02-03 08:00:00", "maximum_stu": 25, "employee_id": 3, "course_id": 1, "level_id": 3, "active": true},
