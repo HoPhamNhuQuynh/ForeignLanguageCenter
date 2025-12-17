@@ -14,6 +14,7 @@ from flask_login import current_user
 
 
 # ==================== AUTH & USER ====================
+
 def auth_user(username, password):
     password = hashlib.md5(password.encode("utf-8")).hexdigest()
     return UserAccount.query.filter(UserAccount.username.__eq__(username.strip()),
@@ -35,6 +36,13 @@ def update_user_password(new_password, u_id):
     u.password = new_password
     db.session.commit()
 
+def update_user_information_by_uid(uid, name, email, address, phone_num):
+    u = get_user_by_id(uid)
+    u.name = name
+    u.email = email
+    u.address = address
+    u.phone_num = phone_num
+    db.session.commit()
 
 def check_email(email):
     return UserAccount.query.filter(UserAccount.email.__eq__(email)).first()
@@ -53,6 +61,7 @@ def get_user_by_email(email):
 
 
 # ==================== COMMON LOADERS ====================
+
 def load_courses():
     return Course.query.all()
 
@@ -60,6 +69,8 @@ def load_courses():
 def load_levels():
     return Level.query.all()
 
+def load_teachers():
+    return UserAccount.query.filter(UserAccount.role == UserRole.TEACHER).all()
 
 def get_registration_by_id(r_id):
     return Registration.query.get(r_id)
@@ -74,6 +85,7 @@ def get_level_by_id(l_id):
 
 
 # ====================== STUDENT ==========================
+
 def create_registration(user, class_id, name, phone):
     classroom = get_class_by_id(class_id)
     tuition_base = classroom.course_level.tuition
@@ -174,8 +186,8 @@ def get_tuition_by_class_id(class_id):
         .first()
     )
     return float(row[0]) if row else 0
+
 # ==================== TEACHER ====================
-# dao.py
 
 def get_teacher_classes(user_id):
     emp = EmployeeInfo.query.filter_by(u_id=user_id).first()
@@ -192,27 +204,28 @@ def get_regs_by_class(class_id):
     return Registration.query.filter_by(class_id=class_id).all()
 
 
-def save_attendance(session_id, student_status):
-    for student_id, status in student_status.items():
-        att = Attendance.query.filter_by(
-            session_id=session_id,
-            student_id=student_id
-        ).first()
-
-        if att:
-            att.status = status
-        else:
-            db.session.add(
-                Attendance(
-                    session_id=session_id,
-                    student_id=student_id,
-                    status=status
-                )
-            )
-    db.session.commit()
+# def save_attendance(session_id, student_status):
+#     for student_id, status in student_status.items():
+#         att = Attendance.query.filter_by(
+#             session_id=session_id,
+#             student_id=student_id
+#         ).first()
+#
+#         if att:
+#             att.status = status
+#         else:
+#             db.session.add(
+#                 Attendance(
+#                     session_id=session_id,
+#                     student_id=student_id,
+#                     status=status
+#                 )
+#             )
+#     db.session.commit()
 
 
 ######### ADMIN ##############
+
 def stats_revenue_per_month_by_year(year=None):
     query = ((db.session.query(
         func.sum(Transaction.money),
@@ -327,6 +340,22 @@ def get_top3_courses_chart_data(year):
         "data": [count for name, count in top3_data]
     }
 
+def get_details_top3_courses(year=None):
+    year = year if year else datetime.now().year
+    return (
+        db.session.query(
+            Course,
+            func.count(Registration.id)
+        )
+        .join(Classroom, Classroom.course_id == Course.id)
+        .join(Registration, Registration.class_id == Classroom.id)
+        .filter(extract('year', Classroom.start_time) == year)
+        .group_by(Course.id)
+        .order_by(func.count(Registration.id).desc())
+        .limit(3)
+        .all()
+    )
+
 
 ######### CASHIER #############
 def get_unpaid_registrations(kw=None):
@@ -409,10 +438,14 @@ def save_changes():
 if __name__ == "__main__":
     with app.app_context():
         # print(auth_user("user", "123"))
-        print(get_classes_by_course_level(2, 2))
-        print(count_students(2024))
-        print(count_courses(2025))
-        print(count_active_classes(2025))
-        print(count_total_revenue(2025))
-        print(stats_rate_passed_per_course_by_year(2025))
-        print(get_tuition_by_class_id(22))
+        # print(get_classes_by_course_level(2, 2))
+        # print(count_students(2024))
+        # print(count_courses(2025))
+        # print(count_active_classes(2025))
+        # print(count_total_revenue(2025))
+        # print(stats_rate_passed_per_course_by_year(2025))
+        # print(get_tuition_by_class_id(22))
+        print(get_details_top3_courses())
+        top3 = get_details_top3_courses(2025)
+        course, total = top3[0]
+        print(course.id, course.name, course.description)
