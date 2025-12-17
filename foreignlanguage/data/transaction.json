@@ -1,4 +1,22 @@
 [
+<<<<<<< HEAD
+  {"id": 1, "money": 1500000.0, "content": "HP Lop 1 - SV 1", "method": "CASH", "date": "2025-05-20 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 1},
+  {"id": 2, "money": 1500000.0, "content": "HP Lop 1 - SV 2", "method": "BANKING", "date": "2025-05-21 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 2},
+  {"id": 3, "money": 2000000.0, "content": "HP Lop 2 - SV 3", "method": "MOMO", "date": "2025-05-22 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 3},
+  {"id": 4, "money": 2000000.0, "content": "HP Lop 2 - SV 4", "method": "CASH", "date": "2025-05-20 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 4},
+  {"id": 5, "money": 2500000.0, "content": "HP Lop 3 - SV 5", "method": "BANKING", "date": "2025-05-21 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 5},
+  {"id": 6, "money": 1800000.0, "content": "HP Lop 4 - SV 6", "method": "CASH", "date": "2025-05-20 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 6},
+  {"id": 7, "money": 2200000.0, "content": "HP Lop 5 - SV 7", "method": "MOMO", "date": "2025-05-20 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 7},
+  {"id": 8, "money": 3000000.0, "content": "HP Lop 6 - SV 8", "method": "CASH", "date": "2025-05-20 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 8},
+  {"id": 9, "money": 4500000.0, "content": "HP Lop 7 - SV 9", "method": "BANKING", "date": "2025-05-21 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 9},
+  {"id": 10, "money": 6000000.0, "content": "HP Lop 8 - SV 10", "method": "CASH", "date": "2025-05-20 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 10},
+  {"id": 11, "money": 6000000.0, "content": "HP Lop 8 - SV 11", "method": "BANKING", "date": "2025-05-21 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 11},
+  {"id": 12, "money": 2000000.0, "content": "HP Lop 9 - SV 12", "method": "MOMO", "date": "2025-05-20 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 12},
+  {"id": 13, "money": 1500000.0, "content": "HP Lop 10 (2026) - SV 16", "method": "BANKING", "date": "2025-12-20 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 13},
+  {"id": 14, "money": 1000000.0, "content": "Coc Lop 12 (2026) - SV 17", "method": "CASH", "date": "2025-12-21 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 14},
+  {"id": 15, "money": 1000000.0, "content": "Coc Lop 18 (2026) - SV 19", "method": "MOMO", "date": "2026-01-20 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 16},
+  {"id": 16, "money": 3000000.0, "content": "HP Lop 22 (2026) - SV 21", "method": "BANKING", "date": "2026-01-05 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 18}
+=======
   {"id": 1, "money": 1500000.0, "content": "HP Lop 1 - SV 1", "method": "CASH", "date": "2024-11-20 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 1},
   {"id": 2, "money": 1500000.0, "content": "HP Lop 1 - SV 2", "method": "BANKING", "date": "2024-11-30 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 2},
   {"id": 3, "money": 2000000.0, "content": "HP Lop 2 - SV 3", "method": "BANKING", "date": "2024-12-22 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 3},
@@ -15,4 +33,5 @@
   {"id": 14, "money": 1000000.0, "content": "Coc Lop 12 (2025) - SV 17", "method": "CASH", "date": "2025-11-21 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 14},
   {"id": 15, "money": 1000000.0, "content": "Coc Lop 18 (2025) - SV 19", "method": "BANKING", "date": "2025-12-05 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 16},
   {"id": 16, "money": 3000000.0, "content": "HP Lop 22 (2025) - SV 21", "method": "BANKING", "date": "2025-12-10 08:00:00", "status": "SUCCESS", "employee_id": 5, "regis_id": 18}
+>>>>>>> 47ebfc6564ad310b2e74f7c30eadbd8e2875792b
 ]

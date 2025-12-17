@@ -1,49 +1,9 @@
-    // load trang
-    document.addEventListener("DOMContentLoaded", function() {
-        highlightMenu();
-        document.querySelectorAll('.score-input').forEach(input => {
-            input.addEventListener('blur', updateDTB);
-        })
+document.addEventListener("DOMContentLoaded", function() {
+    initRegisterFromCourse();
+    document.querySelector('input[name="payment_method"][value="2"]').checked = true;
+});
 
-    });
-    console.log("SCRIPT LOADED");
-
-
-    function togglePass(inputId, icon) {
-        const input = document.getElementById(inputId);
-        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-        input.setAttribute('type', type);
-
-        if (type === 'text') {
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        } else {
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        }
-    }
-
-    function highlightMenu(){
-        const currentPath = window.location.pathname;
-
-        const navLinks = document.querySelectorAll('.navbar-nav .nav-link, .navbar-nav .dropdown-item ');
-
-        navLinks.forEach(link => {
-            const href = link.getAttribute('href');
-
-            if (href === currentPath) {
-                link.classList.add('active');
-
-                if(link.classList.contains('dropdown-item')){
-                    link.closest('.dropdown').querySelector('.nav-link.dropdown-toggle').classList.add('active');
-                }
-            }
-            });
-    }
-
-<<<<<<< HEAD
-=======
-    // truyen tham so tu course qua register-course
+// truyen tham so tu course qua register-course
     function initRegisterFromCourse(){
         let c = document.getElementById("courseSelect")
         let l = document.getElementById("levelSelect")
@@ -174,6 +134,11 @@
             console.log(percent, percentName);
 
             document.getElementById("percentPay").textContent = percentName;
+
+            const classRadio = document.querySelector('input[name="class_id"]:checked');
+            if (classRadio) {
+                loadInvoice(classRadio.value);
+            }
         }
     });
 
@@ -183,18 +148,16 @@
             headers: {
                 'Content-Type': 'application/json'
             }}).then(res=>res.json()).then(data=>{
-                document.getElementById('totalPrice').textContent = data.tuition.toLocaleString() + ' VND'
-            });
+                const percentInput = document.querySelector('input[name="payment_percent"]:checked')
+                const percent = percentInput ? percentInput.value : '100';
 
+                let tuition = data.tuition;
+                if (percent === '50') {
+                    tuition = Math.ceil(tuition / 2);
+                }
+                document.getElementById('totalPrice').textContent = tuition.toLocaleString() + ' VND';
+        });
     }
-
-    const inputs = document.querySelectorAll('.required');
-    const submitBtn = document.getElementById('btnRegister');
-    function checkForm() {
-      const allFilled = Array.from(inputs).every(input => input.value.trim() !== '');
-      submitBtn.disabled = !allFilled;
-    }
-    inputs.forEach(input => input.addEventListener('input', checkForm));
 
     // xu ly nut dang ky
     const btnRegister = document.getElementById("btnRegister")
@@ -203,28 +166,45 @@
         const phone_num = document.getElementById("phone_num").value
         const class_id = document.querySelector('input[name="class_id"]:checked').value
         const payment_method = document.querySelector('input[name="payment_method"]:checked').value
-        const payment_percent = document.querySelector('input[name="payment_percent"]:checked').value
 
-        addRegistration(name, phone_num, class_id, payment_method, payment_percent);
+        const payment_percent = document.querySelector('input[name="payment_percent"]:checked').value
+        const totalPriceText = document.getElementById("totalPrice").innerText;
+        let tuition = parseFloat(totalPriceText.replace(/,/g, '').replace(' VND',''));
+
+
+        console.log(payment_method)
+        console.log(payment_percent)
+        addRegistration(name, phone_num, class_id, payment_method, payment_percent, tuition);
     });
 
-    function addRegistration(name, phone_num, class_id, payment_method, payment_percent){
+    function addRegistration(name, phone_num, class_id, payment_method, payment_percent, tuition){
+        if (!name || !phone_num || !class_id || !payment_method || !payment_percent)
+            {
+                alert("Vui lòng nhập đầy đủ thông tin trước khi nhấn nút đăng ký!")
+                return;
+            }
+
         if (confirm("Bạn có chắc chắc muốn đăng ký khóa học và thanh toán ngay?")===true){
             fetch("api/registrations", {
                 method: "post",
                 body: JSON.stringify({
                     "name": name,
-                    "phone_num": phone_num,
+                    "phone": phone_num,
                     "class_id": class_id,
-                    "payment_method": payment_method,
-                    "payment_percent": payment_percent
+                    "payment_method": parseInt(payment_method),
+                    "payment_percent": payment_percent,
+                    "money": tuition
                 }),
                 headers: {
                     "Content-type": "application/json"
                 }
             }).then(res=>res.json()).then(data=>{
+                alert(data.msg);
+                if (data.success) {
+                    location.reload();
+                }
                 console.log(data)
             })
         }
     }
->>>>>>> 47ebfc6564ad310b2e74f7c30eadbd8e2875792b
+

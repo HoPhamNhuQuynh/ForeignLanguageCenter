@@ -12,9 +12,14 @@
   {"id": 11, "student_id": 11, "class_id": 8, "transact_time": "2025-05-21 08:00:00", "paid": 6000000.0, "actual_tuition": 6000000.0, "status": "PAID", "final_score": 4.0, "academic_status": "FAILED"},
   {"id": 12, "student_id": 12, "class_id": 9, "transact_time": "2025-05-20 08:00:00", "paid": 2000000.0, "actual_tuition": 2000000.0, "status": "PAID", "final_score": 6.0, "academic_status": "PASSED"},
   {"id": 13, "student_id": 16, "class_id": 10, "transact_time": "2025-12-20 08:00:00", "paid": 1500000.0, "actual_tuition": 1500000.0, "status": "PAID", "final_score": null, "academic_status": "PENDING"},
+<<<<<<< HEAD
+  {"id": 14, "student_id": 17, "class_id": 12, "transact_time": "2025-12-21 08:00:00", "paid": 1000000.0, "actual_tuition": 2500000.0, "status": "PARTIAL", "final_score": null, "academic_status": "PENDING"},
+  {"id": 15, "student_id": 18, "class_id": 15, "transact_time": "2025-12-22 08:00:00", "paid": 0.0, "actual_tuition": 3000000.0, "status": "PENDING", "final_score": null, "academic_status": "PENDING"},
+=======
   {"id": 14, "student_id": 17, "class_id": 12, "transact_time": "2025-12-21 08:00:00", "paid": 1250000.0, "actual_tuition": 2500000.0, "status": "PARTIAL", "final_score": null, "academic_status": "PENDING"},
   {"id": 15, "student_id": 18, "class_id": 15, "transact_time": "2025-12-22 08:00:00", "paid": 0.0, "actual_tuition": 3000000.0, "status": "UNPAID", "final_score": null, "academic_status": "PENDING"},
+>>>>>>> 47ebfc6564ad310b2e74f7c30eadbd8e2875792b
   {"id": 16, "student_id": 19, "class_id": 18, "transact_time": "2026-01-20 08:00:00", "paid": 1000000.0, "actual_tuition": 2000000.0, "status": "PARTIAL", "final_score": null, "academic_status": "PENDING"},
-  {"id": 17, "student_id": 20, "class_id": 20, "transact_time": "2026-02-28 08:00:00", "paid": 0.0, "actual_tuition": 2000000.0, "status": "UNPAID", "final_score": null, "academic_status": "PENDING"},
+  {"id": 17, "student_id": 20, "class_id": 20, "transact_time": "2026-02-28 08:00:00", "paid": 0.0, "actual_tuition": 2000000.0, "status": "PENDING", "final_score": null, "academic_status": "PENDING"},
   {"id": 18, "student_id": 21, "class_id": 22, "transact_time": "2026-01-05 08:00:00", "paid": 3000000.0, "actual_tuition": 3000000.0, "status": "PAID", "final_score": null, "academic_status": "PENDING"}
 ]
