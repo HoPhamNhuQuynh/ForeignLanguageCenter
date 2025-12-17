@@ -5,13 +5,14 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
 from flask_login import current_user, login_user, logout_user
 from flask_sqlalchemy.session import Session
+from collections import defaultdict
 from markupsafe import Markup
 
 from foreignlanguage import app, db, login
 from foreignlanguage.models import (
     StudentInfo, Course, Classroom, EmployeeInfo,
     Registration, Transaction, UserRole, Score,
-    Session, GradeCategory
+    Session, GradeCategory, AcademicStatus
 )
 import dao
 
@@ -379,7 +380,7 @@ class RollcallView(TeacherView):
             return jsonify({'students': [], 'sessions': []})
 
         # Buổi học
-        sessions = Session.query.filter(class_id == class_id).all()
+        sessions = Session.query.filter(class_id==class_id).all()
 
         # Học viên trong lớp
         regs = Registration.query.filter_by(class_id=class_id).all()
@@ -460,7 +461,6 @@ class EnterScoreView(TeacherView):
         db.session.commit()
         flash("Đã lưu điểm thành công!", "success")
         return redirect(request.referrer)
-
 
 ############## XỬ LÝ LOGIN #####################
 

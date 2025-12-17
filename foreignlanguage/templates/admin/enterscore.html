@@ -5,12 +5,12 @@
 
 <form method="post" action="{{ url_for('enterscore.save_scores') }}">
     <div class="border p-3 rounded bg-orange-light">
-        <label class="fw-bold">Chọn lớp</label>
-        <select class="form-select mb-3" onchange="location='?class_id=' + this.value">
+        <label class="fw-bold">Chọn lớp: </label>
+        <select class="form-select mb-3" style="width: 30%; min-width: 400px; padding: 10px;" onchange="location='?class_id=' + this.value">
             <option value="">-- Chọn lớp --</option>
             {% for c in classes %}
             <option value="{{ c.id }}" {% if c.id== selected_class %}selected{% endif %}>
-                {{ c.course.name }} - {{ c.level.name }}
+                {{ c.course_level.course.name }} - {{ c.course_level.level.name }} (Mã lớp: {{ c.id }})
             </option>
             {% endfor %}
         </select>
@@ -73,6 +73,6 @@
         <button type="submit" class="btn btn-orange px-4 rounded-3">Lưu điểm</button>
     </div>
 </form>
-<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/teacher.js') }}"></script>
 
 {% endblock %}
