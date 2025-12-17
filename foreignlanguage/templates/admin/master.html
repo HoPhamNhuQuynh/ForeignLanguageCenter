@@ -3,74 +3,52 @@
 {% block head_css %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 
-<style>
-    :root {
-        --primary-orange: #FF6B4A;
-        --dark-orange: #e55a3b;
-    }
+<script src="{{ url_for('static', filename='js/invoiceCreate.js') }}"></script>
 
-    /* 1. Header của Bảng dữ liệu */
-    .table thead th {
-        background-color: var(--primary-orange);
-        color: white;
-        border-bottom: 2px solid var(--dark-orange);
-        vertical-align: middle;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-    }
-
-    /* Icon sắp xếp trong bảng */
-    .table thead th a {
-        color: white !important;
-        text-decoration: none;
-    }
-
-    /* 2. Nút bấm chính (Create, Save) */
-    .btn-primary {
-        background-color: var(--primary-orange);
-        border-color: var(--primary-orange);
-    }
-    .btn-primary:hover, .btn-primary:focus {
-        background-color: var(--dark-orange) !important;
-        border-color: var(--dark-orange) !important;
-    }
-
-    /* 3. Phân trang (Pagination) */
-    .page-item.active .page-link {
-        background-color: var(--primary-orange);
-        border-color: var(--primary-orange);
-    }
-    .page-link {
-        color: var(--primary-orange);
-    }
-    .page-link:hover {
-        color: var(--dark-orange);
-    }
-
-    /* 4. Tabs điều hướng (trên đầu trang List/Create) */
-    .nav-tabs .nav-link.active {
-        border-top: 3px solid var(--primary-orange);
-        color: var(--primary-orange);
-        font-weight: bold;
-    }
-    .nav-tabs .nav-link {
-        color: #555;
-    }
-
-    /* 5. Logo thương hiệu góc trái */
-    .navbar-brand {
-        color: var(--primary-orange) !important;
-        font-weight: bold;
-    }
-
-    /* 6. Dropdown menu actions */
-    .dropdown-menu .dropdown-item:active {
-        background-color: var(--primary-orange);
-    }
-</style>
 {% endblock %}
 
-{% block body %}
-{{ super() }}
+{% block page_body %}
+    <div class="container{% if theme.fluid %}-fluid{% endif %}">
+
+        {# ĐÂY LÀ CHỖ CẦN SỬA: Thêm class sticky-top và z-index #}
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2 sticky-top shadow" role="navigation" style="z-index: 1020;">
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#admin-navbar-collapse"
+                    aria-controls="admin-navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="admin-navbar-collapse">
+                {% block brand %}
+                    <a class="navbar-brand" href="{{ admin_view.admin.url }}">{{ admin_view.admin.name }}</a>
+                {% endblock %}
+
+                {% block main_menu %}
+                    <ul class="nav navbar-nav mr-auto">
+                        {{ layout.menu() }}
+                    </ul>
+                {% endblock %}
+
+                {% block menu_links %}
+                    <ul class="nav navbar-nav navbar-right">
+                        {{ layout.menu_links() }}
+                    </ul>
+                {% endblock %}
+
+                {% block access_control %}
+                {% endblock %}
+            </div>
+        </nav>
+
+        {% block messages %}
+            {{ layout.messages() }}
+        {% endblock %}
+
+        {# store the jinja2 context for form_rules rendering logic #}
+        {% set render_ctx = h.resolve_ctx() %}
+
+        {% block body %}{% endblock %}
+    </div>
 {% endblock %}

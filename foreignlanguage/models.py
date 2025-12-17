@@ -1,5 +1,4 @@
 import json
-
 from foreignlanguage import db, app
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Enum, Text, ForeignKeyConstraint
 from sqlalchemy.orm import relationship, backref
@@ -165,6 +164,7 @@ class Transaction(Base):
     employee_id = Column(Integer, ForeignKey('employee_info.id'))
     regis_id = Column(Integer, ForeignKey('registration.id'), nullable=False)
 
+    employee = relationship('EmployeeInfo', backref='transactions', lazy=True)
     registration = relationship('Registration', backref='transactions', lazy=True)
 
 

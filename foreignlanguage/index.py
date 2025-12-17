@@ -10,7 +10,8 @@ from flask import send_file
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    popular_courses = dao.get_top3_courses_chart_data(None)
+    return render_template("index.html", popular_courses=popular_courses)
 
 
 @app.route("/signin", methods=["GET", "POST"])
@@ -158,6 +159,8 @@ def register_course():
 def get_tuition():
     class_id = request.args.get("class_id", type=int)
     tuition= dao.get_tuition_by_class_id(class_id=class_id)
+    # import pdb
+    # pdb.set_trace()
     return jsonify({
         "tuition": tuition
     })
