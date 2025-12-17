@@ -5,12 +5,13 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
 from flask_login import current_user, login_user, logout_user
 from flask_sqlalchemy.session import Session
+from collections import defaultdict
 
 from foreignlanguage import app, db, login
 from foreignlanguage.models import (
     StudentInfo, Course, Classroom, EmployeeInfo,
     Registration, Transaction, UserRole, Score,
-    Session, GradeCategory
+    Session, GradeCategory, AcademicStatus
 )
 import dao
 
@@ -265,7 +266,7 @@ class RollcallView(TeacherView):
             return jsonify({'students': [], 'sessions': []})
 
         # Buổi học
-        sessions = Session.query.filter_by(class_id=class_id).all()
+        sessions = Session.query.filter(class_id==class_id).all()
 
         # Học viên trong lớp
         regs = Registration.query.filter_by(class_id=class_id).all()
@@ -286,7 +287,7 @@ class RollcallView(TeacherView):
             ]
         })
 
-class EnterscoreView(TeacherView):
+class EnterScoreView(TeacherView):
 
     @expose('/', methods=['GET'])
     def index(self):
@@ -345,6 +346,7 @@ class EnterscoreView(TeacherView):
         db.session.commit()
         flash("Đã lưu điểm thành công!", "success")
         return redirect(request.referrer)
+
 ############## XỬ LÝ LOGIN #####################
 
 class MyAdminIndexView(AdminIndexView):
@@ -389,7 +391,7 @@ admin.add_view(TransactionAdminView(Transaction, db.session, name='Quản lý gi
 
 # --- Menu cho TEACHER ---
 admin.add_view(RollcallView(name="Điểm danh", endpoint="rollcall"))
-admin.add_view(EnterscoreView(name="Nhập điểm", endpoint="enterscore"))
+admin.add_view(EnterScoreView(name="Nhập điểm", endpoint="enterscore"))
 
 # --- Menu chung ---
 admin.add_view(MyLogoutView(name='Đăng xuất'))

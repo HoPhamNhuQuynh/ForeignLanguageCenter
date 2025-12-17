@@ -234,8 +234,7 @@
         box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
     }
 
-
-
-
-
-
+    .classSelect {
+    padding: 10px 40px 10px 15px; /* Tăng khoảng trống bên trong */
+    display: block;
+}

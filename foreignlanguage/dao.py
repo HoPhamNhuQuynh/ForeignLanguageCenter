@@ -119,61 +119,40 @@ def add_registration(name, phone_number, class_id, payment_method, payment_perce
 
 
 # ==================== TEACHER ====================
-def get_course_by_teacher(user_id):
-    return (db.session.query(Classroom)
-            .join(EmployeeInfo, EmployeeInfo.id == Classroom.employee_id)
-            .filter(EmployeeInfo.u_id == user_id).all())
-
-
-def get_student_by_course(course_id):
-    return (db.session.query(Registration)
-            .join(StudentInfo, Registration.student_id == StudentInfo.id)
-            .join(UserAccount, StudentInfo.u_id == UserAccount.id)
-            .filter(Registration.class_id == course_id).all())
-
-
-def get_scores_by_course(course_id):
-    return (db.session.query(Registration)
-            .join(StudentInfo, Registration.student_id == StudentInfo.id)
-            .join(UserAccount, StudentInfo.u_id == UserAccount.id)
-            .filter(Registration.class_id == course_id).all())
-
+# dao.py
 
 def get_teacher_classes(user_id):
-    employee = EmployeeInfo.query.filter_by(u_id=user_id).first()
-    if not employee:
+    emp = EmployeeInfo.query.filter_by(u_id=user_id).first()
+    if not emp:
         return []
-    return Classroom.query.filter_by(employee_id=employee.id).all()
+    return Classroom.query.filter_by(employee_id=emp.id).all()
 
 
-def get_rollcall_data(user_id, class_id):
-    employee = EmployeeInfo.query.filter_by(u_id=user_id).first()
-    if not employee:
-        return None, None
+def get_sessions_by_class(class_id):
+    return Session.query.filter_by(class_id=class_id).all()
 
-    classroom = Classroom.query.filter_by(
-        id=class_id,
-        employee_id=employee.id
-    ).first()
 
-    if not classroom:
-        return None, None
+def get_regs_by_class(class_id):
+    return Registration.query.filter_by(class_id=class_id).all()
 
-    sessions = Session.query.filter_by(class_id=class_id).all()
 
-    regs = Registration.query.filter_by(class_id=class_id).all()
-    students = [r.student for r in regs]
+def save_attendance(session_id, student_status):
+    for student_id, status in student_status.items():
+        att = Attendance.query.filter_by(
+            session_id=session_id,
+            student_id=student_id
+        ).first()
 
-    return sessions, students
-
-def save_attendance(session_id: int, student_status: dict):
-    for stu_id, status in student_status.items():
-        is_present = status == "1"
-        present = Present.query.filter_by(session_id=session_id, student_id=stu_id).first()
-        if present:
-            present.is_present = is_present
+        if att:
+            att.status = status
         else:
-            db.session.add(Present(session_id=session_id, student_id=stu_id, is_present=is_present))
+            db.session.add(
+                Attendance(
+                    session_id=session_id,
+                    student_id=student_id,
+                    status=status
+                )
+            )
     db.session.commit()
 
 
