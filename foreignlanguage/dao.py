@@ -288,8 +288,7 @@ def get_top3_courses_chart_data(year):
 
 ######### CASHIER #############
 def get_unpaid_registrations(kw=None):
-    """Lấy danh sách học viên chưa hoàn thành học phí"""
-    query = Registration.query.filter(Registration.status != StatusTuition.PAID)
+    query = Registration.query.filter(Registration.status == StatusTuition.PARTIAL)
     if kw:
         query = query.join(StudentInfo).join(UserAccount).filter(or_(
             UserAccount.name.contains(kw),
@@ -297,33 +296,6 @@ def get_unpaid_registrations(kw=None):
             UserAccount.email.contains(kw)
         ))
     return query.all()
-
-def update_tuition_fee(level_id, new_fee):
-    """Cập nhật học phí cho 1 level"""
-    level = Level.query.get(level_id)
-    if level:
-        level.tuition = float(new_fee)
-        db.session.add(level)
-        # Lưu ý: commit sẽ được gọi ở view hoặc gọi batch update
-
-def get_all_course_levels():
-    """Lấy danh sách cấu hình học phí kèm thông tin Khóa và Level"""
-    # Dùng joinedload để tối ưu query (nối bảng lấy tên)
-    return CourseLevel.query.options(
-        joinedload(CourseLevel.course),
-        joinedload(CourseLevel.level)
-    ).order_by(CourseLevel.course_id, CourseLevel.level_id).all()
-
-def update_course_level_tuition(course_id, level_id, new_fee):
-    """Cập nhật học phí dựa trên khóa chính tổ hợp (course_id, level_id)"""
-    # SQLAlchemy hỗ trợ lấy composite PK bằng cách truyền tuple
-    config = CourseLevel.query.get((course_id, level_id))
-    if config:
-        config.tuition = float(new_fee)
-        db.session.add(config)
-
-def save_changes():
-    db.session.commit()
 
 def process_payment(regis_id, amount, content, method, created_date, employee_id):
     """
@@ -352,7 +324,7 @@ def process_payment(regis_id, amount, content, method, created_date, employee_id
 
     # 3. Update Status
     debt = regis.actual_tuition - regis.paid
-    if debt <= 1000:
+    if debt == 0:
         regis.status = StatusTuition.PAID
         msg = "Đã hoàn tất học phí!"
     else:
@@ -363,29 +335,34 @@ def process_payment(regis_id, amount, content, method, created_date, employee_id
     db.session.commit()
     return True, msg
 
-
 # --- XỬ LÝ HOÀN TÁC KHI XÓA ---
 def revert_payment(registration, money_to_revert):
-    """
-    Xử lý khi xóa giao dịch:
-    1. Trừ tiền đã đóng trong Registration
-    2. Cập nhật lại trạng thái
-    """
     if not registration: return
-
     registration.paid -= money_to_revert
     if registration.paid < 0: registration.paid = 0
-
     debt = registration.actual_tuition - registration.paid
-
     if registration.paid == 0:
         registration.status = StatusTuition.UNPAID
-    elif debt <= 1000:
+    elif debt == 0:
         registration.status = StatusTuition.PAID
     else:
         registration.status = StatusTuition.PARTIAL
-
     db.session.add(registration)
+
+def get_all_course_levels():
+    return CourseLevel.query.options(
+        joinedload(CourseLevel.course),
+        joinedload(CourseLevel.level)
+    ).order_by(CourseLevel.course_id, CourseLevel.level_id).all()
+
+def update_course_level_tuition(course_id, level_id, new_fee):
+    config = CourseLevel.query.get((course_id, level_id))
+    if config:
+        config.tuition = float(new_fee)
+        db.session.add(config)
+
+def save_changes():
+    db.session.commit()
 
 if __name__ == "__main__":
     with app.app_context():
