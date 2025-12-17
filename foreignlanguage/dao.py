@@ -175,62 +175,40 @@ def get_tuition_by_class_id(class_id):
     )
     return float(row[0]) if row else 0
 # ==================== TEACHER ====================
-def get_course_by_teacher(user_id):
-    return (db.session.query(Classroom)
-            .join(EmployeeInfo, EmployeeInfo.id == Classroom.employee_id)
-            .filter(EmployeeInfo.u_id == user_id).all())
-
-
-def get_student_by_course(course_id):
-    return (db.session.query(Registration)
-            .join(StudentInfo, Registration.student_id == StudentInfo.id)
-            .join(UserAccount, StudentInfo.u_id == UserAccount.id)
-            .filter(Registration.class_id == course_id).all())
-
-
-def get_scores_by_course(course_id):
-    return (db.session.query(Registration)
-            .join(StudentInfo, Registration.student_id == StudentInfo.id)
-            .join(UserAccount, StudentInfo.u_id == UserAccount.id)
-            .filter(Registration.class_id == course_id).all())
-
+# dao.py
 
 def get_teacher_classes(user_id):
-    employee = EmployeeInfo.query.filter_by(u_id=user_id).first()
-    if not employee:
+    emp = EmployeeInfo.query.filter_by(u_id=user_id).first()
+    if not emp:
         return []
-    return Classroom.query.filter_by(employee_id=employee.id).all()
+    return Classroom.query.filter_by(employee_id=emp.id).all()
 
 
-def get_rollcall_data(user_id, class_id):
-    employee = EmployeeInfo.query.filter_by(u_id=user_id).first()
-    if not employee:
-        return None, None
-
-    classroom = Classroom.query.filter_by(
-        id=class_id,
-        employee_id=employee.id
-    ).first()
-
-    if not classroom:
-        return None, None
-
-    sessions = Session.query.filter_by(class_id=class_id).all()
-
-    regs = Registration.query.filter_by(class_id=class_id).all()
-    students = [r.student for r in regs]
-
-    return sessions, students
+def get_sessions_by_class(class_id):
+    return Session.query.filter_by(class_id=class_id).all()
 
 
-def save_attendance(session_id: int, student_status: dict):
-    for stu_id, status in student_status.items():
-        is_present = status == "1"
-        present = Present.query.filter_by(session_id=session_id, student_id=stu_id).first()
-        if present:
-            present.is_present = is_present
+def get_regs_by_class(class_id):
+    return Registration.query.filter_by(class_id=class_id).all()
+
+
+def save_attendance(session_id, student_status):
+    for student_id, status in student_status.items():
+        att = Attendance.query.filter_by(
+            session_id=session_id,
+            student_id=student_id
+        ).first()
+
+        if att:
+            att.status = status
         else:
-            db.session.add(Present(session_id=session_id, student_id=stu_id, is_present=is_present))
+            db.session.add(
+                Attendance(
+                    session_id=session_id,
+                    student_id=student_id,
+                    status=status
+                )
+            )
     db.session.commit()
 
 
@@ -314,14 +292,12 @@ def count_students(year=None):
                                                                UserAccount.name.isnot(None),
                                                                extract('year', UserAccount.joined_date) == year).scalar()
 
-
 def count_active_classes(year=None):
     return Classroom.query.filter(Classroom.active == 1).filter(extract('year', Classroom.joined_date) == year).count()
 
 
 def count_total_revenue(year=None):
     return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.date) == year, Transaction.status==StatusPayment.SUCCESS).scalar()
-
 
 def stats_top3_popular_courses_by_year(year=None):
     query = (
@@ -354,8 +330,7 @@ def get_top3_courses_chart_data(year):
 
 ######### CASHIER #############
 def get_unpaid_registrations(kw=None):
-    """Lấy danh sách học viên chưa hoàn thành học phí"""
-    query = Registration.query.filter(Registration.status != StatusTuition.PAID)
+    query = Registration.query.filter(Registration.status == StatusTuition.PARTIAL)
     if kw:
         query = query.join(StudentInfo).join(UserAccount).filter(or_(
             UserAccount.name.contains(kw),
@@ -363,33 +338,6 @@ def get_unpaid_registrations(kw=None):
             UserAccount.email.contains(kw)
         ))
     return query.all()
-
-def update_tuition_fee(level_id, new_fee):
-    """Cập nhật học phí cho 1 level"""
-    level = Level.query.get(level_id)
-    if level:
-        level.tuition = float(new_fee)
-        db.session.add(level)
-        # Lưu ý: commit sẽ được gọi ở view hoặc gọi batch update
-
-def get_all_course_levels():
-    """Lấy danh sách cấu hình học phí kèm thông tin Khóa và Level"""
-    # Dùng joinedload để tối ưu query (nối bảng lấy tên)
-    return CourseLevel.query.options(
-        joinedload(CourseLevel.course),
-        joinedload(CourseLevel.level)
-    ).order_by(CourseLevel.course_id, CourseLevel.level_id).all()
-
-def update_course_level_tuition(course_id, level_id, new_fee):
-    """Cập nhật học phí dựa trên khóa chính tổ hợp (course_id, level_id)"""
-    # SQLAlchemy hỗ trợ lấy composite PK bằng cách truyền tuple
-    config = CourseLevel.query.get((course_id, level_id))
-    if config:
-        config.tuition = float(new_fee)
-        db.session.add(config)
-
-def save_changes():
-    db.session.commit()
 
 def process_payment(regis_id, amount, content, method, created_date, employee_id):
     """
@@ -418,7 +366,7 @@ def process_payment(regis_id, amount, content, method, created_date, employee_id
 
     # 3. Update Status
     debt = regis.actual_tuition - regis.paid
-    if debt <= 1000:
+    if debt == 0:
         regis.status = StatusTuition.PAID
         msg = "Đã hoàn tất học phí!"
     else:
@@ -429,29 +377,34 @@ def process_payment(regis_id, amount, content, method, created_date, employee_id
     db.session.commit()
     return True, msg
 
-
 # --- XỬ LÝ HOÀN TÁC KHI XÓA ---
 def revert_payment(registration, money_to_revert):
-    """
-    Xử lý khi xóa giao dịch:
-    1. Trừ tiền đã đóng trong Registration
-    2. Cập nhật lại trạng thái
-    """
     if not registration: return
-
     registration.paid -= money_to_revert
     if registration.paid < 0: registration.paid = 0
-
     debt = registration.actual_tuition - registration.paid
-
     if registration.paid == 0:
         registration.status = StatusTuition.UNPAID
-    elif debt <= 1000:
+    elif debt == 0:
         registration.status = StatusTuition.PAID
     else:
         registration.status = StatusTuition.PARTIAL
-
     db.session.add(registration)
+
+def get_all_course_levels():
+    return CourseLevel.query.options(
+        joinedload(CourseLevel.course),
+        joinedload(CourseLevel.level)
+    ).order_by(CourseLevel.course_id, CourseLevel.level_id).all()
+
+def update_course_level_tuition(course_id, level_id, new_fee):
+    config = CourseLevel.query.get((course_id, level_id))
+    if config:
+        config.tuition = float(new_fee)
+        db.session.add(config)
+
+def save_changes():
+    db.session.commit()
 
 if __name__ == "__main__":
     with app.app_context():

@@ -3,7 +3,7 @@ import random
 from flask_mail import Message
 from flask import render_template, request, redirect, session, url_for, jsonify
 from foreignlanguage import app, dao, login, db, mail, admin, email_service
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
 from decorators import anonymous_required
 from foreignlanguage.models import MethodEnum
 from openpyxl import Workbook
@@ -234,7 +234,6 @@ def common_attributes():
 @app.route("/")
 def home():
     return redirect(url_for('admin.index'))
-
 
 if __name__ == "__main__":
     with app.app_context():

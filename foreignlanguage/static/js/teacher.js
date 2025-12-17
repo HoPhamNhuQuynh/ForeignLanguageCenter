@@ -1,38 +1,47 @@
 
-//    -------TEACHER------------
-//    rollcall
-    document.getElementById('classSelect').addEventListener('change', function () {
-        const classId = this.value;
+   // rollcall
+  document.addEventListener('DOMContentLoaded', () => {
+    const classSelect = document.getElementById('classSelect');
+    const saveBtn = document.getElementById('saveBtn');
+
+    classSelect.addEventListener('change', () => {
+        const classId = classSelect.value;
         if (!classId) return;
 
-        fetch(`./load-by-class?class_id=${classId}`)
+        fetch('load-by-class?class_id=' + classId)
             .then(res => res.json())
             .then(data => {
-                // Buổi học
+                // sessions
                 const sessionSelect = document.getElementById('sessionSelect');
                 sessionSelect.innerHTML = '<option value="">-- Chọn buổi học --</option>';
                 data.sessions.forEach(s => {
-                    sessionSelect.innerHTML +=
-                        `<option value="${s.id}">${s.name}</option>`;
+                    sessionSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
                 });
 
-                // Học viên
+                // students
                 const tbody = document.getElementById('studentBody');
                 tbody.innerHTML = '';
-                data.students.forEach((stu, index) => {
+                data.students.forEach((stu, i) => {
                     tbody.innerHTML += `
                         <tr>
-                            <td>${index + 1}</td>
+                            <td>${i + 1}</td>
                             <td>${stu.name}</td>
                             <td>
-                                <input type="radio" name="${stu.id}" value="1"> Có mặt
-                                <input type="radio" name="${stu.id}" value="0" class="ms-3"> Vắng
+                                <input type="radio" name="student_${stu.id}" value="1"> Có mặt
+                                <input type="radio" name="student_${stu.id}" value="0"> Vắng
                             </td>
                         </tr>
                     `;
                 });
             });
     });
+
+    document.addEventListener('change', () => {
+        const radios = document.querySelectorAll('#studentBody input[type="radio"]');
+        const checked = new Set([...radios].filter(r => r.checked).map(r => r.name));
+        saveBtn.classList.toggle('d-none', checked.size * 2 !== radios.length);
+    });
+});
 
     //enterscore
     function updateDTB() {
@@ -63,4 +72,11 @@
         row.querySelector('.rank').textContent = rank;
     }
 
+
+    // Gắn blur cho tất cả input khi load trang
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.score-input').forEach(input => {
+            input.addEventListener('blur', updateDTB);
+        });
+    });
 

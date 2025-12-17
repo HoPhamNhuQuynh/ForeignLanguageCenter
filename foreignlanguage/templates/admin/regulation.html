@@ -1,44 +1,7 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-<style>
-    /* 1. Branding Colors */
-    :root {
-        --primary-orange: #FF6B4A;
-        --dark-orange: #E55A3B;
-        --light-orange-bg: #fff5f2;
-    }
 
-    /* 2. Custom Classes */
-    .text-orange { color: var(--primary-orange) !important; }
-    .bg-orange { background-color: var(--primary-orange) !important; color: white; }
-
-    .btn-orange {
-        background-color: var(--primary-orange);
-        color: white;
-        border: none;
-        transition: all 0.2s;
-    }
-    .btn-orange:hover {
-        background-color: var(--dark-orange);
-        color: white;
-        transform: translateY(-1px);
-    }
-
-    /* 3. Table Styling */
-    .table thead th {
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
-    }
-
-    /* Input Focus Effect */
-    .form-control:focus {
-        border-color: var(--primary-orange);
-        box-shadow: 0 0 0 0.25rem rgba(255, 107, 74, 0.25);
-    }
-</style>
 
 <div class="container py-5" style="max-width: 900px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
