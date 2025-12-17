@@ -3,7 +3,20 @@
 {% block title %} Hồ sơ học viên {% endblock%}
 
 {% block content %}
+
 <div class="container py-5">
+    {% if status is not none %}
+    <div id="status-msg"
+         style="position: fixed; top: 20px; right: 20px; padding: 10px 20px;
+                background-color: {% if status %}#4CAF50{% else %}#f44336{% endif %};
+                color: white; border-radius: 5px;">
+        {% if status %}
+            Lưu thông tin thành công!
+        {% else %}
+            Thất bại!
+        {% endif %}
+    </div>
+    {% endif %}
     <div class="row g-4">
 
         <div class="col-lg-5 col-xl-4">
@@ -25,12 +38,12 @@
                         <p class="text-muted small">Học viên</p>
                     </div>
 
-                    <form action="/update-profile" method="POST">
+                    <form action="/student" method="POST">
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-secondary">HỌ VÀ TÊN</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="far fa-user text-muted"></i></span>
-                                <input type="email" class="form-control bg-light border-start-0 ps-0 text-muted" value="{{ current_user.name }}" readonly disabled>
+                                <input type="text" class="form-control bg-light border-start-0 ps-0 text-muted" value="{{ current_user.name }}" name="name">
                             </div>
                         </div>
 
@@ -38,7 +51,7 @@
                             <label class="form-label small fw-bold text-secondary">EMAIL</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="far fa-envelope text-muted"></i></span>
-                                <input type="email" class="form-control bg-light border-start-0 ps-0 text-muted" value="{{ current_user.email }}" readonly disabled>
+                                <input type="email" class="form-control bg-light border-start-0 ps-0 text-muted" value="{{ current_user.email }}" name="email">
                             </div>
                         </div>
 
@@ -46,7 +59,7 @@
                             <label class="form-label small fw-bold text-secondary">ĐỊA CHỈ</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="fas fa-location-arrow text-muted"></i></span>
-                                <input type="text" class="form-control bg-light border-start-0 ps-0" name="name" value="{{ current_user.address }}">
+                                <input type="text" class="form-control bg-light border-start-0 ps-0" name="address" value="{{ current_user.address }}">
                             </div>
                         </div>
 
@@ -72,7 +85,7 @@
                     <h6 class="fw-bold text-dark"><i class="fas fa-cog me-2 text-primary"></i>Cài đặt tài khoản</h6>
                 </div>
                 <div class="list-group list-group-flush p-2">
-                    <a href="/change-password" class="list-group-item list-group-item-action border-0 rounded-3 p-3 d-flex align-items-center mb-1">
+                    <a href="#" class="list-group-item list-group-item-action border-0 rounded-3 p-3 d-flex align-items-center mb-1">
                         <div class="text-warning rounded-3 me-3">
                             <i class="fas fa-lock"></i>
                         </div>
@@ -83,7 +96,7 @@
                         <i class="fas fa-chevron-right text-muted small"></i>
                     </a>
 
-                    <a href="/payment-history" class="list-group-item list-group-item-action border-0 rounded-3 p-3 d-flex align-items-center mb-1">
+                    <a href="#" class="list-group-item list-group-item-action border-0 rounded-3 p-3 d-flex align-items-center mb-1">
                         <div class="text-success rounded-3 me-3">
                             <i class="fas fa-receipt"></i>
                         </div>
@@ -178,5 +191,12 @@
         </div>
     </div>
 </div>
-
+<script>
+    setTimeout(function(){
+        const msg = document.getElementById('status-msg');
+        if(msg){
+            msg.style.display = 'none';
+        }
+    }, 3000); // 3000ms = 3 giây
+</script>
 {% endblock %}

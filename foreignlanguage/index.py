@@ -12,7 +12,7 @@ from flask import send_file
 
 @app.route("/")
 def index():
-    popular_courses = dao.get_top3_courses_chart_data(None)
+    popular_courses = dao.get_details_top3_courses(None)
     return render_template("index.html", popular_courses=popular_courses)
 
 
@@ -131,14 +131,25 @@ def course(id):
     return render_template("course.html", course=c)
 
 
-@app.route("/student")
+@app.route("/student", methods=["GET", "POST"])
 def student():
-    return render_template("student.html")
-
+    status = None
+    name = request.form.get("name")
+    email = request.form.get("email")
+    addr = request.form.get("address")
+    phone_num = request.form.get("phone")
+    try:
+        dao.update_user_information_by_uid(current_user.id, name, email, addr, phone_num)
+        status = True
+    except:
+        db.session.rollback()
+        status = False
+    return render_template("student.html", status=status)
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    teachers = dao.load_teachers()
+    return render_template("about.html", teachers=teachers)
 
 
 @app.route("/contact")
@@ -154,8 +165,9 @@ def entry_test():
 def register_course():
     if not current_user.is_authenticated:
         return redirect("/signin")
+    profile = dao.get_user_by_id(current_user.id)
     payment_methods = dao.get_payment_methods()
-    return render_template("register-form.html", payment_methods=payment_methods)
+    return render_template("register-form.html", payment_methods=payment_methods, profile=profile)
 
 @app.route("/api/tuition")
 def get_tuition():
