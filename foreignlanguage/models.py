@@ -17,7 +17,7 @@ class UserRole(ValueEnum):
 class MethodEnum(ValueEnum):
     CASH = 1
     BANKING = 2
-    QR_CODE = 3
+    MOMO = 3
 
 
 class StatusPayment(ValueEnum):
@@ -28,10 +28,10 @@ class StatusPayment(ValueEnum):
 
 
 class StatusTuition(ValueEnum):
-    UNPAID = 1
+    FAILED = 1
     PAID = 2
     PARTIAL = 3
-    OVERDUE = 4
+    PENDING = 4
 
 class AcademicStatus(ValueEnum):
     PENDING = 1
@@ -143,7 +143,7 @@ class Registration(Base):
     paid = Column(Float, default=0.0)
     transact_time = Column(DateTime, default=datetime.now)
     actual_tuition = Column(Float, default=0.0)
-    status = Column(Enum(StatusTuition), default=StatusTuition.UNPAID)
+    status = Column(Enum(StatusTuition), default=StatusTuition.PENDING)
     final_score = Column(Float, nullable=True)
     academic_status = Column(Enum(AcademicStatus), default=AcademicStatus.PENDING)
 

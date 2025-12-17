@@ -2,6 +2,9 @@ import math
 from sqlalchemy import or_, extract, func
 from sqlalchemy.orm import joinedload
 from datetime import datetime
+
+from sqlalchemy.sql.operators import isnot
+
 from foreignlanguage.models import (UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo,
                                     Classroom, EmployeeInfo, MethodEnum, StatusPayment, CourseLevel, Session, Present,
                                     UserRole, AcademicStatus)
@@ -23,6 +26,8 @@ def add_user(username, password, email, address):
     db.session.add(u)
     db.session.commit()
 
+def get_info_of_current_user_by_uid(u_id):
+    return StudentInfo.query.filter(StudentInfo.u_id == u_id).first()
 
 def update_user_password(new_password, u_id):
     new_password = hashlib.md5(new_password.encode("utf-8")).hexdigest()
@@ -69,24 +74,61 @@ def get_level_by_id(l_id):
 
 
 # ====================== STUDENT ==========================
-def add_registration(name, phone_number, class_id, payment_method, payment_percent):
+def create_registration(user, class_id, name, phone):
     classroom = get_class_by_id(class_id)
-    if classroom:
-        u_id = current_user.id
-        exist = db.session.query(Registration.id).filter_by(Registration.class_id == class_id,
-                                                            Registration.student_id == u_id,
-                                                            Registration.active == True).first()
-        if not exist:
-            tuition = classroom.course_level.tuition
-            if payment_percent == "50":
-                status = StatusTuition.PARTIAL
-                paid = math.ceil(tuition / 2)
-            else:
-                status = StatusTuition.PAID
-                paid = tuition
-            reg = Registration(student_id=u_id, class_id=class_id, actual_tuition=tuition, paid_payment=payment_percent,
-                               status=status, paid=paid)
-            db.session.add(reg)
+    tuition_base = classroom.course_level.tuition
+    reg = db.session.query(Registration).filter(Registration.class_id == class_id,
+                                                        Registration.student_id == user.id,
+                                                         Registration.active == True).first()
+
+    if not reg:
+        reg = Registration(student_id=user.id, class_id=class_id, actual_tuition= tuition_base)
+        db.session.add(reg)
+
+    user.name = name
+    user.phone_num = phone
+    db.session.commit()
+    return reg
+
+
+def create_transaction(money, method, regis_id):
+    transact = Transaction(money=money, method=method, regis_id=regis_id)
+    db.session.add(transact)
+    db.session.flush()
+
+    return transact
+
+def process_payments(transaction, result_payment, status_fee): # cua Quynh viet nha
+    result_payment = True
+    if result_payment:
+        transaction.status = StatusPayment.SUCCESS
+        transaction.registration.paid += transaction.money
+        transaction.registration.status = status_fee
+        db.session.commit()
+        return True
+    else:
+        transaction.status = StatusPayment.FAILED
+        db.session.commit()
+        return False
+
+def register_and_pay(user, class_id, amount, method, payment_percent, name, phone):
+    classroom = get_class_by_id(class_id)
+    tuition_base = classroom.course_level.tuition
+    if payment_percent == 50:
+        expected_money = math.ceil(tuition_base / 2)
+        status = StatusTuition.PARTIAL
+    else:
+        expected_money = tuition_base
+        status = StatusTuition.PAID
+
+    if amount != expected_money:
+        return
+
+    reg = create_registration(user=user, class_id=class_id, name=name, phone=phone)
+    transact = create_transaction(money=expected_money, method=method, regis_id=reg.id)
+    process_result = True #gia lap cong thanh toan tra ve ket qua giao dich la thanh cong
+    is_success = process_payments(transact, process_result, status)
+    return is_success
 
 
 def get_classes_by_course_level(c_id, l_id):
@@ -269,8 +311,8 @@ def count_courses(year=None):
 
 def count_students(year=None):
     return db.session.query(func.count(UserAccount.id)).filter(UserAccount.role == UserRole.STUDENT,
-                                                               UserAccount.name != None,
-                                                               extract('year', UserAccount.joined_date) == year).count()
+                                                               UserAccount.name.isnot(None),
+                                                               extract('year', UserAccount.joined_date) == year).scalar()
 
 
 def count_active_classes(year=None):
@@ -278,7 +320,7 @@ def count_active_classes(year=None):
 
 
 def count_total_revenue(year=None):
-    return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.date) == year).count()
+    return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.date) == year, Transaction.status==StatusPayment.SUCCESS).scalar()
 
 
 def stats_top3_popular_courses_by_year(year=None):
@@ -415,9 +457,9 @@ if __name__ == "__main__":
     with app.app_context():
         # print(auth_user("user", "123"))
         print(get_classes_by_course_level(2, 2))
-        # print(count_students(2025))
-        # print(count_courses(2025))
-        # print(count_active_classes(2025))
-        # print(count_total_revenue(2025))
-        # print(stats_rate_passed_per_course_by_year())
+        print(count_students(2024))
+        print(count_courses(2025))
+        print(count_active_classes(2025))
+        print(count_total_revenue(2025))
+        print(stats_rate_passed_per_course_by_year(2025))
         print(get_tuition_by_class_id(22))

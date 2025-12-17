@@ -20,6 +20,7 @@ app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'mydanh1177@gmail.com'
 app.config['MAIL_PASSWORD'] = 'lvmg fuxh uyzg otpy'
+app.config['MAIL_DEFAULT_SENDER'] = 'mydanh1177@gmail.com'
 mail = Mail(app)
 
 db = SQLAlchemy(app)
