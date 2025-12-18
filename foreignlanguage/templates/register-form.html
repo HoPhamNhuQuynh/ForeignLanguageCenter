@@ -26,7 +26,7 @@
                                        class="form-control form-control-lg"
                                        id="name"
                                        placeholder="Nhập họ tên của bạn"
-                                       {% if profile.name %} value="{{ profile.name }}" readonly {% else %} required {% endif %}>
+                                       {% if current_user.name %} value="{{ current_user.name }}" readonly {% else %} required {% endif %}>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -44,7 +44,7 @@
                                            placeholder="Số điện thoại"
                                            id="phone_num"
                                            title="Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0 (VD: 0912345678)"
-                                           {% if profile.phone_num %} value="{{ profile.phone_num }}" readonly {% else %} required {% endif %}>
+                                           {% if current_user.phone_num %} value="{{ current_user.phone_num }}" readonly {% else %} required {% endif %}>
                                 </div>
                             </div>
                         </div>

@@ -1,7 +1,9 @@
 
 import random
+
+from cloudinary import uploader
 from flask_mail import Message
-from flask import render_template, request, redirect, session, url_for, jsonify
+from flask import render_template, request, redirect, session, url_for, jsonify, flash
 from foreignlanguage import app, dao, login, db, mail, admin, email_service
 from flask_login import login_user, logout_user, current_user, login_required
 from decorators import anonymous_required
@@ -131,20 +133,6 @@ def course(id):
     return render_template("course.html", course=c)
 
 
-@app.route("/student", methods=["GET", "POST"])
-def student():
-    status = None
-    name = request.form.get("name")
-    email = request.form.get("email")
-    addr = request.form.get("address")
-    phone_num = request.form.get("phone")
-    try:
-        dao.update_user_information_by_uid(current_user.id, name, email, addr, phone_num)
-        status = True
-    except:
-        db.session.rollback()
-        status = False
-    return render_template("student.html", status=status)
 
 @app.route("/about")
 def about():
@@ -165,9 +153,8 @@ def entry_test():
 def register_course():
     if not current_user.is_authenticated:
         return redirect("/signin")
-    profile = dao.get_user_by_id(current_user.id)
     payment_methods = dao.get_payment_methods()
-    return render_template("register-form.html", payment_methods=payment_methods, profile=profile)
+    return render_template("register-form.html", payment_methods=payment_methods)
 
 @app.route("/api/tuition")
 def get_tuition():
@@ -227,9 +214,39 @@ def add_registration():
         return jsonify({"status": False, "msg": str(ex)})
 
 
-@app.route("/user-profile")
+@app.route("/user-profile", methods=["GET", "POST"])
 def user_profile():
-    return render_template("student.html")
+        if request.method.__eq__("POST"):
+            name = request.form.get("name")
+            email = request.form.get("email")
+            addr = request.form.get("address")
+            phone_num = request.form.get("phone")
+            try:
+                dao.update_user_information_by_uid(current_user.id, name, email, addr, phone_num)
+                flash("Cập nhật thông tin thành công!", "success")
+            except:
+                db.session.rollback()
+                flash("Cập nhật thất bại!", "danger")
+
+            return redirect(url_for('user_profile'))
+
+        return render_template("student.html")
+
+@app.route("/api/student/avatar", methods=["PATCH"])
+def update_avatar():
+    file_path = None
+    file = request.files.get("avatar")
+    if file:
+        res = uploader.upload(file)
+        file_path = res.get("secure_url")
+
+    try:
+        dao.update_user_avatar_by_uid(uid=current_user.id, avatar=file_path)
+        return jsonify({"avatar_url": file_path})
+    except Exception as ex:
+        return jsonify({"err_msg": "Upload hình ảnh thất bại"})
+
+
 
 
 @login.user_loader

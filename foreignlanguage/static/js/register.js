@@ -199,8 +199,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     "Content-type": "application/json"
                 }
             }).then(res=>res.json()).then(data=>{
-                alert(data.msg);
-                if (data.success) {
+                if (data.success && alert(data.msg)===true) {
                     location.reload();
                 }
                 console.log(data)
