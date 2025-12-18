@@ -4,6 +4,7 @@ from sqlalchemy.orm import joinedload
 from datetime import datetime
 
 from sqlalchemy.sql.operators import isnot
+from sqlalchemy.testing.pickleable import User
 
 from foreignlanguage.models import (UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo,
                                     Classroom, EmployeeInfo, MethodEnum, StatusPayment, CourseLevel, Session, Present,
@@ -44,6 +45,11 @@ def update_user_information_by_uid(uid, name, email, address, phone_num):
     u.phone_num = phone_num
     db.session.commit()
 
+def update_user_avatar_by_uid(uid, avatar):
+    u = get_user_by_id(uid)
+    u.avatar = avatar
+    db.session.commit()
+
 def check_email(email):
     return UserAccount.query.filter(UserAccount.email.__eq__(email)).first()
 
@@ -64,7 +70,6 @@ def get_user_by_email(email):
 
 def load_courses():
     return Course.query.all()
-
 
 def load_levels():
     return Level.query.all()
@@ -110,7 +115,7 @@ def create_transaction(money, method, regis_id):
 
     return transact
 
-def process_payments(transaction, result_payment, status_fee): # cua Quynh viet nha
+def process_payments(transaction, result_payment, status_fee):
     result_payment = True
     if result_payment:
         transaction.status = StatusPayment.SUCCESS
@@ -250,11 +255,10 @@ def stats_revenue_per_month_by_year(year=None):
         func.sum(Transaction.money),
         extract('month', Transaction.date)
     ).
-              filter(extract('year', Transaction.date) == year).
-              group_by(extract('month', Transaction.date))).
-             order_by(extract('month', Transaction.date)).
-             all())
-    return query
+        filter(extract('year', Transaction.date) == year).
+        group_by(extract('month', Transaction.date))).
+        order_by(extract('month', Transaction.date)))
+    return query.all()
 
 
 def get_revenue_chart_data(year):
@@ -296,10 +300,10 @@ def stats_numbers_of_students_per_course_by_year(year=None):
         func.count(Registration.student_id),
         Course.name
     ).
-             join(Classroom, Course.id == Classroom.course_id).
-             join(Registration, Registration.class_id == Classroom.id).
-             filter(extract('year', Classroom.start_time) == year).
-             group_by(Course.name).all())
+        join(Classroom, Course.id == Classroom.course_id).
+        join(Registration, Registration.class_id == Classroom.id).
+        filter(extract('year', Classroom.start_time) == year).
+        group_by(Course.id).all())
     return query
 
 
@@ -320,22 +324,20 @@ def count_courses(year=None):
 
 
 def count_students(year=None):
-    return db.session.query(func.count(UserAccount.id)).filter(UserAccount.role == UserRole.STUDENT,
-                                                               UserAccount.name.isnot(None),
-                                                               extract('year', UserAccount.joined_date) == year).scalar()
+    query = db.session.query(func.count(UserAccount.id))
+    query = query.filter(UserAccount.role == UserRole.STUDENT, extract('year', UserAccount.joined_date) == year)
+    return query.join(StudentInfo, StudentInfo.u_id == UserAccount.id).join(Registration, StudentInfo.id == Registration.student_id).scalar()
 
 def count_active_classes(year=None):
-    return Classroom.query.filter(Classroom.active == 1).filter(extract('year', Classroom.joined_date) == year).count()
-
+    return Classroom.query.filter(extract('year', Classroom.joined_date) == year, Classroom.active == 1).count()
 
 def count_total_revenue(year=None):
     return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.date) == year, Transaction.status==StatusPayment.SUCCESS).scalar()
 
 def stats_top3_popular_courses_by_year(year=None):
-    query = (
-        db.session.query(
+    return (db.session.query(
             Course.name,
-            func.count(Registration.id)  # số học viên đăng ký
+            func.count(Registration.id)
         )
         .join(Classroom, Classroom.course_id == Course.id)
         .join(Registration, Registration.class_id == Classroom.id)
@@ -345,8 +347,6 @@ def stats_top3_popular_courses_by_year(year=None):
         .limit(3)
         .all()
     )
-    return query
-
 
 def get_top3_courses_chart_data(year):
     top3_data = stats_top3_popular_courses_by_year(year)
@@ -456,14 +456,14 @@ def save_changes():
 
 if __name__ == "__main__":
     with app.app_context():
-        # print(auth_user("user", "123"))
-        # print(get_classes_by_course_level(2, 2))
-        # print(count_students(2024))
-        # print(count_courses(2025))
-        # print(count_active_classes(2025))
-        # print(count_total_revenue(2025))
-        # print(stats_rate_passed_per_course_by_year(2025))
-        # print(get_tuition_by_class_id(22))
+        print(auth_user("user", "123"))
+        print(get_classes_by_course_level(2, 2))
+        print(count_students(2025))
+        print(count_courses(2025))
+        print(count_active_classes(2025))
+        print(count_total_revenue(2025))
+        print(stats_rate_passed_per_course_by_year(2025))
+        print(get_tuition_by_class_id(22))
         print(get_details_top3_courses())
         top3 = get_details_top3_courses(2025)
         course, total = top3[0]

@@ -3,47 +3,47 @@
 {% block title %} Hồ sơ học viên {% endblock%}
 
 {% block content %}
-
 <div class="container py-5">
-    {% if status is not none %}
-    <div id="status-msg"
-         style="position: fixed; top: 20px; right: 20px; padding: 10px 20px;
-                background-color: {% if status %}#4CAF50{% else %}#f44336{% endif %};
-                color: white; border-radius: 5px;">
-        {% if status %}
-            Lưu thông tin thành công!
-        {% else %}
-            Thất bại!
-        {% endif %}
-    </div>
-    {% endif %}
-    <div class="row g-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show position-fixed end-0 me-4"
+               style="top: 80px; z-index: 9999; min-width: 250px;">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
+
+    <div class="row g-4">
         <div class="col-lg-5 col-xl-4">
 
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-body p-4">
                     <div class="text-center mb-4">
                         <div class="position-relative d-inline-block">
-                            <img src="{{ current_user.avatar or 'https://i.pravatar.cc/150?img=12' }}"
-                                 class="rounded-circle border border-3 border-white shadow-sm"
+                            <img src="{{ current_user.avatar }}"
+                                 class="rounded-circle border border-3 border-white shadow-sm user-avatar"
                                  style="width: 110px; height: 110px; object-fit: cover;">
                             <label class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 border border-2 border-white"
                                    style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                 <i class="fas fa-camera text-white" style="font-size: 0.8rem;"></i>
-                                <input type="file" class="d-none" name="avatar">
+                                <input type="file" class="d-none" id="avatar" onchange="updateAvatar(this)">
                             </label>
                         </div>
                         <h5 class="fw-bold mt-3 mb-1">{{ current_user.name }}</h5>
                         <p class="text-muted small">Học viên</p>
                     </div>
 
-                    <form action="/student" method="POST">
+                    <form action="/user-profile" method="POST">
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-secondary">HỌ VÀ TÊN</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="far fa-user text-muted"></i></span>
-                                <input type="text" class="form-control bg-light border-start-0 ps-0 text-muted" value="{{ current_user.name }}" name="name">
+                                <input type="text" class="form-control bg-light border-start-0 ps-0 text-muted"
+                                       {% if current_user.name %} value="{{ current_user.name }}" {% else %} placeholder="Nhập họ và tên của bạn..." {% endif %} name="name">
                             </div>
                         </div>
 
@@ -51,7 +51,8 @@
                             <label class="form-label small fw-bold text-secondary">EMAIL</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="far fa-envelope text-muted"></i></span>
-                                <input type="email" class="form-control bg-light border-start-0 ps-0 text-muted" value="{{ current_user.email }}" name="email">
+                                <input type="email" class="form-control bg-light border-start-0 ps-0 text-muted"
+                                       {% if current_user.email %} value="{{ current_user.email }}" {% else %} placeholder="Nhập email của bạn..." {% endif %} name="email">
                             </div>
                         </div>
 
@@ -59,7 +60,8 @@
                             <label class="form-label small fw-bold text-secondary">ĐỊA CHỈ</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="fas fa-location-arrow text-muted"></i></span>
-                                <input type="text" class="form-control bg-light border-start-0 ps-0" name="address" value="{{ current_user.address }}">
+                                <input type="text" class="form-control bg-light border-start-0 ps-0" name="address"
+                                       {% if current_user.address %} value="{{ current_user.address }}" {% else %} placeholder="Nhập địa chỉ của bạn..." {% endif %}>
                             </div>
                         </div>
 
@@ -67,7 +69,9 @@
                             <label class="form-label small fw-bold text-secondary">SỐ ĐIỆN THOẠI</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="fas fa-mobile-alt text-muted"></i></span>
-                                <input type="tel" class="form-control bg-light border-start-0 ps-0" name="phone" value="{{ current_user.phone }}">
+                                <input type="tel" class="form-control bg-light border-start-0 ps-0" name="phone"
+                                       {% if current_user.phone_num %} value="{{ current_user.phone_num }}" {% else %} placeholder="Nhập số điện thoại..." {% endif %}
+                                       >
                             </div>
                         </div>
 
@@ -183,20 +187,9 @@
                     </div>
                 </div>
             </div>
-
-            <div class="text-center mt-4">
-                <a href="#" class="text-decoration-none fw-bold text-secondary">Xem lịch sử khóa học cũ <i class="fas fa-angle-down ms-1"></i></a>
-            </div>
-
         </div>
     </div>
 </div>
-<script>
-    setTimeout(function(){
-        const msg = document.getElementById('status-msg');
-        if(msg){
-            msg.style.display = 'none';
-        }
-    }, 3000); // 3000ms = 3 giây
-</script>
+<script src="{{ url_for('static', filename='js/student.js')}}"></script>
+
 {% endblock %}

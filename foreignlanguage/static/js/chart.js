@@ -33,7 +33,7 @@ export function initCharts(data){
         },
         options: {
             scales: { y: { grid: { borderDash: [2, 2] } } },
-            plugins: { title: getChartTitle('DOANH THU THEO THÁNG'), legend: { display: false } }
+            plugins: { title: getChartTitle('DOANH THU THEO THÁNG'), legend: { display: true } }
         }
     });
 
