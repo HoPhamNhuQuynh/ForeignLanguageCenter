@@ -121,49 +121,17 @@
         </div>
 
         <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="card border-0 rounded-4 overflow-hidden h-100 shadow-sm teacher-card">
-                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764836813/christina-wocintechchat-com-0Zx1bDv5BNY-unsplash_ptpyqu.jpg" class="card-img-top" alt="Teacher">
+            {% for t in teachers %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 rounded-5 overflow-hidden h-100 shadow-sm teacher-card">
+                    <img src="{{ t.avatar }}" class="card-img-top" alt="{{ t.name }}">
                     <div class="card-body text-center">
-                        <h5 class="fw-bold mb-1">Ms. Sarah</h5>
-                        <small class="text-orange fw-bold">IELTS 8.5</small>
-                        <p class="small text-muted mt-2 mb-0">Thạc sĩ Ngôn ngữ học ĐH Cambridge. 5 năm kinh nghiệm luyện thi.</p>
+                        <h5 class="fw-bold mb-1 text-orange">{{ t.name }}</h5>
+                        <small class="text-orange fw-bold"></small>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-6 col-lg-3">
-                <div class="card border-0 rounded-4 overflow-hidden h-100 shadow-sm teacher-card">
-                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764836817/tye-doring-yT71caKUv9U-unsplash_tisei4.jpg" class="card-img-top" alt="Teacher">
-                    <div class="card-body text-center">
-                        <h5 class="fw-bold mb-1">Mr. David</h5>
-                        <small class="text-orange fw-bold">TESOL Certified</small>
-                        <p class="small text-muted mt-2 mb-0">Chuyên gia giao tiếp phản xạ. Phong cách hài hước, năng động.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3">
-                <div class="card border-0 rounded-4 overflow-hidden h-100 shadow-sm teacher-card">
-                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764836815/itay-verchik-YmQ8TrsieE4-unsplash_zca44k.jpg" class="card-img-top" alt="Teacher">
-                    <div class="card-body text-center">
-                        <h5 class="fw-bold mb-1">Mr. John</h5>
-                        <small class="text-orange fw-bold">TOEIC 990</small>
-                        <p class="small text-muted mt-2 mb-0">"Sát thủ" đề thi TOEIC. Giúp 500+ học viên đạt 800+ mỗi năm.</p>
-                    </div>
-                </div>
-            </div>
-
-             <div class="col-md-6 col-lg-3">
-                <div class="card border-0 rounded-4 overflow-hidden h-100 shadow-sm teacher-card">
-                    <img src="https://res.cloudinary.com/desvczltb/image/upload/v1764836812/amy-hirschi-b3AYk8HKCl0-unsplash_qqjqhc.jpg" class="card-img-top" alt="Teacher">
-                    <div class="card-body text-center">
-                        <h5 class="fw-bold mb-1">Ms. Lely</h5>
-                        <small class="text-orange fw-bold">Expert Trainer</small>
-                        <p class="small text-muted mt-2 mb-0">10 năm kinh nghiệm dạy tiếng Anh cho doanh nghiệp và người đi làm.</p>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>

@@ -115,22 +115,22 @@
         </div>
 
         <div class="row g-4">
-            {% for c in popular_courses %}
+            {% for c, total in popular_courses %}
             <div class="col-md-6 col-lg-4">
                 <div class="card course-card border-0 shadow-sm h-100 rounded-3 overflow-hidden">
                     <div class="position-relative">
-                        <img src="{{ c.image_url or 'https://res.cloudinary.com/desvczltb/image/upload/v1763545919/abroad.webp' }}"
+                        <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545919/abroad.webp"
                              class="card-img-top" alt="{{ c.name }}">
                         <div class="course-badge bg-primary text-white position-absolute top-0 end-0 m-3 px-3 py-1 rounded-pill fw-bold">
-                            {{ c.category or 'English' }}
+                            English
                         </div>
                     </div>
                     <div class="card-body p-4">
-                        <h5 class="card-title fw-bold mb-3">{{ c.student_course }}</h5>
-                        <p class="card-text text-secondary mb-4">{{ c.description or '' }}</p>
+                        <h5 class="card-title fw-bold mb-3">{{ c.name}}</h5>
+                        <p class="card-text text-secondary mb-4">{{ c.description }}</p>
                         <div class="d-flex align-items-center justify-content-between border-top pt-3">
-                            <h5 class="text-orange fw-bold mb-0">Thông tin khóa học  </h5>
-                            <a href="#"
+                            <h5 class="text-orange fw-bold mb-0">Số học viên: {{ total }}  </h5>
+                            <a href="/courses/{{ c.id}}"
                                class="btn btn-sm btn-outline-dark rounded-pill px-3">
                                 Chi tiết <i class="fas fa-arrow-right ms-1"></i>
                             </a>

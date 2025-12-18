@@ -77,8 +77,8 @@ class MyLogoutView(BaseView):
         return current_user.is_authenticated
 
 
-################Phần chức năng ADMIN####################
-# --- Báo cáo Dashboard (Admin) ---
+################ ADMIN ####################
+# --- Báo cáo Dashboard ---
 class StatsView(AdminBaseView):
     @expose('/')
     def index(self):

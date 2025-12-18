@@ -1,16 +1,18 @@
+
 import random
 from flask_mail import Message
 from flask import render_template, request, redirect, session, url_for, jsonify
-from foreignlanguage import app, dao, login, db, mail, admin
+from foreignlanguage import app, dao, login, db, mail, admin, email_service
 from flask_login import login_user, logout_user, current_user, login_required
 from decorators import anonymous_required
+from foreignlanguage.models import MethodEnum
 from openpyxl import Workbook
 from flask import send_file
 
 
 @app.route("/")
 def index():
-    popular_courses = dao.get_top3_courses_chart_data(None)
+    popular_courses = dao.get_details_top3_courses(None)
     return render_template("index.html", popular_courses=popular_courses)
 
 
@@ -129,14 +131,25 @@ def course(id):
     return render_template("course.html", course=c)
 
 
-@app.route("/student")
+@app.route("/student", methods=["GET", "POST"])
 def student():
-    return render_template("student.html")
-
+    status = None
+    name = request.form.get("name")
+    email = request.form.get("email")
+    addr = request.form.get("address")
+    phone_num = request.form.get("phone")
+    try:
+        dao.update_user_information_by_uid(current_user.id, name, email, addr, phone_num)
+        status = True
+    except:
+        db.session.rollback()
+        status = False
+    return render_template("student.html", status=status)
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    teachers = dao.load_teachers()
+    return render_template("about.html", teachers=teachers)
 
 
 @app.route("/contact")
@@ -150,10 +163,11 @@ def entry_test():
 
 @app.route("/register-course", methods=["GET", "POST"])
 def register_course():
-    # if not current_user.is_authenticated:
-    #     return redirect("/signin")
+    if not current_user.is_authenticated:
+        return redirect("/signin")
+    profile = dao.get_user_by_id(current_user.id)
     payment_methods = dao.get_payment_methods()
-    return render_template("register-form.html", payment_methods=payment_methods)
+    return render_template("register-form.html", payment_methods=payment_methods, profile=profile)
 
 @app.route("/api/tuition")
 def get_tuition():
@@ -187,7 +201,30 @@ def get_classes():
 
 @app.route("/api/registrations", methods=["POST"])
 def add_registration():
-    pass
+    data = request.get_json()
+    class_id = data.get("class_id")
+    name = data.get("name")
+    phone = data.get("phone")
+    payment_method = data.get("payment_method")
+    payment_method = MethodEnum(payment_method)
+    payment_percent = int(data.get("payment_percent", 100))
+    client_money = data.get("money")
+    user_info = dao.get_info_of_current_user_by_uid(current_user.id)
+    try:
+        is_success = dao.register_and_pay(user=user_info, class_id=class_id, amount=client_money, method=payment_method,
+                             payment_percent=payment_percent, name=name, phone=phone)
+        if is_success:
+            if is_success:
+                classroom = dao.get_class_by_id(class_id=class_id)
+                email_service.send_register_success_email(
+                    current_user.email,
+                    name,
+                    classroom.id
+                )
+            return jsonify({"status": True, "msg": "Đăng ký và thanh toán thành công!"})
+        return jsonify({"status": False, "msg": "Giao dịch không thành công, vui lòng thực hiện lại giao dịch sau!"})
+    except Exception as ex:
+        return jsonify({"status": False, "msg": str(ex)})
 
 
 @app.route("/user-profile")

@@ -1,3 +1,4 @@
+
    // rollcall
   document.addEventListener('DOMContentLoaded', () => {
     const classSelect = document.getElementById('classSelect');
@@ -71,6 +72,7 @@
         else rank = "Yếu";
         row.querySelector('.rank').textContent = rank;
     }
+
 
     // Gắn blur cho tất cả input khi load trang
     document.addEventListener('DOMContentLoaded', function() {

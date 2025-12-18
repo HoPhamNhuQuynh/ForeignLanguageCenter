@@ -159,7 +159,7 @@
 {% block tail %}
 {{ super() }}
 <script type="module">
-import { initCharts } from "/static/js/dashboard.js";
+import { initCharts } from "/static/js/chart.js";
 
 const chartData = {
     ratioPassedLabels: {{ ratio_passed_data.labels | tojson | default('[]') }},
@@ -174,4 +174,5 @@ const chartData = {
 
 initCharts(chartData);
 </script>
+<script src="{{ url_for('static', filename='js/statistics.js')}}"></script>
 {% endblock %}

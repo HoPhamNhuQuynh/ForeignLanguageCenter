@@ -7,7 +7,6 @@
 
 <div class="bg-light min-vh-100 py-5">
     <div class="container">
-        <form action="/register-course" method="POST">
             <div class="row">
                 <div class="col-lg-7">
                     <div class="d-flex align-items-center mb-4">
@@ -27,7 +26,7 @@
                                        class="form-control form-control-lg"
                                        id="name"
                                        placeholder="Nhập họ tên của bạn"
-                                       required>
+                                       {% if profile.name %} value="{{ profile.name }}" readonly {% else %} required {% endif %}>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -44,7 +43,8 @@
                                            class="form-control form-control-lg bg-light fs-6"
                                            placeholder="Số điện thoại"
                                            id="phone_num"
-                                           title="Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0 (VD: 0912345678)" required>
+                                           title="Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0 (VD: 0912345678)"
+                                           {% if profile.phone_num %} value="{{ profile.phone_num }}" readonly {% else %} required {% endif %}>
                                 </div>
                             </div>
                         </div>
@@ -214,14 +214,14 @@
                             </div>
 
 
-                            <button type="submit" class="btn btn-danger w-100 py-3 fw-bold fs-5 shadow hover-scale" id="btnRegister">
+                            <button type="button" class="btn btn-danger w-100 py-3 fw-bold fs-5 shadow hover-scale" id="btnRegister">
                                 XÁC NHẬN & THANH TOÁN
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
     </div>
 </div>
+<script src="{{ url_for('static', filename='js/register.js') }}" defer></script>
 {% endblock %}

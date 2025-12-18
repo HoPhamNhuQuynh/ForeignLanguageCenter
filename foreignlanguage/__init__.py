@@ -7,7 +7,7 @@ import cloudinary
 
 app = Flask(__name__)
 app.secret_key = "asjdahjsdaskdjahsd%#adsd"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/centerdb?charset=utf8'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Nhuquynh261105%40@localhost/centerdb?charset=utf8'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 cloudinary.config(cloud_name='dv71msurs',
@@ -20,8 +20,8 @@ app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'mydanh1177@gmail.com'
 app.config['MAIL_PASSWORD'] = 'lvmg fuxh uyzg otpy'
+app.config['MAIL_DEFAULT_SENDER'] = 'mydanh1177@gmail.com'
 mail = Mail(app)
 
 db = SQLAlchemy(app)
 login = LoginManager(app)
-
