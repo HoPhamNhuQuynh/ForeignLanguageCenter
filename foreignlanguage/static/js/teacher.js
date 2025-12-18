@@ -7,7 +7,7 @@
         const classId = classSelect.value;
         if (!classId) return;
 
-        fetch('load-by-class?class_id=' + classId)
+        fetch('/admin/rollcall/api/load-by-class?class_id=' + classId)
             .then(res => res.json())
             .then(data => {
                 // sessions
@@ -15,6 +15,7 @@
                 sessionSelect.innerHTML = '<option value="">-- Chọn buổi học --</option>';
                 data.sessions.forEach(s => {
                     sessionSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                    console.log(data);
                 });
 
                 // students

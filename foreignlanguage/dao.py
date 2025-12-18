@@ -132,14 +132,15 @@ def get_tuition_by_class_id(class_id):
         .first()
     )
     return float(row[0]) if row else 0
-# ==================== TEACHER ====================
-# dao.py
 
-def get_teacher_classes(user_id):
-    emp = EmployeeInfo.query.filter_by(u_id=user_id).first()
-    if not emp:
+# ==================== TEACHER ====================
+def get_emloyee_by_user_id(user_id):
+    return EmployeeInfo.query.filter_by(u_id=user_id).first()
+
+def get_teacher_classes(employee_id):
+    if not employee_id:
         return []
-    return Classroom.query.filter_by(employee_id=emp.id).all()
+    return Classroom.query.filter_by(employee_id=employee_id).all()
 
 
 def get_sessions_by_class(class_id):
@@ -150,25 +151,43 @@ def get_regs_by_class(class_id):
     return Registration.query.filter_by(class_id=class_id).all()
 
 
-def save_attendance(session_id, student_status):
-    for student_id, status in student_status.items():
-        att = Attendance.query.filter_by(
-            session_id=session_id,
-            student_id=student_id
-        ).first()
+def save_present(session_id, student_status):
+    print(f"--- Đang nhận: Session={session_id}, Data={student_status} ---")  # Dòng này để debug
+    if not student_status:
+        print("CẢNH BÁO: student_status đang bị RỖNG!")
+        return False
+    try:
+        for student_id, status in student_status.items():
+            # Chuyển đổi giá trị từ radio thành Boolean
+            is_present_val = True if int(status) == 1 else False
 
-        if att:
-            att.status = status
-        else:
-            db.session.add(
-                Attendance(
-                    session_id=session_id,
-                    student_id=student_id,
-                    status=status
+            # Tìm bản ghi đã có sẵn trong data (Seed data)
+            # Ép kiểu int để chắc chắn khớp với database
+            att = Present.query.get((int(session_id), int(student_id)))
+
+            if att:
+                # Nếu đã có (đã tồn tại từ JSON), ta THAY THẾ giá trị cũ
+                att.is_present = is_present_val
+            else:
+                # Nếu chưa có thì mới thêm mới
+                db.session.add(
+                    Present(
+                        session_id=int(session_id),
+                        student_id=int(student_id),
+                        is_present=is_present_val
+                    )
                 )
-            )
-    db.session.commit()
 
+        db.session.commit()
+        # Thử lấy lại đúng cái vừa lưu xem nó ra gì
+        check = Present.query.filter_by(session_id=session_id).all()
+        print(f"Dữ liệu trong DB hiện tại của session {session_id}: {[(p.student_id, p.is_present) for p in check]}")
+        return True
+
+    except Exception as e:
+        print(f"Lỗi khi cập nhật dữ liệu: {e}")
+        db.session.rollback()
+        return False
 
 ######### ADMIN ##############
 def stats_revenue_per_month_by_year(year=None):
