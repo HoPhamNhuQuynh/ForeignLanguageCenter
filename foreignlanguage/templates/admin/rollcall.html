@@ -1,4 +1,3 @@
-
 {% extends 'admin/master.html' %}
 
 {% block body %}
@@ -15,14 +14,14 @@
             </option>
             {% endfor %}
         </select>
-
         <table class="table table-bordered text-center">
             <thead class="bg-orange">
             <tr>
                 <th>STT</th>
                 <th>Tên học viên</th>
                 <th>
-                    <select class="form-select" name="session_id" id="sessionSelect" style="width: 30%; min-width: 300px; padding: 10px;">
+                    <select class="form-select" name="session_id" id="sessionSelect"
+                            style="width: 30%; min-width: 300px; padding: 10px;">
                         <option value="">-- Chọn buổi học --</option>
                     </select>
 
@@ -35,8 +34,8 @@
                 <td>{{ loop.index }}</td>
                 <td>{{ reg.student.account.name }}</td>
                 <td>
-                    <input type="radio" name="{{ reg.id }}" value="1"> Có mặt
-                    <input type="radio" name="{{ reg.id }}" value="0" class="ms-3"> Vắng
+                    <input type="radio" name="{{ reg.student.id }}" value="1"> Có mặt
+<input type="radio" name="{{ reg.student.id }}" value="0" class="ms-3"> Vắng
                 </td>
             </tr>
             {% endfor %}
