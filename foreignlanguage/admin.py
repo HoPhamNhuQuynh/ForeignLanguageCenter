@@ -371,8 +371,8 @@ class RollcallView(TeacherView):
 
     @expose('/', methods=['GET', 'POST'])
     def index(self):
-        employee = EmployeeInfo.query.filter_by(u_id=current_user.id).first()
-        classes = Classroom.query.filter_by(employee_id=employee.id).all() if employee else []
+        employee = dao.get_emloyee_by_user_id(current_user.id)
+        classes = dao.get_teacher_classes(employee.id if employee else None)
 
         if request.method == 'POST':
             session_id = request.form.get('session_id')
@@ -382,8 +382,8 @@ class RollcallView(TeacherView):
 
                 class_id = request.form.get('class_id')
 
-                sessions = Session.query.filter_by(class_id=class_id).all()
-                regs = Registration.query.filter_by(class_id=class_id).all()
+                sessions = dao.get_sessions_by_class(class_id)
+                regs = dao.get_regs_by_class(class_id)
 
                 return self.render(
                     'admin/rollcall.html',
@@ -395,15 +395,23 @@ class RollcallView(TeacherView):
             student_status = {}
 
             for k, v in request.form.items():
-                if k.isdigit():  # CHỈ NHẬN key là số
-                    student_status[int(k)] = int(v)
-            dao.save_attendance(int(session_id), student_status)
-            flash("Đã lưu điểm danh thành công!", "success")
+                # Kiểm tra nếu key bắt đầu bằng cụm 'student_'
+                if k.startswith('student_'):
+                    # Tách lấy phần số ID phía sau (ví dụ 'student_6' -> '6')
+                    student_id = k.replace('student_', '')
+                    if student_id.isdigit():
+                        student_status[int(student_id)] = int(v)
+
+            # Lúc này student_status sẽ là {6: 0} -> Hết rỗng!
+            if dao.save_present(int(session_id), student_status):
+                flash("Đã lưu điểm danh thành công!", "success")
+            else:
+                flash("Lưu điểm danh thất bại!", "danger")
             return redirect(url_for('.index'))
 
         return self.render('admin/rollcall.html', classes=classes, sessions=[], student=[])
 
-    @expose('/load-by-class')
+    @expose('/api/load-by-class')
     def load_by_class(self):
         class_id = request.args.get('class_id')
         if not class_id:
