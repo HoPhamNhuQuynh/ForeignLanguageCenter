@@ -32,6 +32,7 @@ class StatusTuition(ValueEnum):
     PAID = 2
     PARTIAL = 3
     PENDING = 4
+    UNPAID = 5
 
 class AcademicStatus(ValueEnum):
     PENDING = 1

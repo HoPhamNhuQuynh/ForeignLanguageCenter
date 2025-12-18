@@ -1,3 +1,4 @@
+import math
 from datetime import datetime
 from flask import redirect, request, flash, url_for, jsonify
 from flask_admin import Admin, AdminIndexView, expose, BaseView
@@ -216,43 +217,87 @@ class CreateInvoiceView(CashierView):
         if search_kw and unpaid_regis:
             student_info = unpaid_regis[0].student
 
-        if request.method == 'POST':
-            try:
-                regis_id = request.form.get('regis_id')
-                amount = float(request.form.get('amount'))
-                method = request.form.get('method')
-                content = request.form.get('content')
-                date_input = request.form.get('created_date')
-
-                created_date = datetime.strptime(date_input, '%Y-%m-%d') if date_input else datetime.now()
-
-                # Kiểm tra nợ
-                regis = dao.get_registration_by_id(regis_id)
-                current_debt = regis.actual_tuition - regis.paid
-
-                if current_debt <= 0:
-                    flash('Học viên đã hoàn tất học phí!', 'danger')
-                elif amount > current_debt + 1000:
-                    flash(f'Số tiền đóng lớn hơn nợ ({current_debt:,.0f}đ)!', 'danger')
-                elif amount <= 0:
-                    flash('Số tiền đóng phải lớn hơn 0!', 'danger')
-                else:
-                    # GỌI DAO ĐỂ XỬ LÝ THANH TOÁN (Gọn gàng hơn rất nhiều)
-                    success, msg = dao.process_payment(
-                        regis_id, amount, content, method, created_date, current_user.id
-                    )
-                    if success:
-                        flash(f'Thu thành công {amount:,.0f}đ. {msg}', 'success' if 'hoàn tất' in msg else 'warning')
-
-                return redirect(url_for('invoice.index'))
-
-            except Exception as e:
-                flash(f'Lỗi hệ thống: {str(e)}', 'danger')
+        # [MỚI] Lấy dữ liệu cho Modal tạo hóa đơn
+        courses = dao.load_courses()
+        levels = dao.load_levels()
+        students = dao.load_students()
+        payment_methods = dao.get_payment_methods()
 
         return self.render('admin/invoice_create.html',
                            student=student_info,
                            registrations=unpaid_regis,
-                           today_str=datetime.now().strftime('%Y-%m-%d'))
+                           today_str=datetime.now().strftime('%Y-%m-%d'),
+                           # Truyền thêm biến
+                           courses=courses,
+                           levels=levels,
+                           students=students,
+                           payment_methods=payment_methods)
+
+    # [MỚI] Xử lý nút Hủy bỏ -> Xóa đăng ký
+    @expose('/delete-regis', methods=['POST'])
+    def delete_regis(self):
+        regis_id = request.form.get('regis_id')
+        if regis_id:
+            if dao.delete_registration(regis_id):
+                flash('Đã xóa đăng ký thành công!', 'success')
+            else:
+                flash('Không tìm thấy đăng ký để xóa.', 'danger')
+        return redirect(url_for('.index'))
+
+    # [MỚI] Xử lý nút Tự tạo hóa đơn
+    @expose('/create-manual', methods=['POST'])
+    def create_manual(self):
+        try:
+            student_id = request.form.get('student_id')  # UserAccount ID
+            class_id = request.form.get('class_id')
+            payment_percent = int(request.form.get('payment_percent'))
+            method = request.form.get('payment_method')
+            # Tính toán số tiền dựa trên % (Logic này nên check lại ở server để an toàn)
+            # Nhưng để nhanh ta lấy tuition gửi lên hoặc tính lại từ class_id
+
+            # Lấy học phí lớp để tính tiền phải đóng
+            real_tuition = dao.get_tuition_by_class_id(class_id)
+            amount = real_tuition if payment_percent == 100 else math.ceil(real_tuition / 2)
+
+            content = f"Thu ngân tạo đăng ký: Thanh toán {payment_percent}%"
+
+            success, msg = dao.create_manual_invoice(
+                student_id, class_id, amount, method, content, current_user.id
+            )
+
+            if success:
+                flash(f'Tạo hóa đơn thành công! {msg}', 'success')
+            else:
+                flash(f'Lỗi: {msg}', 'danger')
+
+        except Exception as e:
+            flash(f'Lỗi hệ thống: {str(e)}', 'danger')
+
+        return redirect(url_for('.index'))
+
+    @expose('/load-classes')
+    def load_classes(self):
+        course_id = request.args.get('course_id')
+        level_id = request.args.get('level_id')
+
+        if not course_id or not level_id:
+            return jsonify([])
+
+        # Gọi hàm DAO để lấy danh sách lớp phù hợp
+        # Hàm này trả về: (id, start_time, maximum_stu, current_count)
+        classes = dao.get_classes_by_course_level(course_id, level_id)
+
+        data = []
+        for c in classes:
+            data.append({
+                'id': c.id,
+                # Format ngày tháng thành chuỗi dd/mm/yyyy
+                'start_time': c.start_time.strftime('%d/%m/%Y'),
+                'maximum_stu': c.maximum_stu,
+                'current_count': c.current_count
+            })
+
+        return jsonify(data)
 
 
 # Quản lý hóa đơn

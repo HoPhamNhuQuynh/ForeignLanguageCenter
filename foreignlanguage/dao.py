@@ -83,6 +83,14 @@ def get_course_by_id(c_id):
 def get_level_by_id(l_id):
     return Level.query.get(l_id)
 
+def get_all_course_levels():
+    return CourseLevel.query.options(
+        joinedload(CourseLevel.course),
+        joinedload(CourseLevel.level)
+    ).order_by(CourseLevel.course_id, CourseLevel.level_id).all()
+
+
+
 
 # ====================== STUDENT ==========================
 
@@ -357,6 +365,12 @@ def get_details_top3_courses(year=None):
     )
 
 
+def update_course_level_tuition(course_id, level_id, new_fee):
+    config = CourseLevel.query.get((course_id, level_id))
+    if config:
+        config.tuition = float(new_fee)
+        db.session.add(config)
+
 ######### CASHIER #############
 def get_unpaid_registrations(kw=None):
     query = Registration.query.filter(Registration.status == StatusTuition.PARTIAL)
@@ -420,17 +434,61 @@ def revert_payment(registration, money_to_revert):
         registration.status = StatusTuition.PARTIAL
     db.session.add(registration)
 
-def get_all_course_levels():
-    return CourseLevel.query.options(
-        joinedload(CourseLevel.course),
-        joinedload(CourseLevel.level)
-    ).order_by(CourseLevel.course_id, CourseLevel.level_id).all()
+### Cashier thêm
+def load_students():
+    # Lấy danh sách user có role là STUDENT
+    return UserAccount.query.filter(UserAccount.role == UserRole.STUDENT).all()
 
-def update_course_level_tuition(course_id, level_id, new_fee):
-    config = CourseLevel.query.get((course_id, level_id))
-    if config:
-        config.tuition = float(new_fee)
-        db.session.add(config)
+
+def delete_registration(reg_id):
+    reg = Registration.query.get(reg_id)
+    if reg:
+        for trans in reg.transactions:
+            db.session.delete(trans)
+
+        db.session.delete(reg)
+        db.session.commit()
+        return True
+    return False
+
+
+def create_manual_invoice(student_id, class_id, amount, method, content, employee_id):
+    """
+    Hàm tạo đăng ký và hóa đơn cùng lúc (dành cho Thu ngân tự tạo)
+    """
+    # 1. Tạo Registration
+    # Lấy học phí gốc
+    classroom = Classroom.query.get(class_id)
+    if not classroom: return False, "Lớp học không tồn tại"
+
+    base_tuition = classroom.course_level.tuition
+
+    # Kiểm tra đã đăng ký chưa
+    exist_reg = Registration.query.filter_by(student_id=student_id, class_id=class_id).first()
+    if exist_reg:
+        return False, "Học viên đã đăng ký lớp này rồi!"
+
+    # Lấy thông tin student_info id từ user_account id
+    student_info = StudentInfo.query.filter_by(u_id=student_id).first()
+    if not student_info:
+        return False, "Không tìm thấy thông tin học viên"
+
+    new_reg = Registration(
+        student_id=student_info.id,
+        class_id=class_id,
+        actual_tuition=base_tuition,
+        paid=0,
+        status=StatusTuition.PENDING
+    )
+    db.session.add(new_reg)
+    db.session.flush()  # Để lấy ID cho transaction
+
+    # 2. Tạo Transaction và Xử lý thanh toán
+    # Tận dụng hàm process_payment đã có
+    # Lưu ý: process_payment sẽ cộng tiền vào regis và update status
+    return process_payment(new_reg.id, amount, content, method, datetime.now(), employee_id)
+
+
 
 def save_changes():
     db.session.commit()
