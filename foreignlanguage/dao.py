@@ -8,7 +8,7 @@ from sqlalchemy.testing.pickleable import User
 
 from foreignlanguage.models import (UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo,
                                     Classroom, EmployeeInfo, MethodEnum, StatusPayment, CourseLevel, Session, Present,
-                                    UserRole, AcademicStatus, Score)
+                                    UserRole, AcademicStatus, Score, GradeCategory)
 from foreignlanguage import app, db
 import hashlib
 from flask_login import current_user
@@ -280,14 +280,20 @@ def get_teacher_classes(employee_id):
         return []
     return Classroom.query.filter_by(employee_id=employee_id).all()
 
+def get_active_grade_categories():
+    return GradeCategory.query.filter_by(active=1).all()
 
 def get_sessions_by_class(class_id):
     return Session.query.filter_by(class_id=class_id).all()
 
+def get_classroom_by_teacher(class_id, employee_id):
+    return Classroom.query.filter_by(id=class_id, employee_id=employee_id).first()
 
 def get_regs_by_class(class_id):
     return Registration.query.filter_by(class_id=class_id).all()
 
+def get_score_by_registration(reg_id, cate_id):
+    return Score.query.filter_by(regis_id=reg_id, grade_cate_id=cate_id).first()
 
 class CourseRegistration:
     pass
@@ -303,7 +309,6 @@ def update_final_score(reg_id):
     total_weight = 0
 
     for s in scores:
-        # Giả sử trong bảng Score có mối quan hệ (relationship) với GradeCategory
         weight = s.grade_category.weight
         if s.value is not None:
             total_weighted_score += s.value * weight
@@ -312,7 +317,6 @@ def update_final_score(reg_id):
     if total_weight > 0:
         final_score = total_weighted_score / total_weight
 
-        # 2. Cập nhật vào bảng Registration (bảng có chứa final_score)
         reg = CourseRegistration.query.get(reg_id)
         if reg:
             reg.final_score = round(final_score, 2)
@@ -326,18 +330,13 @@ def save_present(session_id, student_status):
         return False
     try:
         for student_id, status in student_status.items():
-            # Chuyển đổi giá trị từ radio thành Boolean
             is_present_val = True if int(status) == 1 else False
 
-            # Tìm bản ghi đã có sẵn trong data (Seed data)
-            # Ép kiểu int để chắc chắn khớp với database
             att = Present.query.get((int(session_id), int(student_id)))
 
             if att:
-                # Nếu đã có (đã tồn tại từ JSON), ta THAY THẾ giá trị cũ
                 att.is_present = is_present_val
             else:
-                # Nếu chưa có thì mới thêm mới
                 db.session.add(
                     Present(
                         session_id=int(session_id),
@@ -347,7 +346,6 @@ def save_present(session_id, student_status):
                 )
 
         db.session.commit()
-        # Thử lấy lại đúng cái vừa lưu xem nó ra gì
         check = Present.query.filter_by(session_id=session_id).all()
         print(f"Dữ liệu trong DB hiện tại của session {session_id}: {[(p.student_id, p.is_present) for p in check]}")
         return True
