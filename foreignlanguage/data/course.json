@@ -1,6 +1,34 @@
 [
-  {"id": 1, "name": "Tiếng Anh Giao Tiếp", "description": "Tự tin giao tiếp phản xạ", "period": 36.0, "content": "Nghe, Nói", "active": true},
-  {"id": 2, "name": "Luyện thi TOEIC", "description": "Đầu ra 650+", "period": 48.0, "content": "Reading, Listening", "active": true},
-  {"id": 3, "name": "Luyện thi IELTS", "description": "Cam kết 6.5 Academic", "period": 72.0, "content": "4 Kỹ năng chuyên sâu", "active": true},
-  {"id": 4, "name": "Tiếng Anh Doanh Nghiệp", "description": "Dành cho người đi làm", "period": 40.0, "content": "Email, Thuyết trình", "active": true}
+  {
+    "id": 1,
+    "name": "Tiếng Anh Giao Tiếp",
+    "description": "Tự tin giao tiếp phản xạ",
+    "period": 36.0,
+    "content": "Nghe, Nói",
+    "active": true
+  },
+  {
+    "id": 2,
+    "name": "Luyện thi TOEIC",
+    "description": "Đầu ra 650+",
+    "period": 48.0,
+    "content": "Reading, Listening",
+    "active": true
+  },
+  {
+    "id": 3,
+    "name": "Luyện thi IELTS",
+    "description": "Cam kết 6.5 Academic",
+    "period": 72.0,
+    "content": "4 Kỹ năng chuyên sâu",
+    "active": true
+  },
+  {
+    "id": 4,
+    "name": "Tiếng Anh Doanh Nghiệp",
+    "description": "Dành cho người đi làm",
+    "period": 40.0,
+    "content": "Email, Thuyết trình",
+    "active": true
+  }
 ]

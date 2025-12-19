@@ -24,7 +24,6 @@ class StatusPayment(ValueEnum):
     SUCCESS = 1
     FAILED = 2
     PENDING = 3
-    CANCELLED = 4
 
 
 class StatusTuition(ValueEnum):
@@ -32,12 +31,13 @@ class StatusTuition(ValueEnum):
     PAID = 2
     PARTIAL = 3
     PENDING = 4
-    UNPAID = 5
+
 
 class AcademicStatus(ValueEnum):
     PENDING = 1
     PASSED = 2
     FAILED = 3
+
 
 class Base(db.Model):
     __abstract__ = True
@@ -50,6 +50,7 @@ class Base(db.Model):
 
 
 class UserAccount(Base, UserMixin):
+    __tablename__ = "user_account"
     name = Column(String(50))
     username = Column(String(30), nullable=False, unique=True)
     password = Column(String(50), nullable=False)
@@ -60,55 +61,55 @@ class UserAccount(Base, UserMixin):
     avatar = Column(String(300),
                     default="https://res.cloudinary.com/desvczltb/image/upload/v1764816296/smiley-face-20_tifcgk.svg")
 
+    student_info = relationship('StudentInfo', backref='account', uselist=False, lazy='subquery')
+    emp_info = relationship('EmployeeInfo', backref='account', uselist=False, lazy='subquery')
+
 
 class EmployeeInfo(Base):
+    __tablename__ = "employee_info"
     base_salary = Column(Float, default=0.0)
-
-    u_id = Column(Integer, ForeignKey("user_account.id"), nullable=False, unique=True)
-
-    account = relationship('UserAccount', backref='emp_info', lazy=True)
-    certifications = relationship('Certification', backref='employee', lazy=True)
+    u_id = Column(Integer, ForeignKey('user_account.id'), unique=True)
+    certifications = relationship('Certification', backref='employee', lazy='subquery')
     classrooms = relationship('Classroom', backref='employee', lazy=True)
+    transactions = relationship('Transaction', backref='employee', lazy=True)
 
 
 class StudentInfo(Base):
+    __tablename__ = "student_info"
     entry_score = Column(Float, default=0.0)
+    u_id = Column(Integer, ForeignKey("user_account.id"), unique=True)
+    sessions = relationship('Present', backref='student', lazy='subquery')
+    classes = relationship('Registration', backref='student', lazy='subquery')
 
-    u_id = Column(Integer, ForeignKey("user_account.id"), nullable=False, unique=True)
-
-    account = relationship('UserAccount', backref='student_info', lazy=True)
-    sessions = relationship('Present', back_populates='student', lazy=True)
-    classes = relationship('Registration', back_populates='student', lazy=True)
-
-
-class Course(Base):
-    name = Column(String(50))
-    description = Column(Text)
-    period = Column(Float, default=0.0)
-    content = Column(String(500), nullable=False)
-
-    levels = relationship('CourseLevel', back_populates='course', lazy=True)
-
-
-class Level(Base):
-    name = Column(String(50))
-    description = Column(Text)
-    courses = relationship('CourseLevel', back_populates='level', lazy=True)
 
 class CourseLevel(db.Model):
     __tablename__ = 'course_level'
-    course_id = Column(Integer, ForeignKey("course.id"), nullable=False, primary_key=True)
-    level_id = Column(Integer, ForeignKey("level.id"), nullable=False, primary_key=True)
+    course_id = Column(Integer, ForeignKey("course.id"), primary_key=True)
+    level_id = Column(Integer, ForeignKey("level.id"), primary_key=True)
     tuition = Column(Float, default=0.0)
+    classrooms = relationship('Classroom', backref='course_level', lazy=True)
 
-    course = relationship('Course', back_populates='levels')
-    level = relationship('Level', back_populates='courses')
-    classrooms=relationship('Classroom', backref='course_level', lazy=True)
+
+class Course(Base):
+    __tablename__ = "course"
+    name = Column(String(50))
+    description = Column(Text)
+    period = Column(Float, default=0.0)
+    content = Column(String(500))
+    levels = relationship('CourseLevel', backref='course', lazy=True)
+
+
+class Level(Base):
+    __tablename__ = "level"
+    name = Column(String(50))
+    description = Column(Text)
+    courses = relationship('CourseLevel', backref='level', lazy=True)
+
 
 class Classroom(Base):  # main model
+    __tablename__ = "classroom"
     start_time = Column(DateTime)
     maximum_stu = Column(Integer, default=25)
-
     employee_id = Column(Integer, ForeignKey('employee_info.id'))
     course_id = Column(Integer, nullable=False)
     level_id = Column(Integer, nullable=False)
@@ -118,84 +119,69 @@ class Classroom(Base):  # main model
             ['course_level.course_id', 'course_level.level_id']
         ),
     )
-
     sessions = relationship('Session', backref='classroom', lazy=True)
-    studs = relationship('Registration', back_populates='classroom', lazy=True)
+    studs = relationship('Registration', backref='classroom', lazy=True)
 
 
 class GradeCategory(Base):  # main model
+    __tablename__ = "grade_category"
     name = Column(String(50))
     weight = Column(Float, default=0.0)
-
     scores = relationship('Score', backref='grade_category', lazy=True)
 
 
 class Certification(Base):
-    name = Column(String(50))
-    band_score = Column(Float, default=0.0)
+    __tablename__ = "certification"
+    name = Column(String(50), nullable=False)
+    band_score = Column(Float, nullable=False)
     provided_date = Column(DateTime, nullable=False)
-
     employee_id = Column(Integer, ForeignKey('employee_info.id'), nullable=False)
 
 
-
-
 class Registration(Base):
+    __tablename__ = "registration"
     paid = Column(Float, default=0.0)
-    transact_time = Column(DateTime, default=datetime.now)
     actual_tuition = Column(Float, default=0.0)
     status = Column(Enum(StatusTuition), default=StatusTuition.PENDING)
     final_score = Column(Float, nullable=True)
     academic_status = Column(Enum(AcademicStatus), default=AcademicStatus.PENDING)
-
     student_id = Column(Integer, ForeignKey('student_info.id'), nullable=False)
     class_id = Column(Integer, ForeignKey('classroom.id'), nullable=False)
-
-    classroom = relationship('Classroom', back_populates='studs', lazy=True)
-    student = relationship('StudentInfo', back_populates='classes', lazy=True)
+    transactions = relationship('Transaction', backref='registration', lazy=True)
+    scores = relationship('Score', backref='registration', lazy=True)
 
 
 class Transaction(Base):
+    __tablename__ = "transaction"
     money = Column(Float, nullable=False)
     content = Column(String(500))
     method = Column(Enum(MethodEnum), default=MethodEnum.BANKING)
-    date = Column(DateTime, default=datetime.now)
     status = Column(Enum(StatusPayment), default=StatusPayment.PENDING)
-
     employee_id = Column(Integer, ForeignKey('employee_info.id'))
     regis_id = Column(Integer, ForeignKey('registration.id'), nullable=False)
 
-    employee = relationship('EmployeeInfo', backref='transactions', lazy=True)
-    registration = relationship('Registration', backref='transactions', lazy=True)
-
 
 class Session(Base):
+    __tablename__ = "session"
     session_date = Column(DateTime)
     session_content = Column(String(500), nullable=False)
-    shift = Column(Integer, default=0)
-
+    shift = Column(Integer, default=1)
     class_id = Column(Integer, ForeignKey('classroom.id'), nullable=False)
-
-    students = relationship('Present', back_populates='session', lazy=True)
+    students = relationship('Present', backref='session', lazy=True)
 
 
 class Present(db.Model):  # relationship
+    __tablename__ = "present"
     is_present = Column(Boolean, default=True)
-
-    session_id = Column(Integer, ForeignKey('session.id'), nullable=False, primary_key=True)
-    student_id = Column(Integer, ForeignKey('student_info.id'), nullable=False, primary_key=True)
-
-    session = relationship('Session', back_populates='students', lazy=True)
-    student = relationship('StudentInfo', back_populates='sessions', lazy=True)
+    session_id = Column(Integer, ForeignKey('session.id'), primary_key=True)
+    student_id = Column(Integer, ForeignKey('student_info.id'), primary_key=True)
 
 
 class Score(Base):
+    __tablename__ = "score"
     value = Column(Float, default=0.0)
-
     regis_id = Column(Integer, ForeignKey('registration.id'), nullable=False)
     grade_cate_id = Column(Integer, ForeignKey('grade_category.id'), nullable=False)
-
-    registration = relationship('Registration', backref='scores', lazy=True)
 
 
 def to_date(date_str):
@@ -271,7 +257,6 @@ def seed_data():
                     db.session.add(CourseLevel(**p))
     except FileNotFoundError:
         print("Khong tim thay file data/course_level.json")
-
 
     # 5. Grade Category
     try:
