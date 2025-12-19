@@ -330,18 +330,13 @@ def save_present(session_id, student_status):
         return False
     try:
         for student_id, status in student_status.items():
-            # Chuyển đổi giá trị từ radio thành Boolean
             is_present_val = True if int(status) == 1 else False
 
-            # Tìm bản ghi đã có sẵn trong data (Seed data)
-            # Ép kiểu int để chắc chắn khớp với database
             att = Present.query.get((int(session_id), int(student_id)))
 
             if att:
-                # Nếu đã có (đã tồn tại từ JSON), ta THAY THẾ giá trị cũ
                 att.is_present = is_present_val
             else:
-                # Nếu chưa có thì mới thêm mới
                 db.session.add(
                     Present(
                         session_id=int(session_id),
@@ -351,7 +346,6 @@ def save_present(session_id, student_status):
                 )
 
         db.session.commit()
-        # Thử lấy lại đúng cái vừa lưu xem nó ra gì
         check = Present.query.filter_by(session_id=session_id).all()
         print(f"Dữ liệu trong DB hiện tại của session {session_id}: {[(p.student_id, p.is_present) for p in check]}")
         return True
