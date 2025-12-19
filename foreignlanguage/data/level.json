@@ -1,5 +1,20 @@
 [
-  {"id": 1, "name": "Cơ bản", "description": "Dành cho người mất gốc", "active": true},
-  {"id": 2, "name": "Trung cấp", "description": "Đã có nền tảng", "active": true},
-  {"id": 3, "name": "Nâng cao", "description": "Thành thạo", "active": true}
+  {
+    "id": 1,
+    "name": "Cơ bản",
+    "description": "Dành cho người mất gốc",
+    "active": true
+  },
+  {
+    "id": 2,
+    "name": "Trung cấp",
+    "description": "Đã có nền tảng",
+    "active": true
+  },
+  {
+    "id": 3,
+    "name": "Nâng cao",
+    "description": "Thành thạo",
+    "active": true
+  }
 ]

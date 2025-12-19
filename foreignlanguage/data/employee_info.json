@@ -1,8 +1,32 @@
 [
-  {"id": 1, "u_id": 2, "base_salary": 8000000.0},
-  {"id": 2, "u_id": 3, "base_salary": 9000000.0},
-  {"id": 3, "u_id": 4, "base_salary": 7500000.0},
-  {"id": 4, "u_id": 5, "base_salary": 6000000.0},
-  {"id": 5, "u_id": 6, "base_salary": 6000000.0},
-  {"id": 6, "u_id": 1, "base_salary": 10000000.0}
+  {
+    "id": 1,
+    "u_id": 2,
+    "base_salary": 8000000.0
+  },
+  {
+    "id": 2,
+    "u_id": 3,
+    "base_salary": 9000000.0
+  },
+  {
+    "id": 3,
+    "u_id": 4,
+    "base_salary": 7500000.0
+  },
+  {
+    "id": 4,
+    "u_id": 5,
+    "base_salary": 6000000.0
+  },
+  {
+    "id": 5,
+    "u_id": 6,
+    "base_salary": 6000000.0
+  },
+  {
+    "id": 6,
+    "u_id": 1,
+    "base_salary": 10000000.0
+  }
 ]
