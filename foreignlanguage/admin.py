@@ -210,6 +210,31 @@ class StudentAdminView(AdminView):
 class CreateInvoiceView(CashierView):
     @expose('/', methods=['GET', 'POST'])
     def index(self):
+
+        # ===== XỬ LÝ LẬP PHIẾU THU =====
+        if request.method == 'POST':
+            regis_id = request.form.get('regis_id')
+            amount = request.form.get('amount')
+            method = request.form.get('payment_method')
+            content = request.form.get('content')
+
+            if not regis_id or not amount or not method:
+                flash("Vui lòng nhập đầy đủ thông tin thanh toán!", "danger")
+                return redirect(url_for('.index'))
+
+            success, msg = dao.process_payments(
+                regis_id=int(regis_id),
+                amount=int(amount),
+                content=content,
+                method=method,  # "1", "2" → DAO ép Enum
+                created_date=datetime.now(),
+                employee_id=current_user.id
+            )
+
+            flash(msg, 'success' if success else 'danger')
+            return redirect(url_for('.index'))
+
+        # ===== GET – HIỂN THỊ DANH SÁCH NỢ =====
         search_kw = request.args.get('search')
         unpaid_regis = dao.get_unpaid_registrations(search_kw)
 
@@ -217,21 +242,21 @@ class CreateInvoiceView(CashierView):
         if search_kw and unpaid_regis:
             student_info = unpaid_regis[0].student
 
-        # [MỚI] Lấy dữ liệu cho Modal tạo hóa đơn
         courses = dao.load_courses()
         levels = dao.load_levels()
         students = dao.load_students()
         payment_methods = dao.get_payment_methods()
 
-        return self.render('admin/invoice_create.html',
-                           student=student_info,
-                           registrations=unpaid_regis,
-                           today_str=datetime.now().strftime('%Y-%m-%d'),
-                           # Truyền thêm biến
-                           courses=courses,
-                           levels=levels,
-                           students=students,
-                           payment_methods=payment_methods)
+        return self.render(
+            'admin/invoice_create.html',
+            student=student_info,
+            registrations=unpaid_regis,
+            today_str=datetime.now().strftime('%Y-%m-%d'),
+            courses=courses,
+            levels=levels,
+            students=students,
+            payment_methods=payment_methods
+        )
 
     # [MỚI] Xử lý nút Hủy bỏ -> Xóa đăng ký
     @expose('/delete-regis', methods=['POST'])
@@ -244,31 +269,51 @@ class CreateInvoiceView(CashierView):
                 flash('Không tìm thấy đăng ký để xóa.', 'danger')
         return redirect(url_for('.index'))
 
-    # [MỚI] Xử lý nút Tự tạo hóa đơn
     @expose('/create-manual', methods=['POST'])
     def create_manual(self):
         try:
             student_id = request.form.get('student_id')  # UserAccount ID
             class_id = request.form.get('class_id')
-            payment_percent = int(request.form.get('payment_percent'))
+            payment_percent = request.form.get('payment_percent')
             method = request.form.get('payment_method')
-            # Tính toán số tiền dựa trên % (Logic này nên check lại ở server để an toàn)
-            # Nhưng để nhanh ta lấy tuition gửi lên hoặc tính lại từ class_id
 
-            # Lấy học phí lớp để tính tiền phải đóng
+            # ===== VALIDATE =====
+            if not student_id or not class_id or not payment_percent or not method:
+                flash('Vui lòng nhập đầy đủ thông tin!', 'danger')
+                return redirect(url_for('.index'))
+
+            student_id = int(student_id)
+            class_id = int(class_id)
+            payment_percent = int(payment_percent)
+
+            # ===== TÍNH HỌC PHÍ =====
             real_tuition = dao.get_tuition_by_class_id(class_id)
-            amount = real_tuition if payment_percent == 100 else math.ceil(real_tuition / 2)
+            if not real_tuition:
+                flash('Không xác định được học phí lớp học!', 'danger')
+                return redirect(url_for('.index'))
 
-            content = f"Thu ngân tạo đăng ký: Thanh toán {payment_percent}%"
+            amount = (
+                real_tuition
+                if payment_percent == 100
+                else math.ceil(real_tuition / 2)
+            )
 
+            content = f"Thu ngân tạo đăng ký – Thanh toán {payment_percent}%"
+
+            # ===== GỌI DAO =====
             success, msg = dao.create_manual_invoice(
-                student_id, class_id, amount, method, content, current_user.id
+                student_id=student_id,
+                class_id=class_id,
+                amount=amount,
+                method=method,  # STRING → DAO xử lý Enum
+                content=content,
+                employee_id=current_user.id
             )
 
             if success:
                 flash(f'Tạo hóa đơn thành công! {msg}', 'success')
             else:
-                flash(f'Lỗi: {msg}', 'danger')
+                flash(msg, 'danger')
 
         except Exception as e:
             flash(f'Lỗi hệ thống: {str(e)}', 'danger')
@@ -298,7 +343,6 @@ class CreateInvoiceView(CashierView):
             })
 
         return jsonify(data)
-
 
 # Quản lý hóa đơn
 class TransactionAdminView(CashierModelView):

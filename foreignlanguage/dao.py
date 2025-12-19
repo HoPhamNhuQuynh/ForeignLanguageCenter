@@ -120,25 +120,60 @@ def create_transaction(money, method, regis_id):
     transact = Transaction(money=money, method=method, regis_id=regis_id)
     db.session.add(transact)
     db.session.flush()
-
     return transact
 
-def process_payments(transaction, result_payment, status_fee):
-    result_payment = True
-    if result_payment:
+# def process_payments(transaction, result_payment, status_fee):
+#     result_payment = True
+#     if result_payment:
+#         transaction.status = StatusPayment.SUCCESS
+#         transaction.registration.paid += transaction.money
+#         transaction.registration.status = status_fee
+#         db.session.commit()
+#         return True
+#     else:
+#         transaction.status = StatusPayment.FAILED
+#         db.session.commit()
+#         return False
+
+def process_payment(transaction, status_tuition):
+    """
+    Xử lý thanh toán dùng chung cho mọi luồng
+    """
+    try:
         transaction.status = StatusPayment.SUCCESS
-        transaction.registration.paid += transaction.money
-        transaction.registration.status = status_fee
+
+        reg = transaction.registration
+        reg.paid += transaction.money
+        reg.status = status_tuition
+
         db.session.commit()
         return True
-    else:
-        transaction.status = StatusPayment.FAILED
-        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
         return False
+
+# def register_and_pay(user, class_id, amount, method, payment_percent, name, phone):
+#     classroom = get_class_by_id(class_id)
+#     tuition_base = classroom.course_level.tuition
+#     if payment_percent == 50:
+#         expected_money = math.ceil(tuition_base / 2)
+#         status = StatusTuition.PARTIAL
+#     else:
+#         expected_money = tuition_base
+#         status = StatusTuition.PAID
+#
+#     if amount != expected_money:
+#         return
+#     reg = create_registration(user=user, class_id=class_id, name=name, phone=phone)
+#     transact = create_transaction(money=expected_money, method=method, regis_id=reg.id)
+#     process_result = True
+#     is_success = process_payments(transact, process_result, status)
+#     return is_success
 
 def register_and_pay(user, class_id, amount, method, payment_percent, name, phone):
     classroom = get_class_by_id(class_id)
     tuition_base = classroom.course_level.tuition
+
     if payment_percent == 50:
         expected_money = math.ceil(tuition_base / 2)
         status = StatusTuition.PARTIAL
@@ -147,13 +182,49 @@ def register_and_pay(user, class_id, amount, method, payment_percent, name, phon
         status = StatusTuition.PAID
 
     if amount != expected_money:
-        return
+        return False
 
     reg = create_registration(user=user, class_id=class_id, name=name, phone=phone)
-    transact = create_transaction(money=expected_money, method=method, regis_id=reg.id)
-    process_result = True #gia lap cong thanh toan tra ve ket qua giao dich la thanh cong
-    is_success = process_payments(transact, process_result, status)
-    return is_success
+    transact = create_transaction(
+        money=expected_money,
+        method=method,
+        regis_id=reg.id
+    )
+
+    return process_payment(transact, status)
+
+def process_payments(regis_id, amount, content, method, created_date, employee_id):
+    regis = Registration.query.get(regis_id)
+    if not regis:
+        return False, "Không tìm thấy đăng ký"
+
+    try:
+        payment_method = MethodEnum(int(method))
+    except (ValueError, KeyError):
+        return False, f"Phương thức thanh toán '{method}' không hợp lệ"
+
+    new_trans = Transaction(
+        money=amount,
+        content=content,
+        method=payment_method,
+        date=created_date,
+        status=StatusPayment.PENDING,
+        regis_id=regis.id,
+        employee_id=employee_id
+    )
+    db.session.add(new_trans)
+    db.session.flush()
+
+    # xác định trạng thái học phí
+    status = (
+        StatusTuition.PAID
+        if regis.paid + amount >= regis.actual_tuition
+        else StatusTuition.PARTIAL
+    )
+
+    success = process_payment(new_trans, status)
+    return success, "Thanh toán thành công" if success else "Thanh toán thất bại"
+
 
 
 def get_classes_by_course_level(c_id, l_id):
@@ -392,52 +463,47 @@ def update_course_level_tuition(course_id, level_id, new_fee):
 
 ######### CASHIER #############
 def get_unpaid_registrations(kw=None):
-    query = Registration.query.filter(Registration.status == StatusTuition.PARTIAL)
+    query = Registration.query.filter(
+        or_(
+            Registration.status == StatusTuition.PARTIAL,
+            Registration.status == StatusTuition.PENDING
+        )
+    )
     if kw:
         query = query.join(StudentInfo).join(UserAccount).filter(or_(
             UserAccount.name.contains(kw),
             UserAccount.phone_num.contains(kw),
             UserAccount.email.contains(kw)
         ))
+
     return query.all()
 
-def process_payment(regis_id, amount, content, method, created_date, employee_id):
-    """
-    Xử lý toàn bộ quy trình đóng tiền:
-    1. Tạo Transaction
-    2. Cộng tiền vào Registration
-    3. Cập nhật trạng thái (PAID/PARTIAL)
-    """
-    regis = Registration.query.get(regis_id)
-    if not regis: return False, "Không tìm thấy đăng ký"
+#
+# def process_payment(regis_id, amount, content, method, created_date, employee_id):
+#     regis = Registration.query.get(regis_id)
+#     if not regis:
+#         return False, "Không tìm thấy đăng ký"
+#     try:
+#         payment_method = MethodEnum[method]
+#     except (KeyError, AttributeError):
+#         return False, f"Phương thức thanh toán '{method}' không hợp lệ"
+#     # 1. Tạo Transaction
+#     new_trans = Transaction(
+#         money=amount,
+#         content=content,
+#         method=payment_method,
+#         date=created_date,
+#         status=StatusPayment.SUCCESS,
+#         regis_id=regis.id,
+#         employee_id=employee_id
+#     )
+#     db.session.add(new_trans)
+#
+#     try:
+#     except Exception as e:
+#         db.session.rollback()
+#         return False, str(e)
 
-    # 1. Tạo Transaction
-    new_trans = Transaction(
-        money=amount,
-        content=content if content else f"Thu học phí đợt: {created_date.strftime('%d/%m')}",
-        method=MethodEnum[method] if isinstance(method, str) else method,
-        date=created_date,
-        status=StatusPayment.SUCCESS,
-        regis_id=regis.id,
-        employee_id=employee_id
-    )
-    db.session.add(new_trans)
-
-    # 2. Update Registration
-    regis.paid += amount
-
-    # 3. Update Status
-    debt = regis.actual_tuition - regis.paid
-    if debt == 0:
-        regis.status = StatusTuition.PAID
-        msg = "Đã hoàn tất học phí!"
-    else:
-        regis.status = StatusTuition.PARTIAL
-        msg = f"Còn nợ {debt:,.0f}đ."
-
-    db.session.add(regis)
-    db.session.commit()
-    return True, msg
 
 # --- XỬ LÝ HOÀN TÁC KHI XÓA ---
 def revert_payment(registration, money_to_revert):
@@ -475,23 +541,25 @@ def create_manual_invoice(student_id, class_id, amount, method, content, employe
     """
     Hàm tạo đăng ký và hóa đơn cùng lúc (dành cho Thu ngân tự tạo)
     """
-    # 1. Tạo Registration
-    # Lấy học phí gốc
     classroom = Classroom.query.get(class_id)
-    if not classroom: return False, "Lớp học không tồn tại"
+    if not classroom:
+        return False, "Lớp học không tồn tại"
 
     base_tuition = classroom.course_level.tuition
 
-    # Kiểm tra đã đăng ký chưa
-    exist_reg = Registration.query.filter_by(student_id=student_id, class_id=class_id).first()
+    # kiểm tra đã đăng ký chưa
+    exist_reg = Registration.query.filter_by(
+        student_id=student_id,
+        class_id=class_id
+    ).first()
     if exist_reg:
         return False, "Học viên đã đăng ký lớp này rồi!"
 
-    # Lấy thông tin student_info id từ user_account id
     student_info = StudentInfo.query.filter_by(u_id=student_id).first()
     if not student_info:
         return False, "Không tìm thấy thông tin học viên"
 
+    # tạo đăng ký
     new_reg = Registration(
         student_id=student_info.id,
         class_id=class_id,
@@ -500,14 +568,17 @@ def create_manual_invoice(student_id, class_id, amount, method, content, employe
         status=StatusTuition.PENDING
     )
     db.session.add(new_reg)
-    db.session.flush()  # Để lấy ID cho transaction
+    db.session.flush()
 
-    # 2. Tạo Transaction và Xử lý thanh toán
-    # Tận dụng hàm process_payment đã có
-    # Lưu ý: process_payment sẽ cộng tiền vào regis và update status
-    return process_payment(new_reg.id, amount, content, method, datetime.now(), employee_id)
-
-
+    # gọi lại luồng thu ngân chuẩn
+    return process_payments(
+        regis_id=new_reg.id,
+        amount=amount,
+        content=content,
+        method=method,          # method dạng string / key enum
+        created_date=datetime.now(),
+        employee_id=employee_id
+    )
 
 def save_changes():
     db.session.commit()

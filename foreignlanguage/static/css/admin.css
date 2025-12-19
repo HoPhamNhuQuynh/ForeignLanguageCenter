@@ -69,3 +69,8 @@
     border: none;
     border-bottom: 2px solid #dee2e6;
 }
+
+/* */
+.style-fix {
+    min-height: 6vh;
+}
