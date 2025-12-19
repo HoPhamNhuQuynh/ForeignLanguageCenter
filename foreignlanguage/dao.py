@@ -8,7 +8,7 @@ from sqlalchemy.testing.pickleable import User
 
 from foreignlanguage.models import (UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo,
                                     Classroom, EmployeeInfo, MethodEnum, StatusPayment, CourseLevel, Session, Present,
-                                    UserRole, AcademicStatus)
+                                    UserRole, AcademicStatus, Score)
 from foreignlanguage import app, db
 import hashlib
 from flask_login import current_user
@@ -288,6 +288,36 @@ def get_sessions_by_class(class_id):
 def get_regs_by_class(class_id):
     return Registration.query.filter_by(class_id=class_id).all()
 
+
+class CourseRegistration:
+    pass
+
+
+def update_final_score(reg_id):
+    scores = Score.query.filter_by(regis_id=reg_id).all()
+
+    if not scores:
+        return
+
+    total_weighted_score = 0
+    total_weight = 0
+
+    for s in scores:
+        # Giả sử trong bảng Score có mối quan hệ (relationship) với GradeCategory
+        weight = s.grade_category.weight
+        if s.value is not None:
+            total_weighted_score += s.value * weight
+            total_weight += weight
+
+    if total_weight > 0:
+        final_score = total_weighted_score / total_weight
+
+        # 2. Cập nhật vào bảng Registration (bảng có chứa final_score)
+        reg = CourseRegistration.query.get(reg_id)
+        if reg:
+            reg.final_score = round(final_score, 2)
+            reg.academic_status = "PASSED" if final_score >= 5 else "FAILED"
+            db.session.commit()
 
 def save_present(session_id, student_status):
     print(f"--- Đang nhận: Session={session_id}, Data={student_status} ---")  # Dòng này để debug

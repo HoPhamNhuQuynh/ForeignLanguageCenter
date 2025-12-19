@@ -6,7 +6,8 @@
 <form method="post" action="{{ url_for('enterscore.save_scores') }}">
     <div class="border p-3 rounded bg-orange-light">
         <label class="fw-bold">Chọn lớp: </label>
-        <select class="form-select mb-3" style="width: 30%; min-width: 400px; padding: 10px;" onchange="location='?class_id=' + this.value">
+        <select class="form-select mb-3" style="width: 30%; min-width: 400px; padding: 10px;"
+                onchange="location='?class_id=' + this.value">
             <option value="">-- Chọn lớp --</option>
             {% for c in classes %}
             <option value="{{ c.id }}" {% if c.id== selected_class %}selected{% endif %}>
@@ -25,7 +26,7 @@
                 {% endfor %}
                 <th>Điểm TB</th>
                 <th>Kết quả</th>
-                <th>Học lực</th>
+                <th>Xếp loại</th>
             </tr>
             </thead>
 
@@ -57,6 +58,9 @@
                 {% endfor %}
 
                 <td class="dtb">{{ "%.2f"|format(item.dtb) }}</td>
+                <input type="hidden" name="final_score_{{ item.reg.id }}" class="hidden-dtb" value="{{ item.dtb }}">
+                <input type="hidden" name="status_{{ item.reg.id }}" class="hidden-status"
+                       value="{{ 'PASSED' if item.dtb >= 5 else 'FAILED' }}">
                 <td class="result">{{ "Đậu" if item.dtb >=5 else "Rớt" }}</td>
                 <td class="rank">
                     {% if item.dtb >= 8 %}Giỏi

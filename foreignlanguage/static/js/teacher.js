@@ -1,10 +1,10 @@
-
    // rollcall
   document.addEventListener('DOMContentLoaded', () => {
     const classSelect = document.getElementById('classSelect');
     const saveBtn = document.getElementById('saveBtn');
 
-    classSelect.addEventListener('change', () => {
+    if (classSelect){
+        classSelect.addEventListener('change', () => {
         const classId = classSelect.value;
         if (!classId) return;
 
@@ -36,6 +36,7 @@
                 });
             });
     });
+    }
 
     document.addEventListener('change', () => {
         const radios = document.querySelectorAll('#studentBody input[type="radio"]');
@@ -44,7 +45,7 @@
     });
 });
 
-    //enterscore
+        //enterscore
     function updateDTB() {
         const row = this.closest('tr');
         const inputs = row.querySelectorAll('.score-input');
@@ -71,6 +72,12 @@
         else if (dtb >=5) rank = "Trung bình";
         else rank = "Yếu";
         row.querySelector('.rank').textContent = rank;
+
+        const hiddenDTB = row.querySelector('.hidden-dtb');
+        const hiddenStatus = row.querySelector('.hidden-status');
+
+        if (hiddenDTB) hiddenDTB.value = dtb.toFixed(2);
+        if (hiddenStatus) hiddenStatus.value = dtb >= 5 ? "PASSED" : "FAILED";
     }
 
 

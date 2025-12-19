@@ -439,9 +439,7 @@ class RollcallView(TeacherView):
             student_status = {}
 
             for k, v in request.form.items():
-                # Kiểm tra nếu key bắt đầu bằng cụm 'student_'
                 if k.startswith('student_'):
-                    # Tách lấy phần số ID phía sau (ví dụ 'student_6' -> '6')
                     student_id = k.replace('student_', '')
                     if student_id.isdigit():
                         student_status[int(student_id)] = int(v)
@@ -543,11 +541,13 @@ class EnterScoreView(TeacherView):
 
     @expose('/save-scores', methods=['POST'])
     def save_scores(self):
+        updated_regs = set()
+
         for key, value in request.form.items():
             if key.startswith("score_"):
                 _, reg_id, cate_id = key.split("_")
                 reg_id, cate_id = int(reg_id), int(cate_id)
-                val = float(value) if value else None
+                val = float(value) if value.strip() else 0
 
                 score = Score.query.filter_by(regis_id=reg_id, grade_cate_id=cate_id).first()
                 if score:
@@ -555,8 +555,32 @@ class EnterScoreView(TeacherView):
                 else:
                     if val is not None:
                         db.session.add(Score(regis_id=reg_id, grade_cate_id=cate_id, value=val))
-        db.session.commit()
-        flash("Đã lưu điểm thành công!", "success")
+
+                updated_regs.add(reg_id)
+
+        for rid in updated_regs:
+            f_score_val = request.form.get(f"final_score_{rid}")
+
+            # Truy vấn theo Model Registration
+            reg_record = Registration.query.get(rid)
+
+            if reg_record:
+                # Gán điểm trung bình (final_score)
+                reg_record.final_score = float(f_score_val) if f_score_val else 0
+
+                # Gán AcademicStatus Enum (Đậu -> PASSED, Rớt -> FAILED)
+                if reg_record.final_score >= 5:
+                    reg_record.academic_status = AcademicStatus.PASSED
+                else:
+                    reg_record.academic_status = AcademicStatus.FAILED
+
+        try:
+            db.session.commit()
+            flash("Đã lưu điểm và kết quả thành công!", "success")
+        except Exception as e:
+            db.session.rollback()
+            print(f"LỖI LƯU ĐIỂM: {str(e)}")
+            flash(f"Lỗi hệ thống: {str(e)}", "danger")
         return redirect(request.referrer)
 
 ############## XỬ LÝ LOGIN #####################
@@ -612,3 +636,4 @@ admin.add_view(MyLogoutView(name='Đăng xuất'))
 
 if __name__ == '__main__':
     app.run(debug=True)
+
