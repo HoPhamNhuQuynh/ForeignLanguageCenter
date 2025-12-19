@@ -459,26 +459,18 @@ class RollcallView(TeacherView):
         if not class_id:
             return jsonify({'students': [], 'sessions': []})
 
-        employee = EmployeeInfo.query.filter_by(
-            u_id=current_user.id
-        ).first()
+        employee = dao.get_emloyee_by_user_id(current_user.id)
 
         if not employee:
             return jsonify({'students': [], 'sessions': []})
 
-        classroom = Classroom.query.filter_by(
-            id=class_id,
-            employee_id=employee.id
-        ).first()
+        classroom = dao.get_classroom_by_teacher(class_id, employee.id)
 
         if not classroom:
             return jsonify({'students': [], 'sessions': []})
 
-        # Buổi học
-        sessions = Session.query.filter(class_id==class_id).all()
-
-        # Học viên trong lớp
-        regs = Registration.query.filter_by(class_id=class_id).all()
+        sessions = dao.get_sessions_by_class(class_id)
+        regs = dao.get_regs_by_class(class_id)
         students = [r.student for r in regs]
 
         return jsonify({
@@ -501,15 +493,15 @@ class EnterScoreView(TeacherView):
 
     @expose('/', methods=['GET'])
     def index(self):
-        employee = EmployeeInfo.query.filter_by(u_id=current_user.id).first()
-        classes = Classroom.query.filter_by(employee_id=employee.id).all() if employee else []
+        employee = dao.get_emloyee_by_user_id(current_user.id)
+        classes = dao.get_teacher_classes(employee if employee else [])
 
         class_id = request.args.get('class_id', type=int)
-        categories = GradeCategory.query.filter_by(active=1).all()
+        categories = dao.get_active_grade_categories()
         students = []
 
         if class_id:
-            regs = Registration.query.filter_by(class_id=class_id).all()
+            regs = dao.get_regs_by_class(class_id)
             for r in regs:
                 score_map = {s.grade_cate_id: s.value for s in r.scores}
                 total = 0
@@ -549,7 +541,7 @@ class EnterScoreView(TeacherView):
                 reg_id, cate_id = int(reg_id), int(cate_id)
                 val = float(value) if value.strip() else 0
 
-                score = Score.query.filter_by(regis_id=reg_id, grade_cate_id=cate_id).first()
+                score = dao.get_score_by_registration(reg_id, cate_id)
                 if score:
                     score.value = val
                 else:
@@ -558,17 +550,13 @@ class EnterScoreView(TeacherView):
 
                 updated_regs.add(reg_id)
 
-        for rid in updated_regs:
-            f_score_val = request.form.get(f"final_score_{rid}")
+        for r_id in updated_regs:
+            f_score_val = request.form.get(f"final_score_{r_id}")
 
-            # Truy vấn theo Model Registration
-            reg_record = Registration.query.get(rid)
-
+            reg_record = dao.get_registration_by_id(r_id)
             if reg_record:
-                # Gán điểm trung bình (final_score)
                 reg_record.final_score = float(f_score_val) if f_score_val else 0
 
-                # Gán AcademicStatus Enum (Đậu -> PASSED, Rớt -> FAILED)
                 if reg_record.final_score >= 5:
                     reg_record.academic_status = AcademicStatus.PASSED
                 else:
