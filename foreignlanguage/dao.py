@@ -1,12 +1,12 @@
 import math
-from sqlalchemy import or_, extract, func
+from sqlalchemy import or_, extract, func, not_
 from sqlalchemy.orm import joinedload
 from datetime import datetime
 
 from sqlalchemy.sql.operators import isnot
 from sqlalchemy.testing.pickleable import User
 
-from foreignlanguage.models import (UserAccount, Course, Transaction, Registration, StatusTuition, Level, StudentInfo,
+from foreignlanguage.models import (StudentInfo, UserAccount, Course, Transaction, Registration, StatusTuition, Level,
                                     Classroom, EmployeeInfo, MethodEnum, StatusPayment, CourseLevel, Session, Present,
                                     UserRole, AcademicStatus, Score, GradeCategory)
 from foreignlanguage import app, db
@@ -122,18 +122,6 @@ def create_transaction(money, method, regis_id):
     db.session.flush()
     return transact
 
-# def process_payments(transaction, result_payment, status_fee):
-#     result_payment = True
-#     if result_payment:
-#         transaction.status = StatusPayment.SUCCESS
-#         transaction.registration.paid += transaction.money
-#         transaction.registration.status = status_fee
-#         db.session.commit()
-#         return True
-#     else:
-#         transaction.status = StatusPayment.FAILED
-#         db.session.commit()
-#         return False
 
 def process_payment(transaction, status_tuition):
     """
@@ -152,23 +140,7 @@ def process_payment(transaction, status_tuition):
         db.session.rollback()
         return False
 
-# def register_and_pay(user, class_id, amount, method, payment_percent, name, phone):
-#     classroom = get_class_by_id(class_id)
-#     tuition_base = classroom.course_level.tuition
-#     if payment_percent == 50:
-#         expected_money = math.ceil(tuition_base / 2)
-#         status = StatusTuition.PARTIAL
-#     else:
-#         expected_money = tuition_base
-#         status = StatusTuition.PAID
-#
-#     if amount != expected_money:
-#         return
-#     reg = create_registration(user=user, class_id=class_id, name=name, phone=phone)
-#     transact = create_transaction(money=expected_money, method=method, regis_id=reg.id)
-#     process_result = True
-#     is_success = process_payments(transact, process_result, status)
-#     return is_success
+
 
 def register_and_pay(user, class_id, amount, method, payment_percent, name, phone):
     classroom = get_class_by_id(class_id)
@@ -227,24 +199,41 @@ def process_payments(regis_id, amount, content, method, created_date, employee_i
 
 
 
-def get_classes_by_course_level(c_id, l_id):
-    query = db.session.query(
-        Classroom.id,
-        Classroom.start_time,
-        Classroom.maximum_stu,
-        func.count(Registration.student_id).label('current_count')
-    ).outerjoin(
-        Registration, Classroom.id == Registration.class_id
-    ).filter(
-        Classroom.course_id == c_id,
-        Classroom.level_id == l_id,
-        Classroom.start_time.__ge__(datetime.now())
-    ).group_by(
-        Classroom.id, Classroom.start_time, Classroom.maximum_stu
-    ).having(
-        func.count(Registration.student_id) < Classroom.maximum_stu
+def get_classes_by_course_level(c_id, l_id, student_id):
+    classes_query = (
+        db.session.query(
+            Classroom.id,
+            Classroom.start_time,
+            Classroom.maximum_stu,
+            func.count(Registration.student_id).label('current_count')
+        )
+        .outerjoin(Registration, Classroom.id == Registration.class_id)
+        .filter(
+            Classroom.course_id == c_id,
+            Classroom.level_id == l_id,
+            Classroom.start_time >= datetime.now()
+        )
+        .group_by(
+            Classroom.id,
+            Classroom.start_time,
+            Classroom.maximum_stu
+        )
+        .having(
+            func.count(Registration.student_id) < Classroom.maximum_stu
+        )
     )
-    return query.all()
+    registered_class_ids = [
+        r.class_id
+        for r in Registration.query.filter_by(
+            student_id=student_id
+        ).all()
+    ]
+    if registered_class_ids:
+        valid_classes_query = classes_query.filter(
+            not_(Classroom.id.in_(registered_class_ids))
+        )
+
+    return valid_classes_query.all()
 
 
 def get_payment_methods():
@@ -271,6 +260,21 @@ def get_tuition_by_class_id(class_id):
     )
     return float(row[0]) if row else 0
 
+def get_classes_by_student_id(student_id):
+    results = db.session.query(
+        Course.name.label('course_name'),
+        Level.name.label('level_name'),
+        Classroom.id.label('class_id'),
+        Classroom.start_time.label('start_time'),
+        UserAccount.name.label('teacher_name')
+    ).join(Course, Course.id == Classroom.course_id) \
+        .join(Level, Level.id == Classroom.level_id) \
+        .join(Registration, Classroom.id == Registration.class_id) \
+        .join(EmployeeInfo, Classroom.employee_id == EmployeeInfo.id) \
+        .join(UserAccount, UserAccount.id == EmployeeInfo.u_id) \
+        .filter(Registration.student_id == student_id).all()
+    return results
+
 # ==================== TEACHER ====================
 def get_emloyee_by_user_id(user_id):
     return EmployeeInfo.query.filter_by(u_id=user_id).first()
@@ -295,9 +299,6 @@ def get_regs_by_class(class_id):
 def get_score_by_registration(reg_id, cate_id):
     return Score.query.filter_by(regis_id=reg_id, grade_cate_id=cate_id).first()
 
-class CourseRegistration:
-    pass
-
 
 def update_final_score(reg_id):
     scores = Score.query.filter_by(regis_id=reg_id).all()
@@ -317,7 +318,7 @@ def update_final_score(reg_id):
     if total_weight > 0:
         final_score = total_weighted_score / total_weight
 
-        reg = CourseRegistration.query.get(reg_id)
+        reg = Registration.query.get(reg_id)
         if reg:
             reg.final_score = round(final_score, 2)
             reg.academic_status = "PASSED" if final_score >= 5 else "FAILED"
@@ -506,31 +507,6 @@ def get_unpaid_registrations(kw=None):
 
     return query.all()
 
-#
-# def process_payment(regis_id, amount, content, method, created_date, employee_id):
-#     regis = Registration.query.get(regis_id)
-#     if not regis:
-#         return False, "Không tìm thấy đăng ký"
-#     try:
-#         payment_method = MethodEnum[method]
-#     except (KeyError, AttributeError):
-#         return False, f"Phương thức thanh toán '{method}' không hợp lệ"
-#     # 1. Tạo Transaction
-#     new_trans = Transaction(
-#         money=amount,
-#         content=content,
-#         method=payment_method,
-#         date=created_date,
-#         status=StatusPayment.SUCCESS,
-#         regis_id=regis.id,
-#         employee_id=employee_id
-#     )
-#     db.session.add(new_trans)
-#
-#     try:
-#     except Exception as e:
-#         db.session.rollback()
-#         return False, str(e)
 
 
 # --- XỬ LÝ HOÀN TÁC KHI XÓA ---
@@ -613,15 +589,16 @@ def save_changes():
 
 if __name__ == "__main__":
     with app.app_context():
-        print(auth_user("user", "123"))
-        print(get_classes_by_course_level(2, 2))
-        print(count_students(2025))
-        print(count_courses(2025))
-        print(count_active_classes(2025))
-        print(count_total_revenue(2025))
-        print(stats_rate_passed_per_course_by_year(2025))
-        print(get_tuition_by_class_id(22))
-        print(get_details_top3_courses())
-        top3 = get_details_top3_courses(2025)
-        course, total = top3[0]
-        print(course.id, course.name, course.description)
+        # print(auth_user("user", "123"))
+        # print(get_classes_by_course_level(2, 2))
+        # print(count_students(2025))
+        # print(count_courses(2025))
+        # print(count_active_classes(2025))
+        # print(count_total_revenue(2025))
+        # print(stats_rate_passed_per_course_by_year(2025))
+        # print(get_tuition_by_class_id(22))
+        # print(get_details_top3_courses())
+        # top3 = get_details_top3_courses(2025)
+        # course, total = top3[0]
+        # print(course.id, course.name, course.description)
+        print(get_classes_by_course_level(1, 2, 1))

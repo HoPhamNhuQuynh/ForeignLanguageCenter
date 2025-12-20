@@ -22,9 +22,15 @@
                 </p>
 
                 <div>
-                    <a href="/register-course" class="btn btn-orange px-5 py-3 fw-bold shadow rounded-3">
-                        Đăng ký ngay
-                    </a>
+                    {% if current_user.is_authenticated %}
+                        <a href="/register-course" class="btn btn-orange px-5 py-3 fw-bold shadow rounded-3">
+                            Đăng ký ngay
+                        </a>
+                    {% else %}
+                        <a href="/signin?next=/register-course" class="btn btn-orange px-5 py-3 fw-bold shadow rounded-3">
+                            Đăng ký ngay
+                        </a>
+                    {% endif %}
                 </div>
 
                 <div class="mt-5 d-flex gap-5">

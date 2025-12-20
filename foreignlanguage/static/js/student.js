@@ -17,9 +17,12 @@ function updateAvatar(obj){
     })
 }
 
-setTimeout(function(){
+setTimeout(function() {
     const msg = document.getElementById('status-msg');
-    if(msg){
-        msg.style.display = 'none';
+    if (msg) {
+        msg.style.opacity = '0';
+        setTimeout(() => {
+            msg.remove();
+        }, 500);
     }
 }, 3000);

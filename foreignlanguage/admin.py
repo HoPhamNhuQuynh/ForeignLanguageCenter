@@ -1,6 +1,8 @@
+import io
 import math
 from datetime import datetime
-from flask import redirect, request, flash, url_for, jsonify
+import pandas as pd
+from flask import redirect, request, flash, url_for, jsonify, send_file
 from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
@@ -83,6 +85,8 @@ class MyLogoutView(BaseView):
 class StatsView(AdminBaseView):
     @expose('/')
     def index(self):
+        can_export = True
+
         year = request.args.get('year', type=int)
         if not year:
             year = datetime.now().year
@@ -110,6 +114,46 @@ class StatsView(AdminBaseView):
                            , ratio_passed_data=ratio_passed_data
                            , top_course_data=top_course_data
                            , year=year)
+    @expose('/export')
+    def export_report(self):
+        year = request.args.get('year', type=int, default=datetime.now().year)
+        stats_summary = {
+            'Học viên': [dao.count_students(year)],
+            'Khóa học': [dao.count_courses(year)],
+            'Lớp học': [dao.count_active_classes(year)],
+            'Tổng doanh thu': [dao.count_total_revenue(year)]
+        }
+        revenue_raw = dao.get_revenue_chart_data(year)
+        student_raw = dao.get_student_chart_data(year)
+        ratio_passed_raw = dao.get_ratio_passed_chart_data(year)
+        top_course_raw = dao.get_top3_courses_chart_data(year)
+        buffer = io.BytesIO()
+        with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+            pd.DataFrame(stats_summary).to_excel(writer, index=False, sheet_name='Tổng quan')
+            pd.DataFrame({
+                'Tháng': revenue_raw.get('labels', []),
+                'Doanh thu (VNĐ)': revenue_raw.get('data', [])
+            }).to_excel(writer, index=False, sheet_name='Doanh thu')
+            pd.DataFrame({
+                'Nhóm học viên': student_raw.get('labels', []),
+                'Số lượng': student_raw.get('data', [])
+            }).to_excel(writer, index=False, sheet_name='Học viên')
+            pd.DataFrame({
+                'Trạng thái': ratio_passed_raw.get('labels', []),
+                'Số lượng': ratio_passed_raw.get('data', [])
+            }).to_excel(writer, index=False, sheet_name='Tỷ lệ đạt')
+            pd.DataFrame({
+                'Khóa học': top_course_raw.get('labels', []),
+                'Doanh thu/Số lượng': top_course_raw.get('data', [])
+            }).to_excel(writer, index=False, sheet_name='Top khóa học')
+
+        buffer.seek(0)
+        return send_file(
+            buffer,
+            as_attachment=True,
+            download_name=f"Bao_cao_tong_hop_{year}.xlsx",
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
 
 
 # --- View Quy định học phí ---
@@ -356,7 +400,7 @@ class TransactionAdminView(CashierModelView):
                          print_ticket='Hành động')
     column_default_sort = ('joined_date', True)
     column_searchable_list = ['id']
-    column_filters = ['status', 'method', 'joined_date', 'money', 'registration.student_id']
+    column_filters = ['status', 'method', 'joined_date', 'money', 'registration.student.account']
 
     def _student_formatter(view, context, model, name):
         if model.registration and model.registration.student:
@@ -370,10 +414,6 @@ class TransactionAdminView(CashierModelView):
 
     def _money_formatter(view, context, model, name):
         return "{:,.0f} đ".format(model.money)
-
-    column_formatters = {
-        'student_info': _student_formatter, 'course_info': _course_formatter, 'money': _money_formatter
-    }
 
     # Gọi DAO để revert dữ liệu khi xóa
     def on_model_delete(self, model):
@@ -391,6 +431,7 @@ class TransactionAdminView(CashierModelView):
         ''')
 
     column_formatters = {
+        'registration.student.account': _student_formatter,
         'student_info': _student_formatter,
         'course_info': _course_formatter,
         'money': _money_formatter,
