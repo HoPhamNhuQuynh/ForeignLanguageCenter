@@ -11,8 +11,8 @@ from markupsafe import Markup
 
 from foreignlanguage import app, db, login
 from foreignlanguage.models import (
-    StudentInfo, Course, Classroom, EmployeeInfo,
-    Registration, Transaction, UserRole, Score,
+    Registration, StudentInfo, Course, Classroom, EmployeeInfo,
+    Transaction, UserRole, Score,
     Session, GradeCategory, AcademicStatus
 )
 import dao
@@ -350,13 +350,13 @@ class TransactionAdminView(CashierModelView):
     can_edit = False
     can_delete = True
 
-    column_list = ('id', 'student_info', 'course_info', 'money', 'method', 'date', 'status', 'content', 'print_ticket')
+    column_list = ('id', 'student_info', 'course_info', 'money', 'method', 'joined_date', 'status', 'content', 'print_ticket')
     column_labels = dict(id='Mã HĐ', student_info='Học viên', course_info='Khóa học', money='Số tiền',
-                         method='Hình thức', date='Ngày nộp', status='Trạng thái', content='Nội dung',
+                         method='Hình thức', joined_date='Ngày nộp', status='Trạng thái', content='Nội dung',
                          print_ticket='Hành động')
-    column_default_sort = ('date', True)
+    column_default_sort = ('joined_date', True)
     column_searchable_list = ['id']
-    column_filters = ['status', 'method', 'date', 'money', 'registration.student.account.name']
+    column_filters = ['status', 'method', 'joined_date', 'money', 'registration.student_id']
 
     def _student_formatter(view, context, model, name):
         if model.registration and model.registration.student:
