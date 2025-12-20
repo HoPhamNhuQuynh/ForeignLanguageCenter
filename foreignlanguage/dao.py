@@ -360,11 +360,11 @@ def save_present(session_id, student_status):
 def stats_revenue_per_month_by_year(year=None):
     query = ((db.session.query(
         func.sum(Transaction.money),
-        extract('month', Transaction.date)
+        extract('month', Transaction.joined_date)
     ).
-        filter(extract('year', Transaction.date) == year).
-        group_by(extract('month', Transaction.date))).
-        order_by(extract('month', Transaction.date)))
+        filter(extract('year', Transaction.joined_date) == year).
+        group_by(extract('month', Transaction.joined_date))).
+        order_by(extract('month', Transaction.joined_date)))
     return query.all()
 
 
@@ -439,7 +439,7 @@ def count_active_classes(year=None):
     return Classroom.query.filter(extract('year', Classroom.joined_date) == year, Classroom.active == 1).count()
 
 def count_total_revenue(year=None):
-    return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.date) == year, Transaction.status==StatusPayment.SUCCESS).scalar()
+    return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.joined_date) == year, Transaction.status==StatusPayment.SUCCESS).scalar()
 
 def stats_top3_popular_courses_by_year(year=None):
     return (db.session.query(
