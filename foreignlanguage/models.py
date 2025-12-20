@@ -79,7 +79,7 @@ class StudentInfo(Base):
     entry_score = Column(Float, default=0.0)
     u_id = Column(Integer, ForeignKey("user_account.id"), unique=True)
     sessions = relationship('Present', backref='student', lazy='subquery')
-    # classes = relationship('Registration', backref='student', lazy='subquery')
+    classes = relationship('Registration', backref='student', lazy='subquery')
 
 
 class CourseLevel(db.Model):
@@ -149,7 +149,7 @@ class Registration(Base):
     class_id = Column(Integer, ForeignKey('classroom.id'), nullable=False)
     transactions = relationship('Transaction', backref='registration', lazy=True)
     scores = relationship('Score', backref='registration', lazy=True)
-    student = relationship('StudentInfo', backref='classes', lazy='subquery')
+    # student = relationship('StudentInfo', backref='classes', lazy='subquery')
 
 
 class Transaction(Base):

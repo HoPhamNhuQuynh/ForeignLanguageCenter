@@ -32,7 +32,8 @@ def signin():
 
         if user:
             login_user(user, remember=remmember)
-            return redirect("/")
+            next = request.args.get("next")
+            return redirect(next if next else '/')
         else:
             err_msg = "Tài khoản hoặc mật khẩu không đúng!"
 
@@ -131,8 +132,6 @@ def course(id):
     c = dao.get_course_by_id(id)
     return render_template("course.html", course=c)
 
-
-
 @app.route("/about")
 def about():
     teachers = dao.load_teachers()
@@ -150,8 +149,6 @@ def entry_test():
 
 @app.route("/register-course", methods=["GET", "POST"])
 def register_course():
-    if not current_user.is_authenticated:
-        return redirect("/signin")
     payment_methods = dao.get_payment_methods()
     return render_template("register-form.html", payment_methods=payment_methods)
 
@@ -174,7 +171,8 @@ def get_classes():
     if not course_id or not level_id:
         return jsonify([])
 
-    classes = dao.get_classes_by_course_level(course_id, level_id)
+    student = dao.get_info_of_current_user_by_uid(current_user.id)
+    classes = dao.get_classes_by_course_level(course_id, level_id, student.id)
     res = []
     for c in classes:
         res.append({
@@ -184,33 +182,6 @@ def get_classes():
             "current_count": c.current_count
         })
     return jsonify(res)
-
-# @app.route("/api/registrations", methods=["POST"])
-# def add_registration():
-#     data = request.get_json()
-#     class_id = data.get("class_id")
-#     name = data.get("name")
-#     phone = data.get("phone")
-#     payment_method = data.get("payment_method")
-#     payment_method = MethodEnum(payment_method)
-#     payment_percent = int(data.get("payment_percent", 100))
-#     client_money = data.get("money")
-#     user_info = dao.get_info_of_current_user_by_uid(current_user.id)
-#     try:
-#         is_success = dao.register_and_pay(user=user_info, class_id=class_id, amount=client_money, method=payment_method,
-#                              payment_percent=payment_percent, name=name, phone=phone)
-#         if is_success:
-#             if is_success:
-#                 classroom = dao.get_class_by_id(class_id=class_id)
-#                 email_service.send_register_success_email(
-#                     current_user.email,
-#                     name,
-#                     classroom.id
-#                 )
-#             return jsonify({"status": True, "msg": "Đăng ký và thanh toán thành công!"})
-#         return jsonify({"status": False, "msg": "Giao dịch không thành công, vui lòng thực hiện lại giao dịch sau!"})
-#     except Exception as ex:
-#         return jsonify({"status": False, "msg": str(ex)})
 
 @app.route("/api/registrations", methods=["POST"])
 def add_registration():
@@ -227,26 +198,29 @@ def add_registration():
 
     user_info = dao.get_info_of_current_user_by_uid(current_user.id)
 
-    is_success = dao.register_and_pay(
-        user=user_info,
-        class_id=class_id,
-        amount=client_money,
-        method=payment_method,
-        payment_percent=payment_percent,
-        name=data.get("name"),
-        phone=data.get("phone")
-    )
-
-    if is_success:
-        classroom = dao.get_class_by_id(class_id)
-        email_service.send_register_success_email(
-            current_user.email,
-            data.get("name"),
-            classroom.id
+    try:
+        is_success = dao.register_and_pay(
+            user=user_info,
+            class_id=class_id,
+            amount=client_money,
+            method=payment_method,
+            payment_percent=payment_percent,
+            name=data.get("name"),
+            phone=data.get("phone")
         )
-        return jsonify({"success": True, "msg": "Đăng ký và thanh toán thành công!"})
 
-    return jsonify({"success": False, "msg": "Giao dịch không thành công"})
+        if is_success:
+            classroom = dao.get_class_by_id(class_id)
+            email_service.send_register_success_email(
+                current_user.email,
+                data.get("name"),
+                classroom.id
+            )
+            return jsonify({"success": True, "msg": "Đăng ký và thanh toán thành công!"})
+
+        return jsonify({"status": False, "msg": "Giao dịch không thành công, vui lòng thực hiện lại giao dịch sau!"})
+    except Exception as ex:
+            return jsonify({"status": False, "msg": str(ex)})
 
 
 @app.route("/user-profile", methods=["GET", "POST"])
@@ -281,7 +255,22 @@ def update_avatar():
     except Exception as ex:
         return jsonify({"err_msg": "Upload hình ảnh thất bại"})
 
-
+@app.route("/api/classrooms", methods=["GET"])
+def get_classrooms():
+    student = dao.get_info_of_current_user_by_uid(current_user.id)
+    valid_classes = dao.get_classes_by_student_id(student.id)
+    if valid_classes:
+        clases = []
+        for c in valid_classes:
+            clases.append({
+                'course_name': c.course_name,
+                'level_name': c.level_name,
+                'class_id': c.MaLop,
+                'start_time': str(c.start_time), # DateTime phải ép kiểu sang String
+                'teacher_name': c.teacher_name
+            })
+        return jsonify(clases)
+    return jsonify({"msg": "Bạn chưa đăng ký khóa học nào!"})
 
 
 @login.user_loader
