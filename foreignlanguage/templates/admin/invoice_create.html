@@ -127,18 +127,22 @@
                                 <label class="form-label small fw-bold">Số tiền đóng:</label>
                                 <input type="number" name="amount" id="inp_amount" class="form-control style-fix" placeholder="0">
                              </div>
-                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Hình thức:</label>
-                                {% for p in payment_methods %}
-                                <label class="list-group-item align-items-center methods" >
-                                    <input class="form-check-input" type="radio" name="payment_method"
-                                           value="{{p.value}}">
-                                    <div>
-                                        <h6 class="mb-0 methodName">{{p.name}}</h6>
-                                    </div>
-                                </label>
-                                {% endfor %}
-                             </div>
+                            <div class="col-md-6">
+    <label class="form-label small fw-bold">Hình thức:</label>
+
+    <div class="d-flex gap-3 flex-wrap">
+        {% for p in payment_methods %}
+        <label class="list-group-item d-flex align-items-center methods">
+            <input class="form-check-input m-0"
+                   type="radio"
+                   name="payment_method"
+                   value="{{ p.value }}">
+
+            <span class="methodName ml-4">{{ p.name }}</span>
+        </label>
+        {% endfor %}
+    </div>
+</div>
                              <div class="col-12">
                                  <small class="text-info fst-italic">
                                      <i class="fa fa-info-circle"></i> Vui lòng chọn học viên từ danh sách bên trái để điền thông tin tự động.
@@ -279,27 +283,33 @@
     // --- Logic cho Modal Tự tạo hóa đơn (Load Classes bằng AJAX) ---
     const courseSel = document.getElementById('modalCourseSelect');
     const levelSel = document.getElementById('modalLevelSelect');
+
+    // [THÊM]: Lấy element dropdown học viên (dựa vào name="student_id")
+    const studentSel = document.querySelector('select[name="student_id"]');
+
     const tableBody = document.getElementById('modalTableClasses');
 
     function loadClassesForModal() {
         const c_id = courseSel.value;
         const l_id = levelSel.value;
 
+        // [THÊM]: Lấy giá trị ID học viên
+        const s_id = studentSel ? studentSel.value : '';
+
         if (c_id && l_id) {
-            // Hiển thị trạng thái đang tải
             tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3"><i class="fa fa-spinner fa-spin"></i> Đang tải danh sách lớp...</td></tr>';
 
-            fetch(`{{ url_for('invoice.load_classes') }}?course_id=${c_id}&level_id=${l_id}`)
+            // [SỬA]: Thêm param &student_id vào URL
+            fetch(`{{ url_for('invoice.load_classes') }}?course_id=${c_id}&level_id=${l_id}&student_id=${s_id}`)
                 .then(res => res.json())
                 .then(data => {
                     tableBody.innerHTML = "";
 
                     if (!data || data.length === 0) {
-                        tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-3">Không có lớp học phù hợp.</td></tr>';
+                        tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-3">Không có lớp phù hợp (hoặc đã đăng ký).</td></tr>';
                         return;
                     }
 
-                    // Render danh sách lớp
                     data.forEach(c => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -318,9 +328,13 @@
         }
     }
 
-    // Gắn sự kiện change cho dropdown
     courseSel.addEventListener('change', loadClassesForModal);
     levelSel.addEventListener('change', loadClassesForModal);
+
+    // [THÊM]: Khi đổi học viên thì cũng load lại lớp để lọc lại
+    if(studentSel) {
+        studentSel.addEventListener('change', loadClassesForModal);
+    }
 </script>
 
 {% endblock %}

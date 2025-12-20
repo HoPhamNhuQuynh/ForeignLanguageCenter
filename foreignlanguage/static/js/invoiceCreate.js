@@ -45,6 +45,6 @@ function selectRow(row, id, name, course, actualTuition, debt) {
 
     // 👉 DÒNG QUAN TRỌNG BỊ THIẾU
     document.getElementById('inp_amount').value = debt;
-
     document.getElementById('btnSubmit').disabled = false;
 }
+

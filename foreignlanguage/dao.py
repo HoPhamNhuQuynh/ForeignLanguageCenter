@@ -98,7 +98,6 @@ def get_all_course_levels():
 
 
 # ====================== STUDENT ==========================
-
 def create_registration(user, class_id, name, phone):
     classroom = get_class_by_id(class_id)
     tuition_base = classroom.course_level.tuition
@@ -116,31 +115,30 @@ def create_registration(user, class_id, name, phone):
     return reg
 
 
-def create_transaction(money, method, regis_id):
-    transact = Transaction(money=money, method=method, regis_id=regis_id)
+def create_transaction(money, method, regis_id, **kwargs):
+    transact = Transaction(
+        money=money,
+        method=method,
+        regis_id=regis_id,
+        **kwargs
+    )
     db.session.add(transact)
     db.session.flush()
     return transact
 
 
 def process_payment(transaction, status_tuition):
-    """
-    Xử lý thanh toán dùng chung cho mọi luồng
-    """
+    result_pay = True
     try:
         transaction.status = StatusPayment.SUCCESS
-
         reg = transaction.registration
         reg.paid += transaction.money
         reg.status = status_tuition
-
         db.session.commit()
-        return True
+        return result_pay
     except Exception as e:
         db.session.rollback()
         return False
-
-
 
 def register_and_pay(user, class_id, amount, method, payment_percent, name, phone):
     classroom = get_class_by_id(class_id)
@@ -152,7 +150,7 @@ def register_and_pay(user, class_id, amount, method, payment_percent, name, phon
     else:
         expected_money = tuition_base
         status = StatusTuition.PAID
-
+    #kt
     if amount != expected_money:
         return False
 
@@ -162,10 +160,9 @@ def register_and_pay(user, class_id, amount, method, payment_percent, name, phon
         method=method,
         regis_id=reg.id
     )
-
     return process_payment(transact, status)
 
-def process_payments(regis_id, amount, content, method, created_date, employee_id):
+def register_and_pay_by_cashier(regis_id, amount, content, method, created_date, employee_id):
     regis = Registration.query.get(regis_id)
     if not regis:
         return False, "Không tìm thấy đăng ký"
@@ -175,16 +172,16 @@ def process_payments(regis_id, amount, content, method, created_date, employee_i
     except (ValueError, KeyError):
         return False, f"Phương thức thanh toán '{method}' không hợp lệ"
 
-    new_trans = Transaction(
+    transact = create_transaction(
         money=amount,
-        content=content,
         method=payment_method,
-        date=created_date,
-        status=StatusPayment.PENDING,
         regis_id=regis.id,
+        content=content,
+        joined_date=created_date,
+        status=StatusPayment.PENDING,
         employee_id=employee_id
     )
-    db.session.add(new_trans)
+    db.session.add(transact)
     db.session.flush()
 
     # xác định trạng thái học phí
@@ -194,9 +191,8 @@ def process_payments(regis_id, amount, content, method, created_date, employee_i
         else StatusTuition.PARTIAL
     )
 
-    success = process_payment(new_trans, status)
+    success = process_payment(transact, status)
     return success, "Thanh toán thành công" if success else "Thanh toán thất bại"
-
 
 
 def get_classes_by_course_level(c_id, l_id, student_id):
@@ -232,7 +228,6 @@ def get_classes_by_course_level(c_id, l_id, student_id):
         valid_classes_query = classes_query.filter(
             not_(Classroom.id.in_(registered_class_ids))
         )
-
     return valid_classes_query.all()
 
 
@@ -507,28 +502,6 @@ def get_unpaid_registrations(kw=None):
 
     return query.all()
 
-
-
-# --- XỬ LÝ HOÀN TÁC KHI XÓA ---
-def revert_payment(registration, money_to_revert):
-    if not registration: return
-    registration.paid -= money_to_revert
-    if registration.paid < 0: registration.paid = 0
-    debt = registration.actual_tuition - registration.paid
-    if registration.paid == 0:
-        registration.status = StatusTuition.UNPAID
-    elif debt == 0:
-        registration.status = StatusTuition.PAID
-    else:
-        registration.status = StatusTuition.PARTIAL
-    db.session.add(registration)
-
-### Cashier thêm
-def load_students():
-    # Lấy danh sách user có role là STUDENT
-    return UserAccount.query.filter(UserAccount.role == UserRole.STUDENT).all()
-
-
 def delete_registration(reg_id):
     reg = Registration.query.get(reg_id)
     if reg:
@@ -540,18 +513,30 @@ def delete_registration(reg_id):
         return True
     return False
 
+def revert_payment(registration, money_to_revert):
+    if not registration:
+        return
+    registration.paid -= money_to_revert
+    if registration.paid < 0:
+        registration.paid = 0
+    if registration.paid == 0:
+        delete_registration(registration.id)
+        return
+    debt = registration.actual_tuition - registration.paid
+    if debt == registration.paid:
+        registration.status = StatusTuition.PARTIAL
+    db.session.add(registration)
+
+### Cashier thêm
+def load_students():
+    return UserAccount.query.filter(UserAccount.role == UserRole.STUDENT).all()
 
 def create_manual_invoice(student_id, class_id, amount, method, content, employee_id):
-    """
-    Hàm tạo đăng ký và hóa đơn cùng lúc (dành cho Thu ngân tự tạo)
-    """
     classroom = Classroom.query.get(class_id)
     if not classroom:
         return False, "Lớp học không tồn tại"
+    tuition = classroom.course_level.tuition
 
-    base_tuition = classroom.course_level.tuition
-
-    # kiểm tra đã đăng ký chưa
     exist_reg = Registration.query.filter_by(
         student_id=student_id,
         class_id=class_id
@@ -567,7 +552,7 @@ def create_manual_invoice(student_id, class_id, amount, method, content, employe
     new_reg = Registration(
         student_id=student_info.id,
         class_id=class_id,
-        actual_tuition=base_tuition,
+        actual_tuition=tuition,
         paid=0,
         status=StatusTuition.PENDING
     )
@@ -575,17 +560,14 @@ def create_manual_invoice(student_id, class_id, amount, method, content, employe
     db.session.flush()
 
     # gọi lại luồng thu ngân chuẩn
-    return process_payments(
+    return register_and_pay_by_cashier(
         regis_id=new_reg.id,
         amount=amount,
         content=content,
-        method=method,          # method dạng string / key enum
+        method=method,
         created_date=datetime.now(),
         employee_id=employee_id
     )
-
-def save_changes():
-    db.session.commit()
 
 if __name__ == "__main__":
     with app.app_context():

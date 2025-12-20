@@ -173,7 +173,7 @@ class RegulationView(AdminBaseView):
                         # Truyền cả 2 ID vào DAO
                         dao.update_course_level_tuition(item.course_id, item.level_id, new_tuition)
 
-                dao.save_changes()
+                dao.db.session.commit()
                 flash('Đã cập nhật bảng giá học phí thành công!', 'success')
                 return redirect(url_for('regulation.index'))
 
@@ -254,7 +254,6 @@ class StudentAdminView(AdminView):
 class CreateInvoiceView(CashierView):
     @expose('/', methods=['GET', 'POST'])
     def index(self):
-
         # ===== XỬ LÝ LẬP PHIẾU THU =====
         if request.method == 'POST':
             regis_id = request.form.get('regis_id')
@@ -266,11 +265,11 @@ class CreateInvoiceView(CashierView):
                 flash("Vui lòng nhập đầy đủ thông tin thanh toán!", "danger")
                 return redirect(url_for('.index'))
 
-            success, msg = dao.process_payments(
+            success, msg = dao.register_and_pay_by_cashier(
                 regis_id=int(regis_id),
                 amount=int(amount),
                 content=content,
-                method=method,  # "1", "2" → DAO ép Enum
+                method=method,
                 created_date=datetime.now(),
                 employee_id=current_user.id
             )
@@ -368,13 +367,12 @@ class CreateInvoiceView(CashierView):
     def load_classes(self):
         course_id = request.args.get('course_id')
         level_id = request.args.get('level_id')
+        student_id = request.args.get('student_id')
 
         if not course_id or not level_id:
             return jsonify([])
 
-        # Gọi hàm DAO để lấy danh sách lớp phù hợp
-        # Hàm này trả về: (id, start_time, maximum_stu, current_count)
-        classes = dao.get_classes_by_course_level(course_id, level_id)
+        classes = dao.get_classes_by_course_level(course_id, level_id, student_id)
 
         data = []
         for c in classes:
@@ -400,7 +398,7 @@ class TransactionAdminView(CashierModelView):
                          print_ticket='Hành động')
     column_default_sort = ('joined_date', True)
     column_searchable_list = ['id']
-    column_filters = ['status', 'method', 'joined_date', 'money', 'registration.student.account']
+    column_filters = ['status', 'method', 'joined_date', 'money']
 
     def _student_formatter(view, context, model, name):
         if model.registration and model.registration.student:
@@ -531,7 +529,6 @@ class RollcallView(TeacherView):
 
 
 class EnterScoreView(TeacherView):
-
     @expose('/', methods=['GET'])
     def index(self):
         employee = dao.get_emloyee_by_user_id(current_user.id)
