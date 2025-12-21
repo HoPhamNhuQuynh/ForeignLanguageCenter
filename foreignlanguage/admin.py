@@ -532,7 +532,7 @@ class EnterScoreView(TeacherView):
     @expose('/', methods=['GET'])
     def index(self):
         employee = dao.get_emloyee_by_user_id(current_user.id)
-        classes = dao.get_teacher_classes(employee if employee else [])
+        classes = dao.get_teacher_classes(employee.id if employee else [])
 
         class_id = request.args.get('class_id', type=int)
         categories = dao.get_active_grade_categories()
