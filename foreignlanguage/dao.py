@@ -28,14 +28,17 @@ def add_user(username, password, email, address):
     db.session.add(u)
     db.session.commit()
 
+
 def get_info_of_current_user_by_uid(u_id):
     return StudentInfo.query.filter(StudentInfo.u_id == u_id).first()
+
 
 def update_user_password(new_password, u_id):
     new_password = hashlib.md5(new_password.encode("utf-8")).hexdigest()
     u = get_user_by_id(u_id)
     u.password = new_password
     db.session.commit()
+
 
 def update_user_information_by_uid(uid, name, email, address, phone_num):
     u = get_user_by_id(uid)
@@ -45,10 +48,12 @@ def update_user_information_by_uid(uid, name, email, address, phone_num):
     u.phone_num = phone_num
     db.session.commit()
 
+
 def update_user_avatar_by_uid(uid, avatar):
     u = get_user_by_id(uid)
     u.avatar = avatar
     db.session.commit()
+
 
 def check_email(email):
     return UserAccount.query.filter(UserAccount.email.__eq__(email)).first()
@@ -71,11 +76,14 @@ def get_user_by_email(email):
 def load_courses():
     return Course.query.all()
 
+
 def load_levels():
     return Level.query.all()
 
+
 def load_teachers():
     return UserAccount.query.filter(UserAccount.role == UserRole.TEACHER).all()
+
 
 def get_registration_by_id(r_id):
     return Registration.query.get(r_id)
@@ -88,6 +96,7 @@ def get_course_by_id(c_id):
 def get_level_by_id(l_id):
     return Level.query.get(l_id)
 
+
 def get_all_course_levels():
     return CourseLevel.query.options(
         joinedload(CourseLevel.course),
@@ -95,18 +104,16 @@ def get_all_course_levels():
     ).order_by(CourseLevel.course_id, CourseLevel.level_id).all()
 
 
-
-
 # ====================== STUDENT ==========================
 def create_registration(user, class_id, name, phone):
     classroom = get_class_by_id(class_id)
     tuition_base = classroom.course_level.tuition
     reg = db.session.query(Registration).filter(Registration.class_id == class_id,
-                                                        Registration.student_id == user.id,
-                                                         Registration.active == True).first()
+                                                Registration.student_id == user.id,
+                                                Registration.active == True).first()
 
     if not reg:
-        reg = Registration(student_id=user.id, class_id=class_id, actual_tuition= tuition_base)
+        reg = Registration(student_id=user.id, class_id=class_id, actual_tuition=tuition_base)
         db.session.add(reg)
 
     user.name = name
@@ -127,18 +134,31 @@ def create_transaction(money, method, regis_id, **kwargs):
     return transact
 
 
-def process_payment(transaction, status_tuition):
-    result_pay = True
-    try:
+# def process_payment(transaction, status_tuition):
+#     result_pay = True
+#     try:
+#         transaction.status = StatusPayment.SUCCESS
+#         reg = transaction.registration
+#         reg.paid += transaction.money
+#         reg.status = status_tuition
+#         db.session.commit()
+#         return result_pay
+#     except Exception as e:
+#         db.session.rollback()
+#         return False
+
+def process_payment(transaction, result_payment, status_fee):
+    if result_payment:
         transaction.status = StatusPayment.SUCCESS
-        reg = transaction.registration
-        reg.paid += transaction.money
-        reg.status = status_tuition
+        transaction.registration.paid += transaction.money
+        transaction.registration.status = status_fee
         db.session.commit()
-        return result_pay
-    except Exception as e:
-        db.session.rollback()
+        return True
+    else:
+        transaction.status = StatusPayment.FAILED
+        db.session.commit()
         return False
+
 
 def register_and_pay(user, class_id, amount, method, payment_percent, name, phone):
     classroom = get_class_by_id(class_id)
@@ -150,7 +170,7 @@ def register_and_pay(user, class_id, amount, method, payment_percent, name, phon
     else:
         expected_money = tuition_base
         status = StatusTuition.PAID
-    #kt
+    # kt
     if amount != expected_money:
         return False
 
@@ -160,9 +180,11 @@ def register_and_pay(user, class_id, amount, method, payment_percent, name, phon
         method=method,
         regis_id=reg.id
     )
-    return process_payment(transact, status)
+    result_payment = True
+    return process_payment(transact, result_payment, status)
 
-def register_and_pay_by_cashier(regis_id, amount, content, method, created_date, employee_id):
+
+def register_and_pay_by_cashier(regis_id, amount, content, method, employee_id):
     regis = Registration.query.get(regis_id)
     if not regis:
         return False, "Không tìm thấy đăng ký"
@@ -177,7 +199,6 @@ def register_and_pay_by_cashier(regis_id, amount, content, method, created_date,
         method=payment_method,
         regis_id=regis.id,
         content=content,
-        joined_date=created_date,
         status=StatusPayment.PENDING,
         employee_id=employee_id
     )
@@ -191,7 +212,7 @@ def register_and_pay_by_cashier(regis_id, amount, content, method, created_date,
         else StatusTuition.PARTIAL
     )
 
-    success = process_payment(transact, status)
+    success = process_payment(transact,True, status)
     return success, "Thanh toán thành công" if success else "Thanh toán thất bại"
 
 
@@ -255,6 +276,7 @@ def get_tuition_by_class_id(class_id):
     )
     return float(row[0]) if row else 0
 
+
 def get_classes_by_student_id(student_id):
     results = db.session.query(
         Course.name.label('course_name'),
@@ -270,26 +292,33 @@ def get_classes_by_student_id(student_id):
         .filter(Registration.student_id == student_id).all()
     return results
 
+
 # ==================== TEACHER ====================
 def get_emloyee_by_user_id(user_id):
     return EmployeeInfo.query.filter_by(u_id=user_id).first()
+
 
 def get_teacher_classes(employee_id):
     if not employee_id:
         return []
     return Classroom.query.filter_by(employee_id=employee_id).all()
 
+
 def get_active_grade_categories():
     return GradeCategory.query.filter_by(active=1).all()
+
 
 def get_sessions_by_class(class_id):
     return Session.query.filter_by(class_id=class_id).all()
 
+
 def get_classroom_by_teacher(class_id, employee_id):
     return Classroom.query.filter_by(id=class_id, employee_id=employee_id).first()
 
+
 def get_regs_by_class(class_id):
     return Registration.query.filter_by(class_id=class_id).all()
+
 
 def get_score_by_registration(reg_id, cate_id):
     return Score.query.filter_by(regis_id=reg_id, grade_cate_id=cate_id).first()
@@ -318,6 +347,7 @@ def update_final_score(reg_id):
             reg.final_score = round(final_score, 2)
             reg.academic_status = "PASSED" if final_score >= 5 else "FAILED"
             db.session.commit()
+
 
 def save_present(session_id, student_status):
     print(f"--- Đang nhận: Session={session_id}, Data={student_status} ---")  # Dòng này để debug
@@ -351,6 +381,7 @@ def save_present(session_id, student_status):
         db.session.rollback()
         return False
 
+
 ######### ADMIN ##############
 
 def stats_revenue_per_month_by_year(year=None):
@@ -358,9 +389,9 @@ def stats_revenue_per_month_by_year(year=None):
         func.sum(Transaction.money),
         extract('month', Transaction.joined_date)
     ).
-        filter(extract('year', Transaction.joined_date) == year).
-        group_by(extract('month', Transaction.joined_date))).
-        order_by(extract('month', Transaction.joined_date)))
+              filter(extract('year', Transaction.joined_date) == year).
+              group_by(extract('month', Transaction.joined_date))).
+             order_by(extract('month', Transaction.joined_date)))
     return query.all()
 
 
@@ -403,10 +434,10 @@ def stats_numbers_of_students_per_course_by_year(year=None):
         func.count(Registration.student_id),
         Course.name
     ).
-        join(Classroom, Course.id == Classroom.course_id).
-        join(Registration, Registration.class_id == Classroom.id).
-        filter(extract('year', Classroom.start_time) == year).
-        group_by(Course.id).all())
+             join(Classroom, Course.id == Classroom.course_id).
+             join(Registration, Registration.class_id == Classroom.id).
+             filter(extract('year', Classroom.start_time) == year).
+             group_by(Course.id).all())
     return query
 
 
@@ -429,27 +460,33 @@ def count_courses(year=None):
 def count_students(year=None):
     query = db.session.query(func.count(UserAccount.id))
     query = query.filter(UserAccount.role == UserRole.STUDENT, extract('year', UserAccount.joined_date) == year)
-    return query.join(StudentInfo, StudentInfo.u_id == UserAccount.id).join(Registration, StudentInfo.id == Registration.student_id).scalar()
+    return query.join(StudentInfo, StudentInfo.u_id == UserAccount.id).join(Registration,
+                                                                            StudentInfo.id == Registration.student_id).scalar()
+
 
 def count_active_classes(year=None):
     return Classroom.query.filter(extract('year', Classroom.joined_date) == year, Classroom.active == 1).count()
 
+
 def count_total_revenue(year=None):
-    return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.joined_date) == year, Transaction.status==StatusPayment.SUCCESS).scalar()
+    return db.session.query(func.sum(Transaction.money)).filter(extract('year', Transaction.joined_date) == year,
+                                                                Transaction.status == StatusPayment.SUCCESS).scalar()
+
 
 def stats_top3_popular_courses_by_year(year=None):
     return (db.session.query(
-            Course.name,
-            func.count(Registration.id)
-        )
-        .join(Classroom, Classroom.course_id == Course.id)
-        .join(Registration, Registration.class_id == Classroom.id)
-        .filter(extract('year', Classroom.start_time) == year)
-        .group_by(Course.id)
-        .order_by(func.count(Registration.id).desc())
-        .limit(3)
-        .all()
+        Course.name,
+        func.count(Registration.id)
     )
+            .join(Classroom, Classroom.course_id == Course.id)
+            .join(Registration, Registration.class_id == Classroom.id)
+            .filter(extract('year', Classroom.start_time) == year)
+            .group_by(Course.id)
+            .order_by(func.count(Registration.id).desc())
+            .limit(3)
+            .all()
+            )
+
 
 def get_top3_courses_chart_data(year):
     top3_data = stats_top3_popular_courses_by_year(year)
@@ -461,6 +498,7 @@ def get_top3_courses_chart_data(year):
         "labels": [name for name, count in top3_data],
         "data": [count for name, count in top3_data]
     }
+
 
 def get_details_top3_courses(year=None):
     year = year if year else datetime.now().year
@@ -485,6 +523,7 @@ def update_course_level_tuition(course_id, level_id, new_fee):
         config.tuition = float(new_fee)
         db.session.add(config)
 
+
 ######### CASHIER #############
 def get_unpaid_registrations(kw=None):
     query = Registration.query.filter(
@@ -502,6 +541,7 @@ def get_unpaid_registrations(kw=None):
 
     return query.all()
 
+
 def delete_registration(reg_id):
     reg = Registration.query.get(reg_id)
     if reg:
@@ -512,6 +552,7 @@ def delete_registration(reg_id):
         db.session.commit()
         return True
     return False
+
 
 def revert_payment(registration, money_to_revert):
     if not registration:
@@ -527,9 +568,11 @@ def revert_payment(registration, money_to_revert):
         registration.status = StatusTuition.PARTIAL
     db.session.add(registration)
 
+
 ### Cashier thêm
 def load_students():
     return UserAccount.query.filter(UserAccount.role == UserRole.STUDENT).all()
+
 
 def create_manual_invoice(student_id, class_id, amount, method, content, employee_id):
     classroom = Classroom.query.get(class_id)
@@ -552,9 +595,7 @@ def create_manual_invoice(student_id, class_id, amount, method, content, employe
     new_reg = Registration(
         student_id=student_info.id,
         class_id=class_id,
-        actual_tuition=tuition,
-        paid=0,
-        status=StatusTuition.PENDING
+        actual_tuition=tuition
     )
     db.session.add(new_reg)
     db.session.flush()
@@ -565,9 +606,9 @@ def create_manual_invoice(student_id, class_id, amount, method, content, employe
         amount=amount,
         content=content,
         method=method,
-        created_date=datetime.now(),
         employee_id=employee_id
     )
+
 
 if __name__ == "__main__":
     with app.app_context():

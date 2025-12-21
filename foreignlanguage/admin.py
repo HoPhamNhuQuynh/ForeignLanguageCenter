@@ -270,7 +270,6 @@ class CreateInvoiceView(CashierView):
                 amount=int(amount),
                 content=content,
                 method=method,
-                created_date=datetime.now(),
                 employee_id=current_user.id
             )
 

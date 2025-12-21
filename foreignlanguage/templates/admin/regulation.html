@@ -12,18 +12,7 @@
             <i class="fa fa-arrow-left me-1"></i> Quay lại
         </a>
     </div>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
-        <i class="fa fa-info-circle me-2"></i> {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-
+    
     <form method="POST">
         <div class="card shadow-lg border-0 rounded-3 overflow-hidden">
             <div class="card-body p-0">
