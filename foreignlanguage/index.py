@@ -1,3 +1,4 @@
+import hashlib
 import random
 
 from cloudinary import uploader
@@ -225,21 +226,24 @@ def add_registration():
 
 @app.route("/user-profile", methods=["GET", "POST"])
 def user_profile():
-        if request.method.__eq__("POST"):
-            name = request.form.get("name")
-            email = request.form.get("email")
-            addr = request.form.get("address")
-            phone_num = request.form.get("phone")
-            try:
-                dao.update_user_information_by_uid(current_user.id, name, email, addr, phone_num)
-                flash("Cập nhật thông tin thành công!", "success")
-            except:
-                db.session.rollback()
-                flash("Cập nhật thất bại!", "danger")
+    student = dao.get_info_of_current_user_by_uid(current_user.id)
+    valid_classes = dao.get_classes_by_student_id(student.id)
 
-            return redirect(url_for('user_profile'))
+    if request.method.__eq__("POST"):
+        name = request.form.get("name")
+        email = request.form.get("email")
+        addr = request.form.get("address")
+        phone_num = request.form.get("phone")
+        try:
+            dao.update_user_information_by_uid(current_user.id, name, email, addr, phone_num)
+            flash("Cập nhật thông tin thành công!", "success")
+        except:
+            db.session.rollback()
+            flash("Cập nhật thất bại!", "danger")
 
-        return render_template("student.html")
+        return redirect(url_for('user_profile'))
+
+    return render_template("student.html", valid_classes=valid_classes)
 
 @app.route("/api/student/avatar", methods=["PATCH"])
 def update_avatar():
@@ -255,23 +259,28 @@ def update_avatar():
     except Exception as ex:
         return jsonify({"err_msg": "Upload hình ảnh thất bại"})
 
-@app.route("/api/classrooms", methods=["GET"])
-def get_classrooms():
-    student = dao.get_info_of_current_user_by_uid(current_user.id)
-    valid_classes = dao.get_classes_by_student_id(student.id)
-    if valid_classes:
-        clases = []
-        for c in valid_classes:
-            clases.append({
-                'course_name': c.course_name,
-                'level_name': c.level_name,
-                'class_id': c.MaLop,
-                'start_time': str(c.start_time), # DateTime phải ép kiểu sang String
-                'teacher_name': c.teacher_name
-            })
-        return jsonify(clases)
-    return jsonify({"msg": "Bạn chưa đăng ký khóa học nào!"})
-
+@app.route('/change-password', methods=['GET', 'POST'])
+def change_password():
+    err_msg = None
+    success_msg = None
+    if request.method == "POST":
+        current_password = request.form.get("current_password")
+        current_password_hash = hashlib.md5(current_password.encode("utf-8")).hexdigest()
+        if current_password_hash.__eq__(current_user.password):
+            new_password = request.form.get("new_password")
+            confirm_password = request.form.get("confirm_password")
+            if new_password == confirm_password:
+                try:
+                    dao.update_user_password(new_password, current_user.id)
+                    success_msg = "Cập nhật mật khẩu thành công!"
+                except:
+                    db.session.rollback()
+                    err_msg = "Đã có lỗi xảy ra! Vui lòng thực hiện lại sau."
+            else:
+                err_msg = "Xác nhận mật khẩu mới không chính xác!"
+        else:
+            err_msg = "Mật khẩu hiện tại không đúng!"
+    return render_template("change_pass.html", err_msg=err_msg, success_msg=success_msg)
 
 @login.user_loader
 def load_user(user_id):

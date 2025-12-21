@@ -6,34 +6,38 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "admin@ou.edu.vn",
     "role": "ADMIN",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766289829/manager_4395949_mgkwvu.png"
   },
   {
     "id": 2,
-    "name": "Nguyễn Văn GV1",
+    "name": "Nguyễn Văn A",
     "username": "gv1",
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "gv1@ou.edu.vn",
     "role": "TEACHER",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1764836817/tye-doring-yT71caKUv9U-unsplash_tisei4.jpg"
   },
   {
     "id": 3,
-    "name": "Trần Thị GV2",
+    "name": "Trần Thị B",
     "username": "gv2",
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "gv2@ou.edu.vn",
     "role": "TEACHER",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1764836813/christina-wocintechchat-com-0Zx1bDv5BNY-unsplash_ptpyqu.jpg"
   },
   {
     "id": 4,
-    "name": "Lê Văn GV3",
+    "name": "Bùi Thị C",
     "username": "gv3",
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "gv3@ou.edu.vn",
     "role": "TEACHER",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1764836812/amy-hirschi-b3AYk8HKCl0-unsplash_qqjqhc.jpg"
   },
   {
     "id": 5,
@@ -42,7 +46,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "tn1@ou.edu.vn",
     "role": "CASHIER",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766289989/cashier_12088049_lxyl6s.png"
   },
   {
     "id": 6,
@@ -51,7 +56,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "tn2@ou.edu.vn",
     "role": "CASHIER",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766289989/cashier_12088049_lxyl6s.png"
   },
   {
     "id": 7,
@@ -60,7 +66,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv1@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 8,
@@ -69,7 +76,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv2@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 9,
@@ -78,7 +86,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv3@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 10,
@@ -87,7 +96,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv4@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 11,
@@ -96,7 +106,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv5@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 12,
@@ -105,7 +116,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv6@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 13,
@@ -114,7 +126,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv7@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 14,
@@ -123,7 +136,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv8@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 15,
@@ -132,7 +146,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv9@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 16,
@@ -141,7 +156,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv10@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 17,
@@ -150,7 +166,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv11@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 18,
@@ -159,7 +176,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv12@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 19,
@@ -168,7 +186,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv13@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 20,
@@ -177,7 +196,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv14@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 21,
@@ -186,7 +206,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv15@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 22,
@@ -195,7 +216,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv16@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 23,
@@ -204,7 +226,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv17@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 24,
@@ -213,7 +236,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv18@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 25,
@@ -222,7 +246,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv19@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 26,
@@ -231,7 +256,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv20@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 27,
@@ -240,7 +266,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv21@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 28,
@@ -249,7 +276,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv22@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 29,
@@ -258,7 +286,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv23@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 30,
@@ -267,7 +296,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv24@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 31,
@@ -276,7 +306,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv25@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 32,
@@ -285,7 +316,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv26@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 33,
@@ -294,7 +326,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv27@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 34,
@@ -303,7 +336,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv28@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 35,
@@ -312,7 +346,8 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv29@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   },
   {
     "id": 36,
@@ -321,6 +356,7 @@
     "password": "202cb962ac59075b964b07152d234b70",
     "email": "hv30@mail.com",
     "role": "STUDENT",
-    "active": true
+    "active": true,
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1766290194/student_4297861_lyjelp.png"
   }
 ]

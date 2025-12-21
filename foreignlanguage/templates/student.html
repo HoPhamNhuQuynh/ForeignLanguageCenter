@@ -89,7 +89,7 @@
                     <h6 class="fw-bold text-dark"><i class="fas fa-cog me-2 text-primary"></i>Cài đặt tài khoản</h6>
                 </div>
                 <div class="list-group list-group-flush p-2">
-                    <a href="#" class="list-group-item list-group-item-action border-0 rounded-3 p-3 d-flex align-items-center mb-1">
+                    <a href="/change-password" class="list-group-item list-group-item-action border-0 rounded-3 p-3 d-flex align-items-center mb-1">
                         <div class="text-warning rounded-3 me-3">
                             <i class="fas fa-lock"></i>
                         </div>
@@ -119,66 +119,27 @@
         <div class="col-lg-7 col-xl-8">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="fw-bold text-dark m-0">Khóa học của tôi</h4>
-                <span class="badge bg-primary rounded-pill px-3 py-2">2 Đang học</span>
             </div>
-
+            {% for c in valid_classes %}
             <div class="card border-0 shadow-sm rounded-4 mb-3 overflow-hidden course-hover">
                 <div class="row g-0">
                     <div class="col-md-4 position-relative">
                         <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545950/teamwork.avif" class="w-100 h-100 object-fit-cover" alt="Course img" style="min-height: 180px;">
-                        <span class="badge bg-success position-absolute top-0 start-0 m-3 shadow-sm">Đang học</span>
+                        <span class="badge bg-success position-absolute top-0 start-0 m-3 shadow-sm">Đã đăng ký</span>
                     </div>
                     <div class="col-md-8">
                         <div class="card-body p-4 h-100 d-flex flex-column">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title fw-bold text-dark mb-0">Tiếng Anh Giao tiếp (Beginner)</h5>
+                                <h5 class="card-title fw-bold text-dark mb-0">{{ c.course_name }} ({{ c.level_name }})</h5>
                             </div>
-                            <p class="text-muted small mb-3"><i class="fas fa-chalkboard-teacher me-2"></i>Mr. David</p>
-
-                            <div class="mt-auto">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <small class="fw-bold text-primary">Tiến độ: 33%</small>
-                                    <small class="text-muted">8/24 bài</small>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 33%"></div>
-                                </div>
-                                <div class="d-flex justify-content-end mt-3">
-                                    <a href="#" class="btn btn-outline-primary btn-sm fw-bold rounded-pill px-4">Xem chi tiết</a>
-                                </div>
-                            </div>
+                            <p class="text-muted small mb-3"><i class="fas fa-chalkboard-teacher me-2"></i>Giáo viên: {{ c.teacher_name }}</p>
+                            <p class="text-muted small mb-3"><i class="fas fa-id-badge me-2"></i>Mã lớp: {{ c.class_id }}</p>
+                            <p class="text-muted small mb-3"><i class="fas fa-clock me-2"></i>Thời gian dự kiến bắt đầu: {{ c.start_time.strftime('%d-%m-%Y') }}</p>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="card border-0 shadow-sm rounded-4 mb-3 overflow-hidden course-hover">
-                <div class="row g-0">
-                    <div class="col-md-4 position-relative">
-                        <img src="https://res.cloudinary.com/desvczltb/image/upload/v1763545858/learnEnglish.webp" class="w-100 h-100 object-fit-cover" alt="Course img" style="min-height: 180px;">
-                        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-3 shadow-sm">Sắp hết hạn</span>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body p-4 h-100 d-flex flex-column">
-                            <h5 class="card-title fw-bold text-dark mb-2">Luyện thi TOEIC 500+</h5>
-                            <p class="text-muted small mb-3"><i class="fas fa-chalkboard-teacher me-2"></i>Ms. Sarah</p>
-
-                            <div class="mt-auto">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <small class="fw-bold text-success">Tiến độ: 75%</small>
-                                    <small class="text-muted">18/24 bài</small>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
-                                </div>
-                                <div class="d-flex justify-content-end mt-3">
-                                    <a href="#" class="btn btn-primary btn-sm fw-bold rounded-pill px-4 shadow-sm">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
