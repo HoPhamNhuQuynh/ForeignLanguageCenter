@@ -133,20 +133,6 @@ def create_transaction(money, method, regis_id, **kwargs):
     db.session.flush()
     return transact
 
-
-# def process_payment(transaction, status_tuition):
-#     result_pay = True
-#     try:
-#         transaction.status = StatusPayment.SUCCESS
-#         reg = transaction.registration
-#         reg.paid += transaction.money
-#         reg.status = status_tuition
-#         db.session.commit()
-#         return result_pay
-#     except Exception as e:
-#         db.session.rollback()
-#         return False
-
 def process_payment(transaction, result_payment, status_fee):
     if result_payment:
         transaction.status = StatusPayment.SUCCESS
@@ -249,7 +235,25 @@ def get_classes_by_course_level(c_id, l_id, student_id):
         valid_classes_query = classes_query.filter(
             not_(Classroom.id.in_(registered_class_ids))
         )
+
+    valid_classes_query = classes_query
+
+    # 2. Logic lọc lớp (Chỉ chạy nếu có student_id)
+    if student_id:
+        registered_class_ids = [
+            r.class_id
+            for r in Registration.query.filter_by(
+                student_id=student_id
+            ).all()
+        ]
+
+        if registered_class_ids:
+            valid_classes_query = classes_query.filter(
+                not_(Classroom.id.in_(registered_class_ids))
+            )
+
     return valid_classes_query.all()
+
 
 
 def get_payment_methods():
@@ -546,9 +550,11 @@ def delete_registration(reg_id):
     reg = Registration.query.get(reg_id)
     if reg:
         for trans in reg.transactions:
-            db.session.delete(trans)
+            trans.status = StatusPayment.FAILED
 
-        db.session.delete(reg)
+        reg.status = StatusTuition.FAILED
+        reg.academic_status = AcademicStatus.FAILED
+        reg.active = False
         db.session.commit()
         return True
     return False
@@ -563,8 +569,7 @@ def revert_payment(registration, money_to_revert):
     if registration.paid == 0:
         delete_registration(registration.id)
         return
-    debt = registration.actual_tuition - registration.paid
-    if debt == registration.paid:
+    if (registration.actual_tuition/2).__eq__(registration.paid):
         registration.status = StatusTuition.PARTIAL
     db.session.add(registration)
 
@@ -586,7 +591,6 @@ def create_manual_invoice(student_id, class_id, amount, method, content, employe
     ).first()
     if exist_reg:
         return False, "Học viên đã đăng ký lớp này rồi!"
-
     student_info = StudentInfo.query.filter_by(u_id=student_id).first()
     if not student_info:
         return False, "Không tìm thấy thông tin học viên"

@@ -33,7 +33,7 @@
         </div>
         <div class="col-4 text-right">
             <h4 class="text-muted">#{{ trans.id }}</h4>
-            <small>Ngày: {{ trans.date.strftime('%d/%m/%Y %H:%M') }}</small>
+            <small>Ngày: {{ trans.joined_date.strftime('%d/%m/%Y %H:%M') }}</small>
         </div>
     </div>
 
@@ -85,7 +85,15 @@
         </div>
         <div class="col-6 text-center">
             <p><strong>Người thu tiền</strong></p>
-            <p>{{ trans.employee.account.name }}</p> </div>
+            <p>
+                {% if trans.employee %}
+                    {{ trans.employee.account.name }}
+                {% else %}
+                    Hệ thống (Online)
+                {% endif %}
+            </p>
+
+        </div>
     </div>
 
     <div class="text-center mt-5 no-print">

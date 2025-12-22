@@ -11,11 +11,11 @@ from flask_sqlalchemy.session import Session
 from collections import defaultdict
 from markupsafe import Markup
 
-from foreignlanguage import app, db, login
+from foreignlanguage import app, db, login, email_service
 from foreignlanguage.models import (
     Registration, StudentInfo, Course, Classroom, EmployeeInfo,
     Transaction, UserRole, Score,
-    Session, GradeCategory, AcademicStatus
+    Session, GradeCategory, AcademicStatus, StatusPayment
 )
 import dao
 
@@ -165,7 +165,6 @@ class RegulationView(AdminBaseView):
         if request.method == 'POST':
             try:
                 for item in course_levels:
-                    # Tạo key định danh dạng: tuition_1_2 (course=1, level=2)
                     input_name = f'tuition_{item.course_id}_{item.level_id}'
                     new_tuition = request.form.get(input_name)
 
@@ -347,13 +346,29 @@ class CreateInvoiceView(CashierView):
                 student_id=student_id,
                 class_id=class_id,
                 amount=amount,
-                method=method,  # STRING → DAO xử lý Enum
+                method=method,
                 content=content,
                 employee_id=current_user.id
             )
-
             if success:
-                flash(f'Tạo hóa đơn thành công! {msg}', 'success')
+                try:
+                    # Lấy thông tin user
+                    user = dao.get_user_by_id(student_id)
+                    # Lấy thông tin lớp
+                    classroom = dao.get_class_by_id(class_id)
+
+                    if user and classroom:
+                        full_class_name = f"{classroom.course_level.course.name} ({classroom.course_level.level.name})"
+
+                        email_service.send_register_success_email(
+                            to_email=user.email,
+                            name=user.name,
+                            class_name=full_class_name
+                        )
+                    flash(f'Tạo hóa đơn thành công! {msg}', 'success')
+                except Exception as e:
+                    print(f"Lỗi gửi mail (Manual): {e}")
+                    flash(f'Tạo hóa đơn thành công nhưng lỗi gửi mail. {msg}', 'warning')
             else:
                 flash(msg, 'danger')
 
@@ -416,11 +431,23 @@ class TransactionAdminView(CashierModelView):
     def on_model_delete(self, model):
         dao.revert_payment(model.registration, model.money)
 
-    def _print_formatter(view, context, model, name):
-        # Tạo URL trỏ đến hàm print_view bên dưới, truyền id của transaction
-        print_url = url_for('.print_view', id=model.id)
+    def delete_model(self, model):
+        try:
+            self.on_model_delete(model)
+            model.status = StatusPayment.FAILED
+            model.content = f"{model.content} [ĐÃ HỦY]"
+            self.session.add(model)
+            self.session.commit()
+            return True
 
-        # Trả về HTML nút bấm (Mở tab mới bằng target="_blank")
+        except Exception as ex:
+            if not self.handle_view_exception(ex):
+                flash(f'Lỗi khi hủy giao dịch: {str(ex)}', 'danger')
+            self.session.rollback()
+            return False
+
+    def _print_formatter(view, context, model, name):
+        print_url = url_for('.print_view', id=model.id)
         return Markup(f'''
             <a href="{print_url}" target="_blank" class="btn btn-info btn-sm" title="In hóa đơn">
                 <i class="fa fa-print"></i> In

@@ -2,7 +2,6 @@
 
 {% block body %}
 
-
 <div class="container py-5" style="max-width: 900px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -12,8 +11,8 @@
             <i class="fa fa-arrow-left me-1"></i> Quay lại
         </a>
     </div>
-    
-    <form method="POST">
+
+    <form method="POST" id="regulationForm">
         <div class="card shadow-lg border-0 rounded-3 overflow-hidden">
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -40,20 +39,22 @@
                             </td>
 
                             <td>
-                                        <span class="badge rounded-pill bg-info bg-opacity-10 text-info border border-info px-3 py-2 text-danger">
-                                            {{ item.level.name }}
-                                        </span>
+                                <span class="badge rounded-pill bg-info bg-opacity-10 text-info border border-info px-3 py-2 text-danger">
+                                    {{ item.level.name }}
+                                </span>
                             </td>
 
                             <td class="pe-4">
                                 <div class="input-group">
                                     <input type="number"
-                                           class="form-control text-end fw-bold text-dark border-end-0"
-
+                                           class="form-control text-end fw-bold text-dark border-end-0 tuition-input"
                                            name="tuition_{{ item.course_id }}_{{ item.level_id }}"
 
                                            value="{{ '{:.0f}'.format(item.tuition) }}"
-                                           min="0" step="1000"
+                                           data-original="{{ '{:.0f}'.format(item.tuition) }}"
+
+                                           min="1000" step="1000"
+                                           required
                                            placeholder="0">
                                     <span class="input-group-text bg-white text-muted small fw-bold border-start-0">₫</span>
                                 </div>
@@ -75,7 +76,7 @@
 
             <div class="card-footer bg-light p-3 border-top-0">
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="/admin" class="btn btn-white border shadow-sm px-4">Hủy bỏ</a>
+                    <a href="/admin" class="btn btn-white border shadow-sm px-4 mr-3">Hủy bỏ</a>
                     <button type="submit" class="btn btn-orange px-4 fw-bold shadow-sm">
                         <i class="fa fa-save me-2"></i> LƯU THAY ĐỔI
                     </button>
@@ -84,4 +85,43 @@
         </div>
     </form>
 </div>
+
+<script>
+    document.getElementById('regulationForm').addEventListener('submit', function(e) {
+        const inputs = document.querySelectorAll('.tuition-input');
+        let hasChange = false;
+        let hasError = false;
+
+        inputs.forEach(input => {
+            const currentVal = parseFloat(input.value);
+            const originalVal = parseFloat(input.getAttribute('data-original'));
+
+            // 1. Kiểm tra số <= 0
+            if (!currentVal || currentVal <= 0) {
+                hasError = true;
+                input.classList.add('is-invalid'); // Bôi đỏ ô lỗi
+            } else {
+                input.classList.remove('is-invalid');
+            }
+
+            // 2. Kiểm tra có thay đổi không
+            if (currentVal !== originalVal) {
+                hasChange = true;
+            }
+        });
+
+        if (hasError) {
+            e.preventDefault();
+            alert("Vui lòng nhập học phí hợp lệ (lớn hơn 0)!");
+            return;
+        }
+
+        if (!hasChange) {
+            e.preventDefault();
+            alert("Bạn chưa thay đổi mức học phí nào cả!");
+            return;
+        }
+    });
+</script>
+
 {% endblock %}
