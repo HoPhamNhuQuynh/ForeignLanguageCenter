@@ -69,7 +69,6 @@ class EmployeeInfo(Base):
     __tablename__ = "employee_info"
     base_salary = Column(Float, default=0.0)
     u_id = Column(Integer, ForeignKey('user_account.id'), unique=True)
-    certifications = relationship('Certification', backref='employee', lazy='subquery')
     classrooms = relationship('Classroom', backref='employee', lazy=True)
     transactions = relationship('Transaction', backref='employee', lazy=True)
 
@@ -128,14 +127,6 @@ class GradeCategory(Base):  # main model
     name = Column(String(50))
     weight = Column(Float, default=0.0)
     scores = relationship('Score', backref='grade_category', lazy=True)
-
-
-class Certification(Base):
-    __tablename__ = "certification"
-    name = Column(String(50), nullable=False)
-    band_score = Column(Float, nullable=False)
-    provided_date = Column(DateTime, nullable=False)
-    employee_id = Column(Integer, ForeignKey('employee_info.id'), nullable=False)
 
 
 class Registration(Base):
@@ -273,17 +264,6 @@ def seed_data():
     db.session.commit()
     print("Da import xong dot 1 (User, Course, Level, GradeCategory, CourseLevel)")
 
-    # 6. Certification
-    try:
-        with open("data/certificate.json", encoding="utf-8") as f:
-            data = json.load(f)
-            for p in data:
-                if 'provided_date' in p: p['provided_date'] = to_date(p['provided_date'])
-                if 'joined_date' in p: p['joined_date'] = to_date(p['joined_date'])
-                if not Certification.query.filter_by(id=p.get('id')).first():
-                    db.session.add(Certification(**p))
-    except FileNotFoundError:
-        print("Loi trong khi import file data/certificate.json")
 
     # 7. Classroom
     try:
@@ -297,7 +277,7 @@ def seed_data():
         print("Loi trong khi import file data/class_room.json")
 
     db.session.commit()
-    print("Da import xong dot 2 (Certification, Classroom)")
+    print("Da import xong dot 2 (Classroom)")
 
     # 8. Registration
     try:
