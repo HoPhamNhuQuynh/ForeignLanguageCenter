@@ -2,16 +2,11 @@ import math
 from sqlalchemy import or_, extract, func, not_
 from sqlalchemy.orm import joinedload
 from datetime import datetime
-
-from sqlalchemy.sql.operators import isnot
-from sqlalchemy.testing.pickleable import User
-
 from foreignlanguage.models import (StudentInfo, UserAccount, Course, Transaction, Registration, StatusTuition, Level,
                                     Classroom, EmployeeInfo, MethodEnum, StatusPayment, CourseLevel, Session, Present,
                                     UserRole, AcademicStatus, Score, GradeCategory)
 from foreignlanguage import app, db
 import hashlib
-from flask_login import current_user
 
 
 # ==================== AUTH & USER ====================
@@ -102,6 +97,12 @@ def get_all_course_levels():
         joinedload(CourseLevel.course),
         joinedload(CourseLevel.level)
     ).order_by(CourseLevel.course_id, CourseLevel.level_id).all()
+
+def get_tuition_by_course_level(c_id, l_id):
+    return CourseLevel.query.filter(CourseLevel.course_id == c_id, CourseLevel.level_id == l_id).first()
+
+def get_levels_by_course(course_id):
+    return db.session.query(Level).join(CourseLevel, CourseLevel.level_id == Level.id).filter(CourseLevel.course_id == course_id).all()
 
 
 # ====================== STUDENT ==========================
