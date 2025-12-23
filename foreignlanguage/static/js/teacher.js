@@ -134,9 +134,48 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.score-input').forEach(input => {
+
+        loadScoreDraft();
+
+        // Lắng nghe tất cả các ô nhập điểm
+        const scoreInputs = document.querySelectorAll('input[name^="score_"]');
+        scoreInputs.forEach(input => {
+            // Giữ nguyên sự kiện blur cũ của bạn
             input.addEventListener('blur', updateDTB);
+
+            input.addEventListener('input', function() {
+                saveScoreDraft(this);
+                updateDTB.call(this);
+            });
         });
+
+        if (document.querySelector('.alert-success')) {
+            clearScoreDraft();
+        }
     });
 
-});
+    function saveScoreDraft(inputElement) {
+        const val = inputElement.value;
+        let draft = JSON.parse(localStorage.getItem('teacher_score_draft')) || {};
+        draft[inputElement.name] = val;
+        localStorage.setItem('teacher_score_draft', JSON.stringify(draft));
+    }
+
+    // 2. Hàm khôi phục dữ liệu khi trang web load lại
+    function loadScoreDraft() {
+        let draft = JSON.parse(localStorage.getItem('teacher_score_draft'));
+        if (!draft) return;
+
+        Object.keys(draft).forEach(scoreId => {
+            let input = document.querySelector(`input[name="${scoreId}"]`);
+            if (input) {
+                input.value = draft[scoreId];
+                updateDTB.call(input);
+            }
+        });
+    }
+
+    function clearScoreDraft() {
+        localStorage.removeItem('teacher_score_draft');
+    }
+

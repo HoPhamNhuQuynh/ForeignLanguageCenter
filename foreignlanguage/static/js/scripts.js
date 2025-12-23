@@ -41,4 +41,20 @@
             });
     }
 
+    function getTuitionBase(course_id, level_id){
+        if (!course_id || !level_id)
+            return;
+
+
+        document.getElementById('tuition_base').innerText = '---'
+        console.log(course_id)
+        console.log(level_id)
+
+        fetch(`/api/tuition-base?course_id=${course_id}&level_id=${level_id}`,{
+            method: 'GET'
+        }).then(res=>res.json()).then(data=>{
+            document.getElementById('tuition_base').innerText = data.tuition.toLocaleString() + ' VND'
+        })
+    }
+
 
