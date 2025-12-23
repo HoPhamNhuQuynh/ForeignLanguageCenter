@@ -192,13 +192,11 @@ def register_and_pay_by_cashier(regis_id, amount, content, method, employee_id):
     db.session.add(transact)
     db.session.flush()
 
-    # xác định trạng thái học phí
     status = (
         StatusTuition.PAID
         if regis.paid + amount >= regis.actual_tuition
         else StatusTuition.PARTIAL
     )
-
     success = process_payment(transact,True, status)
     return success, "Thanh toán thành công" if success else "Thanh toán thất bại"
 
@@ -527,6 +525,7 @@ def update_course_level_tuition(course_id, level_id, new_fee):
     if config:
         config.tuition = float(new_fee)
         db.session.add(config)
+        db.session.commit()
 
 
 ######### CASHIER #############

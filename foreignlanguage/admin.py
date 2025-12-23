@@ -34,8 +34,6 @@ class AuthenticationBaseView(BaseView):
     def is_accessible(self) -> bool:
         return current_user.is_authenticated and current_user.role == self.required_role
 
-
-########### Khôi lỡ làm kiểu kế thừa roi ##############
 # --- Dành cho ADMIN ---
 class AdminView(AuthenticationView):
     def __init__(self, *args, **kwargs):
@@ -58,14 +56,13 @@ class CashierView(AuthenticationBaseView):
         super().__init__(role=UserRole.CASHIER, *args, **kwargs)
 
 
-# --- Dành cho TEACHER (Giáo viên) ---
+# --- Dành cho TEACHER ---
 class TeacherView(AuthenticationBaseView):
     def __init__(self, *args, **kwargs):
         super().__init__(role=UserRole.TEACHER, *args, **kwargs)
 
 
 # 2. CÁC VIEW CHỨC NĂNG
-
 # --- View Logout ---
 class MyLogoutView(BaseView):
     @expose('/')
@@ -158,7 +155,6 @@ class RegulationView(AdminBaseView):
     @expose('/', methods=['GET', 'POST'])
     def index(self):
         course_levels = dao.get_all_course_levels()
-
         if request.method == 'POST':
             try:
                 for item in course_levels:
@@ -166,10 +162,7 @@ class RegulationView(AdminBaseView):
                     new_tuition = request.form.get(input_name)
 
                     if new_tuition and float(new_tuition) != item.tuition:
-                        # Truyền cả 2 ID vào DAO
                         dao.update_course_level_tuition(item.course_id, item.level_id, new_tuition)
-
-                dao.db.session.commit()
                 flash('Đã cập nhật bảng giá học phí thành công!', 'success')
                 return redirect(url_for('regulation.index'))
 
