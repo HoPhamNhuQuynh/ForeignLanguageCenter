@@ -323,6 +323,9 @@ def get_classroom_by_teacher(class_id, employee_id):
 def get_regs_by_class(class_id):
     return Registration.query.filter_by(class_id=class_id).all()
 
+def get_present_by_session(session_id):
+    return Present.query.filter_by(session_id=session_id).all()
+
 
 def get_score_by_registration(reg_id, cate_id):
     return Score.query.filter_by(regis_id=reg_id, grade_cate_id=cate_id).first()
@@ -354,30 +357,23 @@ def update_final_score(reg_id):
 
 
 def save_present(session_id, student_status):
-    print(f"--- Đang nhận: Session={session_id}, Data={student_status} ---")  # Dòng này để debug
-    if not student_status:
-        print("CẢNH BÁO: student_status đang bị RỖNG!")
-        return False
     try:
         for student_id, status in student_status.items():
-            is_present_val = True if int(status) == 1 else False
+            is_present = True if int(status) == 1 else False
 
-            att = Present.query.get((int(session_id), int(student_id)))
+            present = Present.query.get((int(session_id), int(student_id)))
 
-            if att:
-                att.is_present = is_present_val
+            if present:
+                present.is_present = is_present
             else:
-                db.session.add(
-                    Present(
-                        session_id=int(session_id),
-                        student_id=int(student_id),
-                        is_present=is_present_val
-                    )
+                present = Present(
+                    session_id=int(session_id),
+                    student_id=int(student_id),
+                    is_present=is_present
                 )
+                db.session.add(present)
 
         db.session.commit()
-        check = Present.query.filter_by(session_id=session_id).all()
-        print(f"Dữ liệu trong DB hiện tại của session {session_id}: {[(p.student_id, p.is_present) for p in check]}")
         return True
 
     except Exception as e:

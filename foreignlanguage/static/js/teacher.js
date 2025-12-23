@@ -2,50 +2,103 @@
   document.addEventListener('DOMContentLoaded', () => {
     const classSelect = document.getElementById('classSelect');
     const saveBtn = document.getElementById('saveBtn');
+    const sessionSelect = document.getElementById('sessionSelect');
+    const tbody = document.getElementById('studentBody');
 
+    function checkCompletion() {
+        const radios = document.querySelectorAll('.attendance-check');
+
+        const names = new Set();
+        radios.forEach(r => names.add(r.name));
+        const totalStudents = names.size;
+
+        const checkedCount = document.querySelectorAll('.attendance-check:checked').length;
+
+        if (totalStudents > 0 && checkedCount === totalStudents) {
+            saveBtn.classList.remove('d-none');
+        } else {
+            saveBtn.classList.add('d-none');
+        }
+    }
     if (classSelect){
         classSelect.addEventListener('change', () => {
         const classId = classSelect.value;
         if (!classId) return;
 
+        if (saveBtn) saveBtn.classList.add('d-none');
+
         fetch('/admin/rollcall/api/load-by-class?class_id=' + classId)
             .then(res => res.json())
             .then(data => {
-                // sessions
-                const sessionSelect = document.getElementById('sessionSelect');
-                sessionSelect.innerHTML = '<option value="">-- Chọn buổi học --</option>';
-                data.sessions.forEach(s => {
-                    sessionSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
-                    console.log(data);
-                });
+                if (sessionSelect) {
+                    sessionSelect.innerHTML = '<option value="">-- Chọn buổi học --</option>';
+                    if (data.sessions) {
+                        data.sessions.forEach(s => {
+                        sessionSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                        });
+                    }
+                }
 
-                // students
-                const tbody = document.getElementById('studentBody');
-                tbody.innerHTML = '';
-                data.students.forEach((stu, i) => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${i + 1}</td>
-                            <td>${stu.name}</td>
-                            <td>
-                                <input type="radio" name="student_${stu.id}" value="1"> Có mặt
-                                <input type="radio" name="student_${stu.id}" value="0"> Vắng
-                            </td>
-                        </tr>
-                    `;
-                });
+                if (studentBody) {
+                    studentBody.innerHTML = '';
+                        if (data.students) {
+                            data.students.forEach((stu, i) => {
+                                // QUAN TRỌNG: Đã thêm class "attendance-check" vào input dưới đây
+                                studentBody.innerHTML += `
+                                    <tr>
+                                        <td>${i + 1}</td>
+                                        <td class="text-start ps-4 fw-bold">${stu.name}</td>
+                                        <td>
+                                            <input type="radio" class="attendance-check" name="student_${stu.id}" value="1"> Có mặt
+                                            <input type="radio" class="attendance-check ms-3" name="student_${stu.id}" value="0"> Vắng
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                        }
+                    }
+                })
+                .catch(err => console.error(err));
             });
-    });
     }
 
-    document.addEventListener('change', () => {
-        const radios = document.querySelectorAll('#studentBody input[type="radio"]');
-        const checked = new Set([...radios].filter(r => r.checked).map(r => r.name));
-        saveBtn.classList.toggle('d-none', checked.size * 2 !== radios.length);
-    });
-});
+    if (sessionSelect) {
+        sessionSelect.addEventListener('change', function() {
+            const sessionId = this.value;
+            if (!sessionId) return;
 
-        //enterscore
+            document.querySelectorAll('.attendance-check').forEach(r => r.checked = false);
+            if (saveBtn) saveBtn.classList.add('d-none');
+
+            fetch(`/admin/rollcall/api/get-attendance?session_id=${sessionId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const attendance = data.attendance || {}; // { "1": 1, "2": 0 }
+
+                    document.querySelectorAll('.attendance-check').forEach(radio => {
+                        const studentId = radio.name.replace('student_', '');
+                        const status = attendance[studentId];
+
+                        if (status !== undefined) {
+                            if (radio.value == status) {
+                                radio.checked = true; // Tự động tick
+                            }
+                        }
+                    });
+
+                    checkCompletion();
+                })
+                .catch(err => console.error("Lỗi load điểm danh:", err));
+        });
+    }
+
+    document.addEventListener('change', (e) => {
+        if (e.target.classList.contains('attendance-check')) {
+            checkCompletion();
+        }
+    });
+
+    //enterscore
     function updateDTB() {
         const row = this.closest('tr');
         const inputs = row.querySelectorAll('.score-input');
@@ -80,11 +133,10 @@
         if (hiddenStatus) hiddenStatus.value = dtb >= 5 ? "PASSED" : "FAILED";
     }
 
-
-    // Gắn blur cho tất cả input khi load trang
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.score-input').forEach(input => {
             input.addEventListener('blur', updateDTB);
         });
     });
 
+});
