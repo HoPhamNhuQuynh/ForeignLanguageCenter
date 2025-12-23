@@ -11,8 +11,9 @@ from markupsafe import Markup
 
 from foreignlanguage import app, db, login, email_service
 from foreignlanguage.models import (
-    StudentInfo, Course, Classroom, EmployeeInfo,
-    Transaction, UserRole, Score, AcademicStatus, StatusPayment
+    Registration, StudentInfo, Course, Classroom, EmployeeInfo,
+    Transaction, UserRole, Score, Present,
+    Session, GradeCategory, AcademicStatus, StatusPayment
 )
 from foreignlanguage import dao
 
@@ -490,12 +491,15 @@ class RollcallView(TeacherView):
 
                 sessions = dao.get_sessions_by_class(class_id)
                 regs = dao.get_regs_by_class(class_id)
+                present = dao.get_present_by_session(session_id)
+                attendance_dict = {p.student_id: (1 if p.is_present else 0) for p in present}
 
                 return self.render(
                     'admin/rollcall.html',
                     classes=classes,
                     sessions=sessions,
-                    student=regs
+                    student=regs,
+                    attendance_dict=attendance_dict
                 )
 
             student_status = {}
@@ -549,6 +553,21 @@ class RollcallView(TeacherView):
                 } for stu in students
             ]
         })
+
+    @expose('/api/get-attendance')
+    def get_attendance(self):
+        session_id = request.args.get('session_id')
+        if not session_id:
+            return jsonify({'attendance': {}})
+
+        present = dao.get_present_by_session(session_id)
+
+        result = {}
+        for p in present:
+            result[p.student_id] = 1 if p.is_present else 0
+
+        return jsonify({'attendance': result})
+
 
 
 class EnterScoreView(TeacherView):
@@ -631,6 +650,7 @@ class EnterScoreView(TeacherView):
             print(f"LỖI LƯU ĐIỂM: {str(e)}")
             flash(f"Lỗi hệ thống: {str(e)}", "danger")
         return redirect(request.referrer)
+
 
 ############## XỬ LÝ LOGIN #####################
 
