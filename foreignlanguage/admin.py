@@ -7,17 +7,14 @@ from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
 from flask_login import current_user, login_user, logout_user
-from flask_sqlalchemy.session import Session
-from collections import defaultdict
 from markupsafe import Markup
 
 from foreignlanguage import app, db, login, email_service
 from foreignlanguage.models import (
-    Registration, StudentInfo, Course, Classroom, EmployeeInfo,
-    Transaction, UserRole, Score,
-    Session, GradeCategory, AcademicStatus, StatusPayment
+    StudentInfo, Course, Classroom, EmployeeInfo,
+    Transaction, UserRole, Score, AcademicStatus, StatusPayment
 )
-import dao
+from foreignlanguage import dao
 
 
 class AuthenticationView(ModelView):

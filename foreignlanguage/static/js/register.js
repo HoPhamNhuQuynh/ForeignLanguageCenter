@@ -4,19 +4,16 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 // truyen tham so tu course qua register-course
-    function initRegisterFromCourse(){
-        let c = document.getElementById("courseSelect")
-        let l = document.getElementById("levelSelect")
-        if (!c || !l) return;
+    function initRegisterFromCourse() {
+        const c = document.getElementById("courseSelect");
+        if (!c) return;
 
         const params = new URLSearchParams(window.location.search);
-        let c_id = params.get("course_id")
-        let l_id = params.get("level_id")
+        const c_id = params.get("course_id");
 
-        if (c_id && l_id){
-            c.value = c_id
-            l.value = l_id
-            loadClasses(c_id, l_id)
+        if (c_id) {
+            c.value = c_id;
+            loadLevels(c_id);
         }
     }
 
@@ -34,7 +31,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // gan su kien
     document.getElementById("courseSelect").addEventListener('change', function() {
-        loadClasses(this.value, document.getElementById('levelSelect').value);
+        const courseId = this.value;
+        loadLevels(courseId);
         updateFromSelect();
     });
 
@@ -74,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     function loadClasses(c_id, l_id){
-        if (!c_id || !l_id) return;
+        if (!c_id && !l_id) return;
         fetch(`api/classes?course_id=${c_id}&level_id=${l_id}`, {
             method: 'GET',
             headers: {
@@ -143,11 +141,8 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     function loadInvoice(class_id){
-        fetch(`api/tuition?class_id=${class_id}`, {
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json'
-            }}).then(res=>res.json()).then(data=>{
+        fetch(`api/tuition?class_id=${class_id}`)
+        .then(res=>res.json()).then(data=>{
                 const percentInput = document.querySelector('input[name="payment_percent"]:checked')
                 const percent = percentInput ? percentInput.value : '100';
 
@@ -206,5 +201,31 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.log(data)
             })
         }
+    }
+
+    function loadLevels(course_id) {
+    if (!course_id) return;
+
+    const levelSelect = document.getElementById("levelSelect");
+
+    fetch(`/api/level?course_id=${course_id}`)
+        .then(res => res.json())
+        .then(data => {
+            levelSelect.innerHTML = '<option selected disabled value="">-- Chọn mục tiêu --</option>';
+
+            data.forEach(level => {
+                const option = document.createElement("option");
+                option.value = level.id;
+                option.textContent = level.name;
+                levelSelect.appendChild(option);
+            });
+
+            const params = new URLSearchParams(window.location.search);
+            const l_id = params.get("level_id");
+            if (l_id) {
+                levelSelect.value = l_id;
+                loadClasses(course_id, l_id);
+            }
+        });
     }
 

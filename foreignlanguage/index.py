@@ -1,6 +1,5 @@
 import hashlib
 import random
-
 from cloudinary import uploader
 from flask_mail import Message
 from flask import render_template, request, redirect, session, url_for, jsonify, flash
@@ -128,10 +127,22 @@ def forgot_password():
 
     return render_template("forgot-pass.html", step=session.get("step", 1), err_msg=err_msg, success_msg=success_msg)
 
+@app.route("/api/tuition-base")
+def get_tuition_base():
+    course_id = request.args.get("course_id")
+    level_id = request.args.get("level_id")
+    detail = dao.get_tuition_by_course_level(course_id, level_id)
+    return jsonify({
+        "course_id": detail.course_id,
+        "level_id": detail.level_id,
+        "tuition": detail.tuition
+    })
+
 @app.route("/courses/<int:id>")
 def course(id):
     c = dao.get_course_by_id(id)
-    return render_template("course.html", course=c)
+    levels = dao.get_levels_by_course(id)
+    return render_template("course.html", course=c, levels=levels)
 
 @app.route("/about")
 def about():
@@ -149,12 +160,13 @@ def entry_test():
     return render_template("entry-test.html")
 
 @app.route("/register-course", methods=["GET", "POST"])
+@login_required
 def register_course():
     payment_methods = dao.get_payment_methods()
     return render_template("register-form.html", payment_methods=payment_methods)
 
 @app.route("/api/tuition")
-def get_tuition():
+def get_tuition_by_class():
     class_id = request.args.get("class_id", type=int)
     tuition= dao.get_tuition_by_class_id(class_id=class_id)
     # import pdb
@@ -162,6 +174,18 @@ def get_tuition():
     return jsonify({
         "tuition": tuition
     })
+
+@app.route("/api/level")
+def get_levels_by_course():
+    course_id = request.args.get("course_id")
+    rows = dao.get_levels_by_course(course_id)
+    levels = []
+    for r in rows:
+        levels.append({
+            "id": r.id,
+            "name": r.name
+        })
+    return jsonify(levels)
 
 
 @app.route("/api/classes", methods=["GET"])
@@ -289,8 +313,7 @@ def load_user(user_id):
 @app.context_processor
 def common_attributes():
     return {
-    'courses': dao.load_courses(),
-    'levels'  :dao.load_levels()
+    'courses': dao.load_courses()
     }
 
 @app.route("/")

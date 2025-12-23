@@ -25,3 +25,7 @@ mail = Mail(app)
 
 db = SQLAlchemy(app)
 login = LoginManager(app)
+
+login.login_view = "signin"
+login.login_message = "Vui lòng đăng nhập để tiếp tục!"
+login.login_message_category = "info"
