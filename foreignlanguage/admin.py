@@ -1,3 +1,4 @@
+import hashlib
 import io
 import math
 from datetime import datetime
@@ -13,7 +14,7 @@ from foreignlanguage import app, db, login, email_service
 from foreignlanguage.models import (
     Registration, StudentInfo, Course, Classroom, EmployeeInfo,
     Transaction, UserRole, Score, Present,
-    Session, GradeCategory, AcademicStatus, StatusPayment
+    Session, GradeCategory, AcademicStatus, StatusPayment, UserAccount, CourseLevel
 )
 from foreignlanguage import dao
 
@@ -172,12 +173,17 @@ class RegulationView(AdminBaseView):
 
         return self.render('admin/regulation.html', course_levels=course_levels)
 
+class CourseLevelAdminView(AdminView):
+    column_list = ('course_id', 'level_id')
+
+    column_labels = dict(
+        course_id='Id khóa học',
+        level_id='Các level id'
+    )
 
 class CourseAdminView(AdminView):
-    # 1. Danh sách các cột cần hiển thị
     column_list = ('name', 'description', 'period', 'content', 'joined_date', 'active')
 
-    # 2. Gán nhãn tiếng Việt
     column_labels = dict(
         name='Tên khóa học',
         description='Mô tả',
@@ -188,6 +194,7 @@ class CourseAdminView(AdminView):
     )
 
 class ClassroomAdminView(AdminView):
+    can_edit = True
     column_list = ('id', 'course_info', 'start_time', 'maximum_stu', 'employee_name', 'joined_date', 'active')
 
     column_labels = dict(
@@ -219,9 +226,9 @@ class ClassroomAdminView(AdminView):
     }
 
 class EmployeeAdminView(AdminView):
+    can_edit = True
     column_list = ('account.name', 'base_salary', 'account.joined_date', 'account.active')
 
-    # 2. Nhãn tiếng Việt
     column_labels = dict(
         base_salary='Lương cơ bản',
         **{'account.name': 'Tên nhân viên',
@@ -230,6 +237,7 @@ class EmployeeAdminView(AdminView):
     )
 
 class StudentAdminView(AdminView):
+    can_edit = True
     column_list = ('account.name', 'entry_score', 'account.joined_date', 'account.active')
 
     column_labels = dict(
@@ -238,6 +246,25 @@ class StudentAdminView(AdminView):
            'account.joined_date': 'Ngày nhập học',
            'account.active': 'Trạng thái'}
     )
+
+class AccountAdminView(AdminView):
+    can_edit = True
+    column_list = ('name', 'username', 'password', 'email', 'role', 'active')
+
+    column_labels = {
+        'name': 'Tên',
+        'username': 'Tên đăng nhập',
+        'password': 'Mật khẩu',
+        'email': 'Email',
+        'role': 'Vai trò',
+        'active': 'Trạng thái'
+    }
+    def on_model_change(self, form, model, is_created):
+        if form.password.data:
+            model.password = hashlib.md5(
+                form.password.data.encode('utf-8')
+            ).hexdigest()
+
 
 ############Chức năng của cashier##################
 # LẬP HÓA ĐƠN
@@ -680,7 +707,9 @@ admin = Admin(app=app, name='ANQUINKO', theme=Bootstrap4Theme(), index_view=MyAd
 # --- Menu cho ADMIN ---
 admin.add_view(StatsView(name='Thống kê báo cáo', endpoint='stats'))
 admin.add_view(CourseAdminView(Course, db.session, name='Khóa học', category='Đào tạo'))
+admin.add_view(CourseLevelAdminView(CourseLevel, db.session, name ='Cấp bậc lớp học', category='Đào tạo'))
 admin.add_view(ClassroomAdminView(Classroom, db.session, name='Lớp học', category='Đào tạo'))
+admin.add_view(AccountAdminView(UserAccount, db.session, name="Tài khoản", category='Người dùng'))
 admin.add_view(EmployeeAdminView(EmployeeInfo, db.session, name='Nhân viên', category='Người dùng'))
 admin.add_view(StudentAdminView(StudentInfo, db.session, name='Học viên', category='Người dùng'))
 admin.add_view(RegulationView(name='Quy định', endpoint='regulation'))
