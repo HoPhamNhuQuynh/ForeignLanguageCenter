@@ -267,7 +267,6 @@
 </div>
 
 <script>
-
     const courseSel = document.getElementById('modalCourseSelect');
     const levelSel = document.getElementById('modalLevelSelect');
     const studentSel = document.querySelector('select[name="student_id"]');
@@ -278,13 +277,10 @@
         const c_id = courseSel.value;
         const l_id = levelSel.value;
 
-        // [THÊM]: Lấy giá trị ID học viên
         const s_id = studentSel ? studentSel.value : '';
-
         if (c_id && l_id) {
             tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3"><i class="fa fa-spinner fa-spin"></i> Đang tải danh sách lớp...</td></tr>';
 
-            // [SỬA]: Thêm param &student_id vào URL
             fetch(`{{ url_for('invoice.load_classes') }}?course_id=${c_id}&level_id=${l_id}&student_id=${s_id}`)
                 .then(res => res.json())
                 .then(data => {
