@@ -57,9 +57,8 @@
                             });
                         }
                     }
-                })
-                .catch(err => console.error(err));
-            });
+            }).catch(err => console.error(err));
+        });
     }
 
     if (sessionSelect) {
@@ -91,13 +90,12 @@
                 .catch(err => console.error("Lỗi load điểm danh:", err));
         });
     }
-
     document.addEventListener('change', (e) => {
         if (e.target.classList.contains('attendance-check')) {
             checkCompletion();
         }
     });
-
+});
     //enterscore
     function updateDTB() {
         const row = this.closest('tr');
@@ -161,7 +159,6 @@
         localStorage.setItem('teacher_score_draft', JSON.stringify(draft));
     }
 
-    // 2. Hàm khôi phục dữ liệu khi trang web load lại
     function loadScoreDraft() {
         let draft = JSON.parse(localStorage.getItem('teacher_score_draft'));
         if (!draft) return;
@@ -178,4 +175,5 @@
     function clearScoreDraft() {
         localStorage.removeItem('teacher_score_draft');
     }
+
 
