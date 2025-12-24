@@ -1,0 +1,115 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+
+<div class="container py-5" style="max-width: 900px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-dark mb-1">TẠO ĐĂNG KÝ & THU TIỀN</h4>
+            <small class="text-muted">Thu ngân: {{ current_user.name }}</small>
+        </div>
+        <a href="{{ url_for('.index') }}" class="btn btn-outline-secondary btn-sm shadow-sm">
+            <i class="fa fa-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    <form action="{{ url_for('.create_manual') }}" method="POST">
+        <div class="card shadow-lg border-0 rounded-3 overflow-hidden">
+            <div class="card-body bg-light p-4">
+                <div class="bg-white p-4 rounded border shadow-sm mb-4">
+                    <h6 class="fw-bold text-primary mb-3"><i class="fa fa-user me-2"></i>1. Chọn Học Viên</h6>
+                    <select class="form-control form-select py-2" name="student_id" id="modalStudentSelect" required>
+                        <option disabled selected value="">-- Chọn học viên từ hệ thống --</option>
+                        {% for s in students %}
+                        <option value="{{ s.student_info.id }}">{{ s.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="bg-white p-4 rounded border shadow-sm mb-4">
+                    <h6 class="fw-bold text-primary mb-3"><i class="fa fa-graduation-cap me-2"></i>2. Chọn Lớp Học</h6>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="small fw-bold text-muted mb-1">Khóa học</label>
+                            <select id="modalCourseSelect" class="form-control form-select py-2" required>
+                                <option disabled selected value="">-- Chọn khóa --</option>
+                                {% for c in courses %}
+                                <option value="{{ c.id }}">{{ c.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="small fw-bold text-muted mb-1">Cấp độ</label>
+                            <select id="modalLevelSelect" class="form-control form-select py-2" required>
+                                <option disabled selected value="">-- Chọn cấp độ --</option>
+                                {% for l in levels %}
+                                <option value="{{ l.id }}">{{ l.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive border rounded">
+                        <table class="table table-hover text-center mb-0 table-sm" id="tableClasses">
+                            <thead class="bg-light text-secondary small">
+                                <tr>
+                                    <th class="py-2" width="50">Chọn</th>
+                                    <th class="py-2">Mã</th>
+                                    <th class="py-2">Khai giảng</th>
+                                    <th class="py-2">Sĩ số</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBodyClasses" class="bg-white">
+                                <tr><td colspan="4" class="text-muted small py-4">Vui lòng chọn Khóa học và Cấp độ để xem lớp</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded border shadow-sm">
+                    <h6 class="fw-bold text-primary mb-3"><i class="fa fa-money-bill me-2"></i>3. Thông Tin Thanh Toán</h6>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="fw-bold small text-muted d-block mb-2">Hình thức thanh toán:</label>
+                            <div class="d-flex flex-wrap gap-3">
+                                {% for p in payment_methods %}
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="radio" name="payment_method"
+                                           value="{{p.value}}" id="pm_{{p.value}}" required>
+                                    <label class="form-check-label" for="pm_{{p.value}}">{{ p.name }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold small text-muted d-block mb-2">Mức đóng:</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="radio" name="payment_percent"
+                                           value="100" id="pp_100" checked>
+                                    <label class="form-check-label" for="pp_100">100% (Toàn bộ)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_percent"
+                                           value="50" id="pp_50">
+                                    <label class="form-check-label" for="pp_50">50% (Cọc)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer bg-light p-3 border-top-0">
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ url_for('.index') }}" class="btn btn-white border shadow-sm px-4">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-orange px-4 fw-bold shadow-sm">
+                        <i class="fa fa-check-circle me-2"></i> HOÀN TẤT ĐĂNG KÝ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

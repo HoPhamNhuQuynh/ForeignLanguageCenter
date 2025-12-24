@@ -213,7 +213,7 @@ def get_classes_by_course_level(c_id, l_id, student_id):
         .filter(
             Classroom.course_id == c_id,
             Classroom.level_id == l_id,
-            Classroom.start_time >= datetime.now()
+            Classroom.start_time >= datetime.now()  # Chỉ lấy lớp chưa khai giảng (hoặc logic tùy bạn)
         )
         .group_by(
             Classroom.id,
@@ -224,32 +224,18 @@ def get_classes_by_course_level(c_id, l_id, student_id):
             func.count(Registration.student_id) < Classroom.maximum_stu
         )
     )
+    valid_classes_query = classes_query
     registered_class_ids = [
         r.class_id
         for r in Registration.query.filter_by(
             student_id=student_id
         ).all()
     ]
+
     if registered_class_ids:
         valid_classes_query = classes_query.filter(
             not_(Classroom.id.in_(registered_class_ids))
         )
-
-    valid_classes_query = classes_query
-
-    # 2. Logic lọc lớp (Chỉ chạy nếu có student_id)
-    if student_id:
-        registered_class_ids = [
-            r.class_id
-            for r in Registration.query.filter_by(
-                student_id=student_id
-            ).all()
-        ]
-
-        if registered_class_ids:
-            valid_classes_query = classes_query.filter(
-                not_(Classroom.id.in_(registered_class_ids))
-            )
 
     return valid_classes_query.all()
 
@@ -577,21 +563,24 @@ def load_students():
 
 def create_manual_invoice(student_id, class_id, amount, method, content, employee_id):
     classroom = Classroom.query.get(class_id)
+    student_info = StudentInfo.query.get(student_id)
+
+    if not student_info:
+        return False, "Không tìm thấy thông tin học viên"
+
     if not classroom:
         return False, "Lớp học không tồn tại"
+
     tuition = classroom.course_level.tuition
 
     exist_reg = Registration.query.filter_by(
         student_id=student_id,
         class_id=class_id
     ).first()
+
     if exist_reg:
         return False, "Học viên đã đăng ký lớp này rồi!"
-    student_info = StudentInfo.query.filter_by(u_id=student_id).first()
-    if not student_info:
-        return False, "Không tìm thấy thông tin học viên"
 
-    # tạo đăng ký
     new_reg = Registration(
         student_id=student_info.id,
         class_id=class_id,
@@ -600,7 +589,6 @@ def create_manual_invoice(student_id, class_id, amount, method, content, employe
     db.session.add(new_reg)
     db.session.flush()
 
-    # gọi lại luồng thu ngân chuẩn
     return register_and_pay_by_cashier(
         regis_id=new_reg.id,
         amount=amount,

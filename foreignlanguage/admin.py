@@ -14,7 +14,7 @@ from foreignlanguage import app, db, login, email_service
 from foreignlanguage.models import (
     Registration, StudentInfo, Course, Classroom, EmployeeInfo,
     Transaction, UserRole, Score, Present,
-    Session, GradeCategory, AcademicStatus, StatusPayment, UserAccount, CourseLevel
+    Session, GradeCategory, AcademicStatus, StatusPayment, UserAccount, CourseLevel, MethodEnum
 )
 from foreignlanguage import dao
 
@@ -328,26 +328,41 @@ class CreateInvoiceView(CashierView):
                 flash('Không tìm thấy đăng ký để xóa.', 'danger')
         return redirect(url_for('.index'))
 
+    @expose('/manual-invoice', methods=['GET'])
+    def manual_invoice_view(self):
+        # Load dữ liệu cần thiết cho form
+        courses = dao.load_courses()
+        levels = dao.load_levels()
+        students = dao.load_students()
+        payment_methods = dao.get_payment_methods()
+
+        return self.render('admin/manual_invoice.html',
+                           courses=courses,
+                           levels=levels,
+                           students=students,
+                           payment_methods=payment_methods)
+
     @expose('/create-manual', methods=['POST'])
     def create_manual(self):
         try:
-            student_id = request.form.get('student_id')  # UserAccount ID
+            # ===== VALIDATE INPUT =====
+            student_id = request.form.get('student_id')
             class_id = request.form.get('class_id')
             payment_percent = request.form.get('payment_percent')
-            method = request.form.get('payment_method')
+            payment_method = request.form.get('payment_method')
 
-            # ===== VALIDATE =====
-            if not student_id or not class_id or not payment_percent or not method:
+            if not all([student_id, class_id, payment_percent, payment_method]):
                 flash('Vui lòng nhập đầy đủ thông tin!', 'danger')
                 return redirect(url_for('.index'))
 
             student_id = int(student_id)
             class_id = int(class_id)
             payment_percent = int(payment_percent)
+            method = int(payment_method)
 
-            # ===== TÍNH HỌC PHÍ =====
+
             real_tuition = dao.get_tuition_by_class_id(class_id)
-            if not real_tuition:
+            if real_tuition <= 0:
                 flash('Không xác định được học phí lớp học!', 'danger')
                 return redirect(url_for('.index'))
 
@@ -358,8 +373,6 @@ class CreateInvoiceView(CashierView):
             )
 
             content = f"Thu ngân tạo đăng ký – Thanh toán {payment_percent}%"
-
-            # ===== GỌI DAO =====
             success, msg = dao.create_manual_invoice(
                 student_id=student_id,
                 class_id=class_id,
@@ -368,55 +381,53 @@ class CreateInvoiceView(CashierView):
                 content=content,
                 employee_id=current_user.id
             )
-            if success:
-                try:
-                    # Lấy thông tin user
-                    user = dao.get_user_by_id(student_id)
-                    # Lấy thông tin lớp
-                    classroom = dao.get_class_by_id(class_id)
 
-                    if user and classroom:
-                        full_class_name = f"{classroom.course_level.course.name} ({classroom.course_level.level.name})"
-
-                        email_service.send_register_success_email(
-                            to_email=user.email,
-                            name=user.name,
-                            class_name=full_class_name
-                        )
-                    flash(f'Tạo hóa đơn thành công! {msg}', 'success')
-                except Exception as e:
-                    print(f"Lỗi gửi mail (Manual): {e}")
-                    flash(f'Tạo hóa đơn thành công nhưng lỗi gửi mail. {msg}', 'warning')
-            else:
+            if not success:
                 flash(msg, 'danger')
+                return redirect(url_for('.index'))
+
+            try:
+                user = dao.get_user_by_id(student_id)
+                classroom = dao.get_class_by_id(class_id)
+
+                if user and classroom:
+                    full_class_name = (
+                        f"{classroom.course_level.course.name} "
+                        f"({classroom.course_level.level.name})"
+                    )
+                    email_service.send_register_success_email(
+                        to_email=user.email,
+                        name=user.name,
+                        class_name=full_class_name
+                    )
+            except Exception as e:
+                print(f"Lỗi gửi mail (Manual): {e}")
+            flash(f'Tạo hóa đơn thành công! {msg}', 'success')
 
         except Exception as e:
             flash(f'Lỗi hệ thống: {str(e)}', 'danger')
-
         return redirect(url_for('.index'))
 
-    @expose('/load-classes')
-    def load_classes(self):
-        course_id = request.args.get('course_id')
-        level_id = request.args.get('level_id')
-        student_id = request.args.get('student_id')
+    @expose('/api/classes')
+    def get_classes(self):
+        course_id = request.args.get('course_id', type=int)
+        level_id = request.args.get('level_id', type=int)
+        student_id = request.args.get('student_id', type=int)
 
-        if not course_id or not level_id:
+        if not course_id or not level_id or not student_id:
             return jsonify([])
 
-        classes = dao.get_classes_by_course_level(course_id, level_id, student_id)
+        classes = dao.get_classes_by_course_level(course_id,level_id,student_id)
 
-        data = []
-        for c in classes:
-            data.append({
-                'id': c.id,
-                # Format ngày tháng thành chuỗi dd/mm/yyyy
-                'start_time': c.start_time.strftime('%d/%m/%Y'),
-                'maximum_stu': c.maximum_stu,
-                'current_count': c.current_count
-            })
+        data = [{
+            'id': c.id,
+            'start_time': c.start_time.strftime('%d/%m/%Y'),
+            'maximum_stu': c.maximum_stu,
+            'current_count': c.current_count
+        } for c in classes]
 
         return jsonify(data)
+
 
 # Quản lý hóa đơn
 class TransactionAdminView(CashierModelView):
