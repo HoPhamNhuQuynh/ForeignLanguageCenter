@@ -71,7 +71,7 @@ def get_user_by_email(email):
 # ==================== COMMON LOADERS ====================
 
 def load_courses():
-    return Course.query.filter(extract('year', Course.joined_date) >= datetime.now().year).all()
+    return Course.query.all()
 
 
 def load_levels():
