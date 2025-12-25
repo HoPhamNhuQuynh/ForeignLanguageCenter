@@ -204,7 +204,7 @@ def register_and_pay_by_cashier(regis_id, amount, content, method, employee_id):
 
 
 def get_classes_by_course_level(c_id, l_id, student_id):
-    classes_query = (
+    valid_classes_query = (
         db.session.query(
             Classroom.id,
             Classroom.start_time,
@@ -233,11 +233,11 @@ def get_classes_by_course_level(c_id, l_id, student_id):
         ).all()
     ]
     if registered_class_ids:
-        valid_classes_query = classes_query.filter(
+        valid_classes_query = valid_classes_query.filter(
             not_(Classroom.id.in_(registered_class_ids))
         )
 
-    valid_classes_query = classes_query
+    valid_classes_query = valid_classes_query
 
     # 2. Logic lọc lớp (Chỉ chạy nếu có student_id)
     if student_id:
