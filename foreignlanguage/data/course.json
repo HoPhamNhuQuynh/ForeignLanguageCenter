@@ -5,7 +5,8 @@
     "description": "Tự tin giao tiếp phản xạ",
     "period": 36.0,
     "content": "Nghe, Nói",
-    "active": true
+    "active": true,
+    "joined_date": "2025-02-15 08:30:00"
   },
   {
     "id": 2,
@@ -13,7 +14,8 @@
     "description": "Đầu ra 650+",
     "period": 48.0,
     "content": "Reading, Listening",
-    "active": true
+    "active": true,
+    "joined_date": "2025-02-15 08:30:00"
   },
   {
     "id": 3,
@@ -21,7 +23,8 @@
     "description": "Cam kết 6.5 Academic",
     "period": 72.0,
     "content": "4 Kỹ năng chuyên sâu",
-    "active": true
+    "active": true,
+    "joined_date": "2025-02-15 08:30:00"
   },
   {
     "id": 4,
@@ -29,6 +32,106 @@
     "description": "Dành cho người đi làm",
     "period": 40.0,
     "content": "Email, Thuyết trình",
-    "active": true
+    "active": true,
+    "joined_date": "2025-02-15 08:30:00"
+  },
+  {
+    "id": 5,
+    "name": "Chuẩn hóa Phát âm",
+    "description": "Sửa lỗi giọng, ngữ điệu.",
+    "period": 12.0,
+    "content": "IPA Chart, Intonation, Linking Sounds",
+    "active": true,
+    "joined_date": "2024-03-20 19:00:00"
+  },
+  {
+    "id": 6,
+    "name": "Tiếng Anh Tổng Quát",
+    "description": "Xây dựng nền tảng vững chắc 4 kỹ năng.",
+    "period": 36.0,
+    "content": "Vocabulary, Grammar, 4 Skills Basic",
+    "active": true,
+    "joined_date": "2024-03-01 18:00:00"
+  },
+  {
+    "id": 7,
+    "name": "Tiếng Anh Giao Tiếp",
+    "description": "Tự tin giao tiếp công việc và đời sống.",
+    "period": 24.0,
+    "content": "Speaking, Listening, Reflex, Pronunciation",
+    "active": true,
+    "joined_date": "2024-03-05 19:30:00"
+  },
+  {
+    "id": 8,
+    "name": "IELTS Foundation",
+    "description": "Mục tiêu band 4.5 - 5.5.",
+    "period": 48.0,
+    "content": "IELTS Format Introduction, Basic Strategies",
+    "active": true,
+    "joined_date": "2024-03-10 17:45:00"
+  },
+  {
+    "id": 9,
+    "name": "IELTS Intensive",
+    "description": "Mục tiêu 6.5+ cấp tốc.",
+    "period": 60.0,
+    "content": "Advanced Writing, Speaking Mock Test",
+    "active": true,
+    "joined_date": "2026-03-12 18:00:00"
+  },
+  {
+    "id": 10,
+    "name": "TOEIC Speaking & Writing",
+    "description": "Bổ sung kỹ năng Nói - Viết cho TOEIC.",
+    "period": 30.0,
+    "content": "Email Writing, Opinion Essay, Speaking Tasks",
+    "active": true,
+    "joined_date": "2026-03-15 19:30:00"
+  },
+  {
+    "id": 11,
+    "name": "Tiếng Anh Thiếu Nhi",
+    "description": "Vừa học vừa chơi cho trẻ 6-11 tuổi.",
+    "period": 36.0,
+    "content": "Songs, Stories, Games, Basic Vocab",
+    "active": true,
+    "joined_date": "2026-06-01 08:00:00"
+  },
+  {
+    "id": 12,
+    "name": "Tiếng Anh Thiếu Niên",
+    "description": "Luyện thi Cambridge (KET, PET, FCE).",
+    "period": 45.0,
+    "content": "Academic Skills, Presentation, Project",
+    "active": true,
+    "joined_date": "2026-06-05 09:30:00"
+  },
+  {
+    "id": 13,
+    "name": "Tiếng Anh Thương Mại",
+    "description": "Chuyên ngành kinh tế, văn phòng.",
+    "period": 40.0,
+    "content": "Business Email, Negotiation, Meetings",
+    "active": true,
+    "joined_date": "2026-04-01 18:30:00"
+  },
+  {
+    "id": 14,
+    "name": "Luyện thi TOEFL iBT",
+    "description": "Dành cho du học Mỹ/Canada.",
+    "period": 50.0,
+    "content": "Integrated Tasks, Academic Reading",
+    "active": true,
+    "joined_date": "2026-04-10 17:45:00"
+  },
+  {
+    "id": 15,
+    "name": "Luyện thi VSTEP (B1-B2-C1)",
+    "description": "Chứng chỉ khung 6 bậc Việt Nam.",
+    "period": 42.0,
+    "content": "VSTEP Format, 4 Skills Practice",
+    "active": true,
+    "joined_date": "2026-04-15 18:00:00"
   }
 ]

@@ -1,4 +1,6 @@
 import math
+
+from flask_login import current_user
 from sqlalchemy import or_, extract, func, not_
 from sqlalchemy.orm import joinedload
 from datetime import datetime
@@ -69,7 +71,7 @@ def get_user_by_email(email):
 # ==================== COMMON LOADERS ====================
 
 def load_courses():
-    return Course.query.all()
+    return Course.query.filter(extract('year', Course.joined_date) >= datetime.now().year).all()
 
 
 def load_levels():
@@ -98,11 +100,14 @@ def get_all_course_levels():
         joinedload(CourseLevel.level)
     ).order_by(CourseLevel.course_id, CourseLevel.level_id).all()
 
+
 def get_tuition_by_course_level(c_id, l_id):
     return CourseLevel.query.filter(CourseLevel.course_id == c_id, CourseLevel.level_id == l_id).first()
 
+
 def get_levels_by_course(course_id):
-    return db.session.query(Level).join(CourseLevel, CourseLevel.level_id == Level.id).filter(CourseLevel.course_id == course_id).all()
+    return db.session.query(Level).join(CourseLevel, CourseLevel.level_id == Level.id).filter(
+        CourseLevel.course_id == course_id).all()
 
 
 # ====================== STUDENT ==========================
@@ -117,8 +122,8 @@ def create_registration(user, class_id, name, phone):
         reg = Registration(student_id=user.id, class_id=class_id, actual_tuition=tuition_base)
         db.session.add(reg)
 
-    user.name = name
-    user.phone_num = phone
+    current_user.name = name
+    current_user.phone_num = phone
     db.session.commit()
     return reg
 
@@ -133,6 +138,7 @@ def create_transaction(money, method, regis_id, **kwargs):
     db.session.add(transact)
     db.session.flush()
     return transact
+
 
 def process_payment(transaction, result_payment, status_fee):
     if result_payment:
@@ -197,48 +203,37 @@ def register_and_pay_by_cashier(regis_id, amount, content, method, employee_id):
         if regis.paid + amount >= regis.actual_tuition
         else StatusTuition.PARTIAL
     )
-    success = process_payment(transact,True, status)
+    success = process_payment(transact, True, status)
     return success, "Thanh toán thành công" if success else "Thanh toán thất bại"
 
 
 def get_classes_by_course_level(c_id, l_id, student_id):
-    classes_query = (
+    query = (
         db.session.query(
             Classroom.id,
             Classroom.start_time,
             Classroom.maximum_stu,
-            func.count(Registration.student_id).label('current_count')
+            func.count(Registration.id).label('current_count')
         )
         .outerjoin(Registration, Classroom.id == Registration.class_id)
         .filter(
             Classroom.course_id == c_id,
             Classroom.level_id == l_id,
-            Classroom.start_time >= datetime.now()  # Chỉ lấy lớp chưa khai giảng (hoặc logic tùy bạn)
+            Classroom.start_time >= datetime.now()
         )
-        .group_by(
-            Classroom.id,
-            Classroom.start_time,
-            Classroom.maximum_stu
-        )
-        .having(
-            func.count(Registration.student_id) < Classroom.maximum_stu
-        )
+        .group_by(Classroom.id)
+        .having(func.count(Registration.id) < Classroom.maximum_stu)
     )
-    valid_classes_query = classes_query
-    registered_class_ids = [
-        r.class_id
-        for r in Registration.query.filter_by(
-            student_id=student_id
-        ).all()
-    ]
 
-    if registered_class_ids:
-        valid_classes_query = classes_query.filter(
-            not_(Classroom.id.in_(registered_class_ids))
+    if student_id:
+        subquery = (
+            db.session.query(Registration.class_id)
+            .filter(Registration.student_id == student_id)
+            .scalar_subquery()
         )
+        query = query.filter(not_(Classroom.id.in_(subquery)))
 
-    return valid_classes_query.all()
-
+    return query.all()
 
 
 def get_payment_methods():
@@ -307,6 +302,7 @@ def get_classroom_by_teacher(class_id, employee_id):
 
 def get_regs_by_class(class_id):
     return Registration.query.filter_by(class_id=class_id).all()
+
 
 def get_present_by_session(session_id):
     return Present.query.filter_by(session_id=session_id).all()
@@ -444,13 +440,13 @@ def count_courses(year=None):
 
 def count_students(year=None):
     query = db.session.query(func.count(UserAccount.id))
-    query = query.filter(UserAccount.role == UserRole.STUDENT, extract('year', UserAccount.joined_date) == year)
+    query = query.filter(UserAccount.role == UserRole.STUDENT, extract('year', StudentInfo.joined_date) == year)
     return query.join(StudentInfo, StudentInfo.u_id == UserAccount.id).join(Registration,
                                                                             StudentInfo.id == Registration.student_id).scalar()
 
 
 def count_active_classes(year=None):
-    return Classroom.query.filter(extract('year', Classroom.joined_date) == year, Classroom.active == 1).count()
+    return Classroom.query.filter(extract('year', Classroom.start_time) == year, Classroom.active == 1).count()
 
 
 def count_total_revenue(year=None):
@@ -551,7 +547,7 @@ def revert_payment(registration, money_to_revert):
     if registration.paid == 0:
         delete_registration(registration.id)
         return
-    if (registration.actual_tuition/2).__eq__(registration.paid):
+    if (registration.actual_tuition / 2).__eq__(registration.paid):
         registration.status = StatusTuition.PARTIAL
     db.session.add(registration)
 
@@ -563,24 +559,21 @@ def load_students():
 
 def create_manual_invoice(student_id, class_id, amount, method, content, employee_id):
     classroom = Classroom.query.get(class_id)
-    student_info = StudentInfo.query.get(student_id)
-
-    if not student_info:
-        return False, "Không tìm thấy thông tin học viên"
-
     if not classroom:
         return False, "Lớp học không tồn tại"
-
     tuition = classroom.course_level.tuition
 
     exist_reg = Registration.query.filter_by(
         student_id=student_id,
         class_id=class_id
     ).first()
-
     if exist_reg:
         return False, "Học viên đã đăng ký lớp này rồi!"
+    student_info = StudentInfo.query.filter_by(u_id=student_id).first()
+    if not student_info:
+        return False, "Không tìm thấy thông tin học viên"
 
+    # tạo đăng ký
     new_reg = Registration(
         student_id=student_info.id,
         class_id=class_id,
@@ -589,6 +582,7 @@ def create_manual_invoice(student_id, class_id, amount, method, content, employe
     db.session.add(new_reg)
     db.session.flush()
 
+    # gọi lại luồng thu ngân chuẩn
     return register_and_pay_by_cashier(
         regis_id=new_reg.id,
         amount=amount,
@@ -602,11 +596,11 @@ if __name__ == "__main__":
     with app.app_context():
         # print(auth_user("user", "123"))
         # print(get_classes_by_course_level(2, 2))
-        # print(count_students(2025))
+        # print(count_students(2024))
         # print(count_courses(2025))
         # print(count_active_classes(2025))
-        # print(count_total_revenue(2025))
-        # print(stats_rate_passed_per_course_by_year(2025))
+        # print(count_total_revenue(2024))
+        # print(stats_rate_passed_per_course_by_year(2024))
         # print(get_tuition_by_class_id(22))
         # print(get_details_top3_courses())
         # top3 = get_details_top3_courses(2025)

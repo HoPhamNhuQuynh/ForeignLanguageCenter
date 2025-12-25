@@ -43,7 +43,6 @@
                     studentBody.innerHTML = '';
                         if (data.students) {
                             data.students.forEach((stu, i) => {
-                                // QUAN TRỌNG: Đã thêm class "attendance-check" vào input dưới đây
                                 studentBody.innerHTML += `
                                     <tr>
                                         <td>${i + 1}</td>
@@ -95,7 +94,8 @@
             checkCompletion();
         }
     });
-});
+  });
+
     //enterscore
     function updateDTB() {
         const row = this.closest('tr');
@@ -175,5 +175,4 @@
     function clearScoreDraft() {
         localStorage.removeItem('teacher_score_draft');
     }
-
 
