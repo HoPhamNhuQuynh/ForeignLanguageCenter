@@ -159,7 +159,7 @@ class RegulationView(AdminBaseView):
         course_levels = dao.get_all_course_levels()
         if request.method == 'POST':
             try:
-                for item in course_levels:
+                for item in course_levels: #tuition_1_1
                     input_name = f'tuition_{item.course_id}_{item.level_id}'
                     new_tuition = request.form.get(input_name)
 
@@ -345,7 +345,6 @@ class CreateInvoiceView(CashierView):
     @expose('/create-manual', methods=['POST'])
     def create_manual(self):
         try:
-            # ===== VALIDATE INPUT =====
             student_id = request.form.get('student_id')
             class_id = request.form.get('class_id')
             payment_percent = request.form.get('payment_percent')
