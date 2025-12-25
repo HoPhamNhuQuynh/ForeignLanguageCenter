@@ -559,21 +559,24 @@ def load_students():
 
 def create_manual_invoice(student_id, class_id, amount, method, content, employee_id):
     classroom = Classroom.query.get(class_id)
+    student_info = StudentInfo.query.get(student_id)
+
+    if not student_info:
+        return False, "Không tìm thấy thông tin học viên"
+
     if not classroom:
         return False, "Lớp học không tồn tại"
+
     tuition = classroom.course_level.tuition
 
     exist_reg = Registration.query.filter_by(
         student_id=student_id,
         class_id=class_id
     ).first()
+
     if exist_reg:
         return False, "Học viên đã đăng ký lớp này rồi!"
-    student_info = StudentInfo.query.filter_by(u_id=student_id).first()
-    if not student_info:
-        return False, "Không tìm thấy thông tin học viên"
 
-    # tạo đăng ký
     new_reg = Registration(
         student_id=student_info.id,
         class_id=class_id,
@@ -582,7 +585,6 @@ def create_manual_invoice(student_id, class_id, amount, method, content, employe
     db.session.add(new_reg)
     db.session.flush()
 
-    # gọi lại luồng thu ngân chuẩn
     return register_and_pay_by_cashier(
         regis_id=new_reg.id,
         amount=amount,
