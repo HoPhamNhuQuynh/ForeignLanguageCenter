@@ -685,7 +685,6 @@ class MyAdminIndexView(AdminIndexView):
             user = dao.auth_user(username, password)
             if user:
                 login_user(user)
-                # Login xong reload lại trang chủ
                 return redirect('/admin')
             else:
                 flash('Sai tên đăng nhập hoặc mật khẩu!', 'danger')

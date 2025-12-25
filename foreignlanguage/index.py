@@ -13,6 +13,9 @@ from flask import send_file
 
 @app.route("/")
 def index():
+    if current_user.is_authenticated and current_user.role != dao.UserRole.STUDENT:
+        return redirect('/admin')
+
     popular_courses = dao.get_details_top3_courses(None)
     return render_template("index.html", popular_courses=popular_courses)
 
@@ -32,6 +35,10 @@ def signin():
 
         if user:
             login_user(user, remember=remmember)
+
+            if user.role != dao.UserRole.STUDENT:
+                return redirect('/admin')
+
             next = request.args.get("next")
             return redirect(next if next else '/')
         else:
@@ -293,15 +300,19 @@ def change_password():
         if current_password_hash.__eq__(current_user.password):
             new_password = request.form.get("new_password")
             confirm_password = request.form.get("confirm_password")
-            if new_password == confirm_password:
-                try:
-                    dao.update_user_password(new_password, current_user.id)
-                    success_msg = "Cập nhật mật khẩu thành công!"
-                except:
-                    db.session.rollback()
-                    err_msg = "Đã có lỗi xảy ra! Vui lòng thực hiện lại sau."
+            new_password_hash = hashlib.md5(new_password.encode("utf-8")).hexdigest()
+            if new_password_hash != current_password_hash:
+                if new_password == confirm_password:
+                    try:
+                        dao.update_user_password(new_password, current_user.id)
+                        success_msg = "Cập nhật mật khẩu thành công!"
+                    except:
+                        db.session.rollback()
+                        err_msg = "Đã có lỗi xảy ra! Vui lòng thực hiện lại sau."
+                else:
+                    err_msg = "Xác nhận mật khẩu mới không chính xác!"
             else:
-                err_msg = "Xác nhận mật khẩu mới không chính xác!"
+                err_msg = "Mật khẩu mới trùng với mật khẩu hiện tại!"
         else:
             err_msg = "Mật khẩu hiện tại không đúng!"
     return render_template("change_pass.html", err_msg=err_msg, success_msg=success_msg)
