@@ -173,7 +173,7 @@
                     <div class="bg-white p-3 border mb-3">
                         <h6 class="fw-bold text-primary mb-3">1. Chọn Học Viên</h6>
                         <select class="form-control form-select style-fix" name="student_id" required>
-                            <option value="">-- Chọn học viên từ hệ thống --</option>
+                            <option disabled value="">-- Chọn học viên từ hệ thống --</option>
                             {% for s in students %}
                             <option value="{{ s.id }}">{{ s.name }}</option>
                             {% endfor %}
@@ -186,7 +186,7 @@
                             <div class="col-md-6">
                                 <label class="small fw-bold text-muted">Khóa học</label>
                                 <select id="modalCourseSelect" class="form-control form-select style-fix" required>
-                                    <option value="">-- Chọn khóa --</option>
+                                    <option disabled value="">-- Chọn khóa --</option>
                                     {% for c in courses %}
                                     <option value="{{ c.id }}">{{ c.name }}</option>
                                     {% endfor %}
@@ -196,7 +196,7 @@
                             <div class="col-md-6">
                                 <label class="small fw-bold text-muted">Cấp độ</label>
                                 <select id="modalLevelSelect" class="form-control form-select style-fix" required>
-                                    <option value="">-- Chọn cấp độ --</option>
+                                    <option disabled value="">-- Chọn cấp độ --</option>
                                     {% for l in levels %}
                                     <option value="{{ l.id }}">{{ l.name }}</option>
                                     {% endfor %}
@@ -228,9 +228,9 @@
                         <div class="row">
                             <div class="col-md-6 mb-2">
                                 <label class="fw-bold small text-muted d-block mb-2">Hình thức:</label>
-                                <div class="d-flex gap-3">
+                                <div class="d-flex justify-content-start">
                                     {% for p in payment_methods %}
-                                    <div class="form-check">
+                                    <div class="form-check mr-2">
                                         <input class="form-check-input" type="radio" name="payment_method"
                                                value="{{p.value}}" id="pm_{{p.value}}" required>
                                         <label class="form-check-label" for="pm_{{p.value}}">{{ p.name }}</label>
@@ -240,8 +240,8 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="fw-bold small text-muted d-block mb-2">Mức đóng:</label>
-                                <div class="d-flex gap-3">
-                                    <div class="form-check">
+                                <div class="d-flex justify-content-start">
+                                    <div class="form-check mr-3">
                                         <input class="form-check-input" type="radio" name="payment_percent"
                                                value="100" id="pp_100" checked>
                                         <label class="form-check-label" for="pp_100">100% (Toàn bộ)</label>
