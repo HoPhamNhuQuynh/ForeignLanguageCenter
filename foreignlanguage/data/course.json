@@ -5,7 +5,8 @@
     "description": "Tự tin giao tiếp phản xạ",
     "period": 36.0,
     "content": "Nghe, Nói",
-    "active": true
+    "active": true,
+    "joined_date": "2025-02-15 08:30:00"
   },
   {
     "id": 2,
@@ -13,7 +14,8 @@
     "description": "Đầu ra 650+",
     "period": 48.0,
     "content": "Reading, Listening",
-    "active": true
+    "active": true,
+    "joined_date": "2025-02-15 08:30:00"
   },
   {
     "id": 3,
@@ -21,7 +23,8 @@
     "description": "Cam kết 6.5 Academic",
     "period": 72.0,
     "content": "4 Kỹ năng chuyên sâu",
-    "active": true
+    "active": true,
+    "joined_date": "2025-02-15 08:30:00"
   },
   {
     "id": 4,
@@ -29,6 +32,34 @@
     "description": "Dành cho người đi làm",
     "period": 40.0,
     "content": "Email, Thuyết trình",
-    "active": true
+    "active": true,
+    "joined_date": "2025-02-15 08:30:00"
+  },
+  {
+    "id": 5,
+    "name": "Luyện thi TOEIC",
+    "description": "Đầu ra 450+",
+    "period": 48.0,
+    "content": "Reading, Listening",
+    "active": true,
+    "joined_date": "2024-02-15 08:30:00"
+  },
+  {
+    "id": 6,
+    "name": "Luyện thi TOEIC 4 kỹ năng 650+",
+    "description": "Đầu ra 650+",
+    "period": 48.0,
+    "content": "Reading, Listening, Speaking, Writing",
+    "active": true,
+    "joined_date": "2024-02-15 08:30:00"
+  },
+  {
+    "id": 7,
+    "name": "Luyện thi IELTS",
+    "description": "Cam kết 6.5 Academic",
+    "period": 72.0,
+    "content": "4 Kỹ năng chuyên sâu",
+    "active": true,
+    "joined_date": "2024-02-15 08:30:00"
   }
 ]

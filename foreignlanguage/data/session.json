@@ -4,27 +4,147 @@
     "class_id": 1,
     "session_date": "2025-06-03 18:00:00",
     "shift": 1,
-    "session_content": "Unit 1: Introduction",
+    "session_content": "Unit 1: Greetings & Introductions",
     "active": true
   },
   {
     "id": 2,
-    "class_id": 2,
-    "session_date": "2025-06-04 18:00:00",
+    "class_id": 1,
+    "session_date": "2025-06-03 18:00:00",
     "shift": 1,
-    "session_content": "Unit 2: Greetings",
+    "session_content": "Unit 2: Jobs & Daily Routines",
     "active": true
   },
   {
     "id": 3,
-    "class_id": 3,
-    "session_date": "2025-06-05 18:00:00",
+    "class_id": 1,
+    "session_date": "2025-06-03 18:00:00",
     "shift": 1,
-    "session_content": "Unit 3: Family",
+    "session_content": "Unit 3: Shopping & Services",
     "active": true
   },
   {
     "id": 4,
+    "class_id": 1,
+    "session_date": "2025-06-03 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 4: Food & Dining",
+    "active": true
+  },
+  {
+    "id": 5,
+    "class_id": 1,
+    "session_date": "2025-06-03 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 5: Travel & Directions",
+    "active": true
+  },
+  {
+    "id": 6,
+    "class_id": 1,
+    "session_date": "2025-06-03 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 6: Family & Friends",
+    "active": true
+  },
+  {
+    "id": 7,
+    "class_id": 2,
+    "session_date": "2025-06-04 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 1: Greetings",
+    "active": true
+  },
+  {
+    "id": 8,
+    "class_id": 2,
+    "session_date": "2025-06-04 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 2: Family Members",
+    "active": true
+  },
+  {
+    "id": 9,
+    "class_id": 2,
+    "session_date": "2025-06-04 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 3: Physical Appearance",
+    "active": true
+  },
+  {
+    "id": 10,
+    "class_id": 2,
+    "session_date": "2025-06-04 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 4: Personality Traits",
+    "active": true
+  },
+  {
+    "id": 11,
+    "class_id": 2,
+    "session_date": "2025-06-04 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 5: Feelings & Emotions",
+    "active": true
+  },
+  {
+    "id": 12,
+    "class_id": 2,
+    "session_date": "2025-06-04 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 6: Home & Furniture",
+    "active": true
+  },
+  {
+    "id": 13,
+    "class_id": 3,
+    "session_date": "2025-06-05 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 1: Home & Furniture",
+    "active": true
+  },
+  {
+    "id": 14,
+    "class_id": 3,
+    "session_date": "2025-06-05 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 2: Housework & Chores",
+    "active": true
+  },
+  {
+    "id": 15,
+    "class_id": 3,
+    "session_date": "2025-06-05 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 3: My Neighborhood",
+    "active": true
+  },
+  {
+    "id": 16,
+    "class_id": 3,
+    "session_date": "2025-06-05 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 4: City Life vs Country Life",
+    "active": true
+  },
+  {
+    "id": 17,
+    "class_id": 3,
+    "session_date": "2025-06-05 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 5: Weather & Seasons",
+    "active": true
+  },
+  {
+    "id": 18,
+    "class_id": 3,
+    "session_date": "2025-06-05 18:00:00",
+    "shift": 1,
+    "session_content": "Unit 6: Clothes & Fashion",
+    "active": true
+  },
+  {
+    "id": 19,
     "class_id": 4,
     "session_date": "2025-06-06 19:30:00",
     "shift": 2,
@@ -32,23 +152,143 @@
     "active": true
   },
   {
-    "id": 5,
+    "id": 20,
+    "class_id": 4,
+    "session_date": "2025-06-06 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 2: Colors & Sizes",
+    "active": true
+  },
+  {
+    "id": 21,
+    "class_id": 4,
+    "session_date": "2025-06-06 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 3: Accessories & Jewelry",
+    "active": true
+  },
+  {
+    "id": 22,
+    "class_id": 4,
+    "session_date": "2025-06-06 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 4: Health & Sickness",
+    "active": true
+  },
+  {
+    "id": 23,
+    "class_id": 4,
+    "session_date": "2025-06-06 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 5: At the Pharmacy",
+    "active": true
+  },
+  {
+    "id": 24,
+    "class_id": 4,
+    "session_date": "2025-06-06 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 6: Seeing the Doctor",
+    "active": true
+  },
+  {
+    "id": 25,
     "class_id": 5,
     "session_date": "2025-06-07 19:30:00",
     "shift": 2,
-    "session_content": "Unit 2: Emails",
+    "session_content": "Unit 1: Emails",
     "active": true
   },
   {
-    "id": 6,
+    "id": 26,
+    "class_id": 5,
+    "session_date": "2025-06-07 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 2: Seeing the Doctor",
+    "active": true
+  },
+  {
+    "id": 27,
+    "class_id": 5,
+    "session_date": "2025-06-07 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 3: Keeping Fit & Execise",
+    "active": true
+  },
+  {
+    "id": 28,
+    "class_id": 5,
+    "session_date": "2025-06-07 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 4: Sports & Games",
+    "active": true
+  },
+  {
+    "id": 29,
+    "class_id": 5,
+    "session_date": "2025-06-07 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 5: Music & Instruments",
+    "active": true
+  },
+  {
+    "id": 30,
+    "class_id": 5,
+    "session_date": "2025-06-07 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 6: Movies & TV Shows",
+    "active": true
+  },
+  {
+    "id": 31,
     "class_id": 6,
     "session_date": "2025-06-08 19:30:00",
     "shift": 2,
-    "session_content": "Unit 3: Meetings",
+    "session_content": "Unit 1: Meetings",
     "active": true
   },
   {
-    "id": 7,
+    "id": 32,
+    "class_id": 6,
+    "session_date": "2025-06-08 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 2: Book & Reading",
+    "active": true
+  },
+  {
+    "id": 33,
+    "class_id": 6,
+    "session_date": "2025-06-08 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 3: Arts & Museums",
+    "active": true
+  },
+  {
+    "id": 34,
+    "class_id": 6,
+    "session_date": "2025-06-08 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 4: Hobbies & Interests",
+    "active": true
+  },
+  {
+    "id": 35,
+    "class_id": 6,
+    "session_date": "2025-06-08 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 5: Weekend Activity",
+    "active": true
+  },
+  {
+    "id": 36,
+    "class_id": 6,
+    "session_date": "2025-06-08 19:30:00",
+    "shift": 2,
+    "session_content": "Unit 6: Holidays",
+    "active": true
+  },
+  {
+    "id": 37,
     "class_id": 7,
     "session_date": "2025-06-09 17:30:00",
     "shift": 1,
@@ -56,7 +296,7 @@
     "active": true
   },
   {
-    "id": 8,
+    "id": 38,
     "class_id": 8,
     "session_date": "2025-06-10 17:30:00",
     "shift": 1,
@@ -64,7 +304,7 @@
     "active": true
   },
   {
-    "id": 9,
+    "id": 39,
     "class_id": 9,
     "session_date": "2025-06-11 17:30:00",
     "shift": 1,
@@ -72,7 +312,7 @@
     "active": true
   },
   {
-    "id": 10,
+    "id": 40,
     "class_id": 10,
     "session_date": "2026-02-03 18:00:00",
     "shift": 1,
@@ -80,7 +320,7 @@
     "active": true
   },
   {
-    "id": 11,
+    "id": 41,
     "class_id": 11,
     "session_date": "2026-02-04 18:00:00",
     "shift": 1,
@@ -88,7 +328,7 @@
     "active": true
   },
   {
-    "id": 12,
+    "id": 42,
     "class_id": 12,
     "session_date": "2026-02-05 19:30:00",
     "shift": 2,
@@ -96,7 +336,7 @@
     "active": true
   },
   {
-    "id": 13,
+    "id": 43,
     "class_id": 13,
     "session_date": "2026-02-06 19:30:00",
     "shift": 2,
@@ -104,7 +344,7 @@
     "active": true
   },
   {
-    "id": 14,
+    "id": 44,
     "class_id": 14,
     "session_date": "2026-02-07 18:00:00",
     "shift": 1,
@@ -112,7 +352,7 @@
     "active": true
   },
   {
-    "id": 15,
+    "id": 45,
     "class_id": 15,
     "session_date": "2026-02-08 18:00:00",
     "shift": 1,
