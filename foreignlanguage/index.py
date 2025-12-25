@@ -27,14 +27,13 @@ def signin():
 
     if request.method.__eq__("POST"):
         username = request.form.get("username")
-
         password = request.form.get("password")
-        remmember = request.form.get("rememberMe") == "true"
+        remember = request.form.get("rememberMe") == "true"
 
         user = dao.auth_user(username, password)
 
         if user:
-            login_user(user, remember=remmember)
+            login_user(user, remember=remember)
 
             if user.role != dao.UserRole.STUDENT:
                 return redirect('/admin')
@@ -73,7 +72,7 @@ def signup():
                     db.session.rollback()
                     err_msg = "Hệ thống đang bị lỗi! Vui lòng quay lại sau!"
         else:
-            err_msg = "Mật khẩu không trùng khớp!"
+            err_msg = "Mật khẩu xác nhận không trùng khớp!"
     return render_template("signup.html", err_msg=err_msg)
 
 @app.route("/logout")
@@ -130,7 +129,7 @@ def forgot_password():
                 else:
                     err_msg = "Người dùng không tồn tại!"
             else:
-                err_msg = "Mật khẩu không trùng khớp!"
+                err_msg = "Mật khẩu xác nhận không trùng khớp!"
 
     return render_template("forgot-pass.html", step=session.get("step", 1), err_msg=err_msg, success_msg=success_msg)
 
@@ -209,7 +208,7 @@ def get_classes():
     for c in classes:
         res.append({
             "id": c.id,
-            "start_time": c.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "start_time": c.start_time.strftime("%d-%m-%Y"),
             "maximum_stu": c.maximum_stu,
             "current_count": c.current_count
         })
@@ -246,7 +245,10 @@ def add_registration():
             email_service.send_register_success_email(
                 current_user.email,
                 data.get("name"),
-                classroom.id
+                classroom.id,
+                classroom.start_time.strftime("%d-%m-%Y"),
+                classroom.course_level.course.name,
+                classroom.course_level.level.name,
             )
             return jsonify({"success": True, "msg": "Đăng ký và thanh toán thành công!"})
 

@@ -26,7 +26,7 @@
                                        class="form-control form-control-lg"
                                        id="name"
                                        placeholder="Nhập họ tên của bạn"
-                                       {% if current_user.name %} value="{{ current_user.name }}" readonly {% else %} required {% endif %}>
+                                       {% if current_user.name %} value="{{ current_user.name }}" {% else %} required {% endif %}>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -39,7 +39,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold small text-muted">SỐ ĐIỆN THOẠI</label>
                                     <input type="text"
-                                           pattern="0\d{9}"
+                                           pattern="^0\d{9}$"
                                            class="form-control form-control-lg bg-light fs-6"
                                            placeholder="Số điện thoại"
                                            id="phone_num"
@@ -151,7 +151,7 @@
 
                                     <div class="alert alert-warning border-0 bg-warning bg-opacity-10 py-1 small rounded mb-0">
                                         <i class="fas fa-clock text-warning ms-1"></i>
-                                        Lưu ý: Giữ chỗ trong <strong>24h</strong>. Vui lòng hoàn tất phần còn lại sau.
+                                        Lưu ý: Giữ chỗ trong <strong>48h</strong>. Vui lòng hoàn tất phần còn lại sau.
                                     </div>
                                 </div>
                             </label>
@@ -160,8 +160,7 @@
 
                     <div class="text-center mt-3">
                         <small class="text-muted"><i class="fas fa-lock me-1"></i> Thông tin của bạn sẽ được bảo mật
-                            theo
-                            chính sách bảo mật.</small>
+                            theo chính sách bảo mật.</small>
                     </div>
                 </div>
 
