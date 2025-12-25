@@ -158,5 +158,95 @@
     "employee_id": 5,
     "regis_id": 18,
     "joined_date": "2025-12-28 10:20:55"
+  },
+  {
+    "id": 17,
+    "money": 3000000.0,
+    "content": "HP Lop 16 (2024) - SV 1",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 19,
+    "joined_date": "2024-1-1 10:20:55"
+  },
+  {
+    "id": 18,
+    "money": 1500000.0,
+    "content": "HP Lop 18 (2024) - SV 1",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 20,
+    "joined_date": "2024-1-1 10:20:55"
+  },
+  {
+    "id": 19,
+    "money": 3000000.0,
+    "content": "HP Lop 16 (2024) - SV 2",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 21,
+    "joined_date": "2024-2-1 10:20:55"
+  },
+  {
+    "id": 20,
+    "money": 4000000.0,
+    "content": "HP Lop 17 (2024) - SV 3",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 22,
+    "joined_date": "2024-5-1 10:20:55"
+  },
+  {
+    "id": 21,
+    "money": 4000000.0,
+    "content": "HP Lop 17 (2024) - SV 4",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 23,
+    "joined_date": "2024-6-1 10:20:55"
+  },
+  {
+    "id": 22,
+    "money": 4500000.0,
+    "content": "HP Lop 2 (2024) - SV 5",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 24,
+    "joined_date": "2024-7-1 10:20:55"
+  },
+  {
+    "id": 23,
+    "money": 2000000.0,
+    "content": "HP Lop 19 (2024) - SV 6",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 25,
+    "joined_date": "2024-8-1 10:20:55"
+  },
+  {
+    "id": 24,
+    "money": 3000000.0,
+    "content": "HP Lop 20 (2024) - SV 7",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 26,
+    "joined_date": "2024-9-1 10:20:55"
+  },
+  {
+    "id": 25,
+    "money": 6000000.0,
+    "content": "HP Lop 24 (2024) - SV 8",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 27,
+    "joined_date": "2024-12-1 10:20:55"
   }
 ]

@@ -460,13 +460,13 @@ def count_courses(year=None):
 
 def count_students(year=None):
     query = db.session.query(func.count(UserAccount.id))
-    query = query.filter(UserAccount.role == UserRole.STUDENT, extract('year', UserAccount.joined_date) == year)
+    query = query.filter(UserAccount.role == UserRole.STUDENT, extract('year', StudentInfo.joined_date) == year)
     return query.join(StudentInfo, StudentInfo.u_id == UserAccount.id).join(Registration,
                                                                             StudentInfo.id == Registration.student_id).scalar()
 
 
 def count_active_classes(year=None):
-    return Classroom.query.filter(extract('year', Classroom.joined_date) == year, Classroom.active == 1).count()
+    return Classroom.query.filter(extract('year', Classroom.start_time) == year, Classroom.active == 1).count()
 
 
 def count_total_revenue(year=None):
@@ -615,11 +615,11 @@ if __name__ == "__main__":
     with app.app_context():
         # print(auth_user("user", "123"))
         # print(get_classes_by_course_level(2, 2))
-        # print(count_students(2025))
+        # print(count_students(2024))
         # print(count_courses(2025))
         # print(count_active_classes(2025))
-        # print(count_total_revenue(2025))
-        # print(stats_rate_passed_per_course_by_year(2025))
+        # print(count_total_revenue(2024))
+        print(stats_rate_passed_per_course_by_year(2024))
         # print(get_tuition_by_class_id(22))
         # print(get_details_top3_courses())
         # top3 = get_details_top3_courses(2025)

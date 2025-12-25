@@ -178,5 +178,95 @@
     "status": "PAID",
     "final_score": null,
     "academic_status": "PENDING"
+  },
+  {
+    "id": 19,
+    "student_id": 1,
+    "class_id": 16,
+    "paid": 3000000.0,
+    "actual_tuition": 3000000.0,
+    "status": "PAID",
+    "final_score": null,
+    "academic_status": "PASSED"
+  },
+  {
+    "id": 20,
+    "student_id": 1,
+    "class_id": 18,
+    "paid": 1500000.0,
+    "actual_tuition": 1500000.0,
+    "status": "PAID",
+    "final_score": null,
+    "academic_status": "PASSED"
+  },
+  {
+    "id": 21,
+    "student_id": 2,
+    "class_id": 16,
+    "paid": 3000000.0,
+    "actual_tuition": 3000000.0,
+    "status": "PAID",
+    "final_score": null,
+    "academic_status": "PASSED"
+  },
+  {
+    "id": 22,
+    "student_id": 3,
+    "class_id": 17,
+    "paid": 4000000.0,
+    "actual_tuition": 4000000.0,
+    "status": "PAID",
+    "final_score": null,
+    "academic_status": "PASSED"
+  },
+  {
+    "id": 23,
+    "student_id": 4,
+    "class_id": 17,
+    "paid": 4000000.0,
+    "actual_tuition": 4000000.0,
+    "status": "PAID",
+    "final_score": null,
+    "academic_status": "FAILED"
+  },
+  {
+    "id": 24,
+    "student_id": 5,
+    "class_id": 22,
+    "paid": 4500000.0,
+    "actual_tuition": 4500000.0,
+    "status": "PAID",
+    "final_score": null,
+    "academic_status": "PASSED"
+  },
+  {
+    "id": 25,
+    "student_id": 6,
+    "class_id": 19,
+    "paid": 2000000.0,
+    "actual_tuition": 2000000.0,
+    "status": "PAID",
+    "final_score": null,
+    "academic_status": "PASSSED"
+  },
+  {
+    "id": 26,
+    "student_id": 7,
+    "class_id": 20,
+    "paid": 3000000.0,
+    "actual_tuition": 3000000.0,
+    "status": "PAID",
+    "final_score": null,
+    "academic_status": "PASSED"
+  },
+  {
+    "id": 27,
+    "student_id": 8,
+    "class_id": 24,
+    "paid": 6000000.0,
+    "actual_tuition": 6000000.0,
+    "status": "PAID",
+    "final_score": null,
+    "academic_status": "PASSED"
   }
 ]
