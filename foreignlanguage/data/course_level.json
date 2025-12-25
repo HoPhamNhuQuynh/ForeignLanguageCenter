@@ -103,5 +103,125 @@
     "course_id": 7,
     "level_id": 3,
     "tuition": 6000000.0
+  },
+  {
+    "course_id": 8,
+    "level_id": 1,
+    "tuition": 3500000.0
+  },
+  {
+    "course_id": 8,
+    "level_id": 2,
+    "tuition": 4000000.0
+  },
+  {
+    "course_id": 8,
+    "level_id": 3,
+    "tuition": 4500000.0
+  },
+  {
+    "course_id": 9,
+    "level_id": 1,
+    "tuition": 5000000.0
+  },
+  {
+    "course_id": 9,
+    "level_id": 2,
+    "tuition": 6500000.0
+  },
+  {
+    "course_id": 9,
+    "level_id": 3,
+    "tuition": 8000000.0
+  },
+  {
+    "course_id": 10,
+    "level_id": 1,
+    "tuition": 2500000.0
+  },
+  {
+    "course_id": 10,
+    "level_id": 2,
+    "tuition": 3000000.0
+  },
+  {
+    "course_id": 10,
+    "level_id": 3,
+    "tuition": 3500000.0
+  },
+  {
+    "course_id": 11,
+    "level_id": 1,
+    "tuition": 1500000.0
+  },
+  {
+    "course_id": 11,
+    "level_id": 2,
+    "tuition": 2000000.0
+  },
+  {
+    "course_id": 11,
+    "level_id": 3,
+    "tuition": 2500000.0
+  },
+  {
+    "course_id": 12,
+    "level_id": 1,
+    "tuition": 2000000.0
+  },
+  {
+    "course_id": 12,
+    "level_id": 2,
+    "tuition": 3000000.0
+  },
+  {
+    "course_id": 12,
+    "level_id": 3,
+    "tuition": 4000000.0
+  },
+  {
+    "course_id": 13,
+    "level_id": 1,
+    "tuition": 3500000.0
+  },
+  {
+    "course_id": 13,
+    "level_id": 2,
+    "tuition": 4500000.0
+  },
+  {
+    "course_id": 13,
+    "level_id": 3,
+    "tuition": 5500000.0
+  },
+  {
+    "course_id": 14,
+    "level_id": 1,
+    "tuition": 4000000.0
+  },
+  {
+    "course_id": 14,
+    "level_id": 2,
+    "tuition": 5500000.0
+  },
+  {
+    "course_id": 14,
+    "level_id": 3,
+    "tuition": 7000000.0
+  },
+  {
+    "course_id": 15,
+    "level_id": 1,
+    "tuition": 2500000.0
+  },
+  {
+    "course_id": 15,
+    "level_id": 2,
+    "tuition": 3500000.0
+  },
+  {
+    "course_id": 15,
+    "level_id": 3,
+    "tuition": 4500000.0
   }
 ]
