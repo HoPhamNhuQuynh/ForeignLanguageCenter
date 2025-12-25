@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // bat su kien load hoa don khi chon radio lop hoc
-    document.getElementById("tableBodyClasses").addEventListener('change', function(e) {
+    document.getElementById("tableBodyClasses").addEventListener('change', function(e) { // dung event delegation
         if (e.target && e.target.type === 'radio'){
             const r = e.target
             const courseSelect = document.getElementById("courseSelect");
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('percentPay').textContent = percent_label.querySelector(".percentName").innerText;
 
             console.log(r.value)
-            loadInvoice(r.value);
+            loadTuition(r.value);
         }
 
     });
@@ -135,12 +135,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const classRadio = document.querySelector('input[name="class_id"]:checked');
             if (classRadio) {
-                loadInvoice(classRadio.value);
+                loadTuition(classRadio.value);
             }
         }
     });
 
-    function loadInvoice(class_id){
+    function loadTuition(class_id){
         fetch(`api/tuition?class_id=${class_id}`)
         .then(res=>res.json()).then(data=>{
                 const percentInput = document.querySelector('input[name="payment_percent"]:checked')
