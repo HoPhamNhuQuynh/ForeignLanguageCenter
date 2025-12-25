@@ -248,5 +248,395 @@
     "employee_id": 6,
     "regis_id": 27,
     "joined_date": "2024-12-1 10:20:55"
+  },
+  {
+    "id": 26,
+    "money": 3000000.0,
+    "content": "HP Lop 16 (2024) - SV 22",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 28,
+    "joined_date": "2024-02-05 08:30:00"
+  },
+  {
+    "id": 27,
+    "money": 3000000.0,
+    "content": "HP Lop 20 (2024) - SV 22",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 29,
+    "joined_date": "2024-03-08 14:15:00"
+  },
+  {
+    "id": 28,
+    "money": 2000000.0,
+    "content": "HP Lop 19 (2024) - SV 23",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 30,
+    "joined_date": "2024-02-24 09:00:00"
+  },
+  {
+    "id": 29,
+    "money": 3500000.0,
+    "content": "HP Lop 21 (2024) - SV 23",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 31,
+    "joined_date": "2024-03-08 10:30:00"
+  },
+  {
+    "id": 30,
+    "money": 4000000.0,
+    "content": "HP Lop 17 (2024) - SV 24",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 32,
+    "joined_date": "2024-02-06 15:45:00"
+  },
+  {
+    "id": 31,
+    "money": 3500000.0,
+    "content": "HP Lop 25 (2024) - SV 24",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 33,
+    "joined_date": "2024-03-14 08:15:00"
+  },
+  {
+    "id": 32,
+    "money": 2000000.0,
+    "content": "Coc Lop 12 (2026) - SV 25",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 34,
+    "joined_date": "2026-01-15 09:30:00"
+  },
+  {
+    "id": 33,
+    "money": 1500000.0,
+    "content": "HP Lop 1 (2025) - SV 25",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 35,
+    "joined_date": "2025-05-20 14:00:00"
+  },
+  {
+    "id": 34,
+    "money": 1500000.0,
+    "content": "HP Lop 30 (2026) - SV 26",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 36,
+    "joined_date": "2026-05-30 10:00:00"
+  },
+  {
+    "id": 35,
+    "money": 1500000.0,
+    "content": "HP Lop 18 (2024) - SV 27",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 37,
+    "joined_date": "2024-02-08 08:45:00"
+  },
+  {
+    "id": 36,
+    "money": 4000000.0,
+    "content": "HP Lop 26 (2024) - SV 27",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 38,
+    "joined_date": "2024-03-18 16:00:00"
+  },
+  {
+    "id": 37,
+    "money": 2500000.0,
+    "content": "HP Lop 10 (2025) - SV 28",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 39,
+    "joined_date": "2025-01-25 09:15:00"
+  },
+  {
+    "id": 38,
+    "money": 5500000.0,
+    "content": "HP Lop 14 (2025) - SV 28",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 40,
+    "joined_date": "2025-02-03 14:30:00"
+  },
+  {
+    "id": 39,
+    "money": 3250000.0,
+    "content": "Coc Lop 27 (2026) - SV 29",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 41,
+    "joined_date": "2026-03-20 10:00:00"
+  },
+  {
+    "id": 40,
+    "money": 3000000.0,
+    "content": "HP Lop 20 (2024) - SV 30",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 42,
+    "joined_date": "2024-03-05 08:30:00"
+  },
+  {
+    "id": 41,
+    "money": 3000000.0,
+    "content": "HP Lop 16 (2024) - SV 31",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 43,
+    "joined_date": "2024-02-04 15:00:00"
+  },
+  {
+    "id": 42,
+    "money": 5500000.0,
+    "content": "HP Lop 32 (2026) - SV 32",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 44,
+    "joined_date": "2026-04-05 09:00:00"
+  },
+  {
+    "id": 43,
+    "money": 2500000.0,
+    "content": "Coc Lop 5 (2025) - SV 33",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 45,
+    "joined_date": "2025-06-01 11:00:00"
+  },
+  {
+    "id": 44,
+    "money": 4500000.0,
+    "content": "HP Lop 22 (2024) - SV 33",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 46,
+    "joined_date": "2024-01-08 13:45:00"
+  },
+  {
+    "id": 45,
+    "money": 4000000.0,
+    "content": "Coc Lop 28 (2026) - SV 34",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 47,
+    "joined_date": "2026-03-22 10:15:00"
+  },
+  {
+    "id": 46,
+    "money": 5000000.0,
+    "content": "HP Lop 23 (2024) - SV 35",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 48,
+    "joined_date": "2024-01-07 08:00:00"
+  },
+  {
+    "id": 47,
+    "money": 3500000.0,
+    "content": "HP Lop 34 (2026) - SV 36",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 49,
+    "joined_date": "2026-05-01 09:30:00"
+  },
+  {
+    "id": 48,
+    "money": 2000000.0,
+    "content": "HP Lop 9 (2025) - SV 37",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 50,
+    "joined_date": "2025-06-05 14:45:00"
+  },
+  {
+    "id": 49,
+    "money": 3500000.0,
+    "content": "HP Lop 13 (2025) - SV 37",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 51,
+    "joined_date": "2025-02-02 10:00:00"
+  },
+  {
+    "id": 50,
+    "money": 2250000.0,
+    "content": "Coc Lop 15 (2026) - SV 38",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 52,
+    "joined_date": "2026-02-05 08:30:00"
+  },
+  {
+    "id": 51,
+    "money": 2000000.0,
+    "content": "HP Lop 19 (2024) - SV 39",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 53,
+    "joined_date": "2024-02-23 15:15:00"
+  },
+  {
+    "id": 52,
+    "money": 6000000.0,
+    "content": "HP Lop 24 (2024) - SV 39",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 54,
+    "joined_date": "2024-01-08 11:00:00"
+  },
+  {
+    "id": 53,
+    "money": 3000000.0,
+    "content": "HP Lop 31 (2026) - SV 40",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 55,
+    "joined_date": "2026-06-12 09:45:00"
+  },
+  {
+    "id": 54,
+    "money": 2000000.0,
+    "content": "HP Lop 11 (2025) - SV 41",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 56,
+    "joined_date": "2025-02-01 08:15:00"
+  },
+  {
+    "id": 55,
+    "money": 4500000.0,
+    "content": "HP Lop 22 (2024) - SV 43",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 58,
+    "joined_date": "2024-01-10 14:00:00"
+  },
+  {
+    "id": 56,
+    "money": 3000000.0,
+    "content": "HP Lop 16 (2024) - SV 43",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 59,
+    "joined_date": "2024-02-06 16:30:00"
+  },
+  {
+    "id": 57,
+    "money": 7000000.0,
+    "content": "HP Lop 33 (2026) - SV 44",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 60,
+    "joined_date": "2026-04-15 10:20:00"
+  },
+  {
+    "id": 58,
+    "money": 3500000.0,
+    "content": "HP Lop 25 (2024) - SV 45",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 61,
+    "joined_date": "2024-03-12 08:50:00"
+  },
+  {
+    "id": 59,
+    "money": 5500000.0,
+    "content": "HP Lop 14 (2025) - SV 46",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 62,
+    "joined_date": "2025-02-04 11:30:00"
+  },
+  {
+    "id": 60,
+    "money": 1500000.0,
+    "content": "HP Lop 1 (2025) - SV 46",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 63,
+    "joined_date": "2025-05-30 15:45:00"
+  },
+  {
+    "id": 61,
+    "money": 1500000.0,
+    "content": "HP Lop 18 (2024) - SV 47",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 64,
+    "joined_date": "2024-02-08 09:10:00"
+  },
+  {
+    "id": 62,
+    "money": 4000000.0,
+    "content": "HP Lop 17 (2024) - SV 48",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 65,
+    "joined_date": "2024-02-07 13:20:00"
+  },
+  {
+    "id": 63,
+    "money": 4000000.0,
+    "content": "HP Lop 12 (2026) - SV 49",
+    "method": "BANKING",
+    "status": "SUCCESS",
+    "employee_id": 6,
+    "regis_id": 66,
+    "joined_date": "2026-02-01 08:00:00"
+  },
+  {
+    "id": 64,
+    "money": 6000000.0,
+    "content": "HP Lop 24 (2024) - SV 50",
+    "method": "CASH",
+    "status": "SUCCESS",
+    "employee_id": 5,
+    "regis_id": 67,
+    "joined_date": "2024-01-08 16:15:00"
   }
 ]

@@ -94,7 +94,8 @@
             checkCompletion();
         }
     });
-});
+  });
+
     //enterscore
     function updateDTB() {
         const row = this.closest('tr');
@@ -174,4 +175,4 @@
     function clearScoreDraft() {
         localStorage.removeItem('teacher_score_draft');
     }
-});
+

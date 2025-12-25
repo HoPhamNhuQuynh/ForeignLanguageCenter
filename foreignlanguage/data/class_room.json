@@ -100,7 +100,7 @@
   },
   {
     "id": 12,
-    "start_time": "2025-02-03 08:00:00",
+    "start_time": "2026-02-03 08:00:00",
     "maximum_stu": 25,
     "employee_id": 3,
     "course_id": 1,
@@ -127,7 +127,7 @@
   },
   {
     "id": 15,
-    "start_time": "2025-02-06 18:00:00",
+    "start_time": "2026-02-06 18:00:00",
     "maximum_stu": 25,
     "employee_id": 3,
     "course_id": 3,
@@ -213,6 +213,168 @@
     "employee_id": 6,
     "course_id": 7,
     "level_id": 3,
+    "active": true
+  },
+  {
+    "id": 25,
+    "start_time": "2024-03-15 18:00:00",
+    "maximum_stu": 20,
+    "employee_id": 3,
+    "course_id": 8,
+    "level_id": 1,
+    "active": true
+  },
+  {
+    "id": 26,
+    "start_time": "2024-03-20 19:30:00",
+    "maximum_stu": 20,
+    "employee_id": 3,
+    "course_id": 8,
+    "level_id": 2,
+    "active": true
+  },
+  {
+    "id": 27,
+    "start_time": "2024-03-20 19:30:00",
+    "maximum_stu": 20,
+    "employee_id": 3,
+    "course_id": 8,
+    "level_id": 3,
+    "active": true
+  },
+  {
+    "id": 28,
+    "start_time": "2026-03-25 18:00:00",
+    "maximum_stu": 15,
+    "employee_id": 2,
+    "course_id": 9,
+    "level_id": 1,
+    "active": true
+  },
+  {
+    "id": 29,
+    "start_time": "2026-03-25 18:00:00",
+    "maximum_stu": 15,
+    "employee_id": 2,
+    "course_id": 9,
+    "level_id": 2,
+    "active": true
+  },
+  {
+    "id": 30,
+    "start_time": "2026-03-30 19:30:00",
+    "maximum_stu": 15,
+    "employee_id": 2,
+    "course_id": 9,
+    "level_id": 3,
+    "active": true
+  },
+  {
+    "id": 31,
+    "start_time": "2026-04-05 18:00:00",
+    "maximum_stu": 25,
+    "employee_id": 1,
+    "course_id": 10,
+    "level_id": 1,
+    "active": true
+  },
+  {
+    "id": 32,
+    "start_time": "2026-04-05 18:00:00",
+    "maximum_stu": 25,
+    "employee_id": 1,
+    "course_id": 10,
+    "level_id": 2,
+    "active": true
+  },
+  {
+    "id": 33,
+    "start_time": "2026-04-05 18:00:00",
+    "maximum_stu": 25,
+    "employee_id": 1,
+    "course_id": 10,
+    "level_id": 3,
+    "active": true
+  },
+  {
+    "id": 34,
+    "start_time": "2026-06-10 08:00:00",
+    "maximum_stu": 20,
+    "employee_id": 6,
+    "course_id": 11,
+    "level_id": 1,
+    "active": true
+  },
+  {
+    "id": 35,
+    "start_time": "2026-06-10 08:00:00",
+    "maximum_stu": 20,
+    "employee_id": 6,
+    "course_id": 11,
+    "level_id": 2,
+    "active": true
+  },
+  {
+    "id": 36,
+    "start_time": "2026-06-10 08:00:00",
+    "maximum_stu": 20,
+    "employee_id": 6,
+    "course_id": 11,
+    "level_id": 3,
+    "active": true
+  },
+  {
+    "id": 37,
+    "start_time": "2026-06-15 09:30:00",
+    "maximum_stu": 20,
+    "employee_id": 6,
+    "course_id": 12,
+    "level_id": 1,
+    "active": true
+  },
+  {
+    "id": 38,
+    "start_time": "2026-06-15 09:30:00",
+    "maximum_stu": 20,
+    "employee_id": 6,
+    "course_id": 12,
+    "level_id": 2,
+    "active": true
+  },
+  {
+    "id": 39,
+    "start_time": "2026-06-15 09:30:00",
+    "maximum_stu": 20,
+    "employee_id": 6,
+    "course_id": 12,
+    "level_id": 3,
+    "active": true
+  },
+  {
+    "id": 32,
+    "start_time": "2026-04-10 18:30:00",
+    "maximum_stu": 20,
+    "employee_id": 3,
+    "course_id": 13,
+    "level_id": 3,
+    "active": true
+  },
+  {
+    "id": 33,
+    "start_time": "2026-04-20 17:45:00",
+    "maximum_stu": 15,
+    "employee_id": 2,
+    "course_id": 14,
+    "level_id": 3,
+    "active": true
+  },
+  {
+    "id": 34,
+    "start_time": "2026-05-05 18:00:00",
+    "maximum_stu": 25,
+    "employee_id": 1,
+    "course_id": 15,
+    "level_id": 2,
     "active": true
   }
 ]
